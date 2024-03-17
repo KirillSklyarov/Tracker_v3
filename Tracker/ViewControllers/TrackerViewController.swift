@@ -15,6 +15,21 @@ final class TrackerViewController: UIViewController {
     private let searchController = UISearchController(searchResultsController: nil)
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
+    private lazy var datePickerButton: UIButton = {
+        let button = UIButton()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yy"
+        let dateToString = formatter.string(from: currentDate)
+        button.setTitle(dateToString, for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.frame = CGRect(x: 0, y: 0, width: 77, height: 34)
+        button.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        button.layer.cornerRadius = 8
+        button.addTarget(self, action: #selector(datePickerTapped), for: .touchUpInside)
+        return button
+    } ()
+    
+    
     // MARK: - Private Properties
     private var categories: [TrackerCategory] = [
         TrackerCategory(header: "Домашний уют", trackers:
@@ -31,6 +46,7 @@ final class TrackerViewController: UIViewController {
     private var isDoneForToday = false
     private var filteredData: [TrackerCategory] = []
     private var isSearchMode = false
+    private var currentDate = UIDatePicker().date
     
     private var newData: [TrackerCategory] {
         isSearchMode ? filteredData : categories
@@ -52,13 +68,7 @@ final class TrackerViewController: UIViewController {
     }
     
     // MARK: - UI Actions
-    @objc private func datePickerTapped(_ sender: UIDatePicker) {
-        let selectedDate = sender.date
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yyyy" // Формат даты
-        let formattedDate = dateFormatter.string(from: selectedDate)
-        print("Выбранная дата: \(formattedDate)")
-    }
+    
     
     @objc private func addNewHabit(_ sender: UIButton) {
         let creatingNewHabitVC = ChoosingTypeOfHabitViewController()
@@ -93,22 +103,49 @@ final class TrackerViewController: UIViewController {
     // MARK: - UI, Navigation, Search
     private func setupNavigation() {
         
+        navigationItem.hidesSearchBarWhenScrolling = false
+                
         let image = UIImage(systemName: "plus")?.withRenderingMode(.alwaysOriginal)
         
-        lazy var datePicker: UIDatePicker = {
-            let datePicker = UIDatePicker()
-            datePicker.locale = Locale(identifier: "ru_RU")
-            datePicker.calendar = Calendar(identifier: .gregorian)
-            datePicker.preferredDatePickerStyle = .compact
-            datePicker.datePickerMode = .date
-            datePicker.addTarget(self, action: #selector(datePickerTapped), for: .valueChanged)
-            return datePicker
-        } ()
-        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePickerButton)
+            
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: image?.withTintColor(.black), style: .done, target: self, action: #selector(addNewHabit))
+    }
+    
+    @objc private func datePickerTapped(_ sender: UIButton) {
+        let picker = UIDatePicker()
+        picker.datePickerMode = .date
+        picker.layer.backgroundColor = UIColor.white.cgColor
+        picker.layer.cornerRadius = 13
+        if #available(iOS 14.0, *) {
+            picker.preferredDatePickerStyle = .inline
+        } else {
+            picker.preferredDatePickerStyle = .wheels
+        }
+        picker.addTarget(self, action: #selector(datePickerTapped2), for: .valueChanged)
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
-        
+        navigationItem.searchController = nil
+       
+        view.addSubViews([picker])
+
+        NSLayoutConstraint.activate([
+            picker.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            picker.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            picker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            picker.heightAnchor.constraint(greaterThanOrEqualToConstant: 325)
+        ])
+    }
+    
+    @objc private func datePickerTapped2(_ sender: UIDatePicker) {
+        let selectedDate = sender.date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yy"
+        let formattedDate = dateFormatter.string(from: selectedDate)
+        datePickerButton.setTitle(formattedDate, for: .normal)
+        navigationItem.searchController = searchController
+        sender.removeFromSuperview()
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationItem.largeTitleDisplayMode = .always
     }
 
     private func setupSearchController() {
@@ -119,7 +156,6 @@ final class TrackerViewController: UIViewController {
         
         navigationItem.searchController = searchController
         definesPresentationContext = false
-        navigationItem.hidesSearchBarWhenScrolling = false
     }
 
     private func setupCollectionView() {
@@ -163,12 +199,17 @@ final class TrackerViewController: UIViewController {
     }
     
     private func showPlaceholderForEmptyScreen() {
+        if isSearchMode {
+            swooshImage.image = UIImage(named: "searchPlaceholder")
+            textLabel.text = "Ничего не найдено"
+        } else {
+            swooshImage.image = UIImage(named: "swoosh")
+            textLabel.text = "Что будем отслеживать?"
+        }
+        
         swooshImage.isHidden = false
         textLabel.isHidden = false
         
-        swooshImage.image = UIImage(named: "swoosh")
-        
-        textLabel.text = "Что будем отслеживать?"
         textLabel.font = .systemFont(ofSize: 12, weight: .medium)
         textLabel.textAlignment = .center
         

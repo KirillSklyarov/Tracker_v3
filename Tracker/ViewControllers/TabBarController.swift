@@ -40,6 +40,7 @@ class TabBarController: UITabBarController {
         navigationController.navigationBar.backgroundColor = .systemBackground
         navigationController.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationController.navigationBar.prefersLargeTitles = true
+        navigationController.navigationItem.hidesSearchBarWhenScrolling = false
         return navigationController
     }
 
