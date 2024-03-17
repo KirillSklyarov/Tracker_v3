@@ -202,7 +202,7 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return newData[section].trackers.count
     }
-    ч
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
     }
