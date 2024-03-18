@@ -30,6 +30,8 @@ final class ChoosingCategoryViewController: UIViewController {
         return label
     } ()
     
+    var updateCategory: ( (String) -> Void)?
+    
     var categories: [TrackerCategory] = []
         
     override func viewDidLoad() {
@@ -179,7 +181,9 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
+        guard let categoryNameToPass = cell?.textLabel?.text else { return }
         cell?.accessoryType = .checkmark
+        updateCategory?(categoryNameToPass)
         dismiss(animated: true)
     }
 }

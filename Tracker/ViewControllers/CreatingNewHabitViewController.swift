@@ -179,15 +179,15 @@ extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDele
         tableViewRows.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        
-        cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
-        cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {        
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         cell.textLabel?.text = tableViewRows[indexPath.row]
-        cell.detailTextLabel?.text = "1234"
+        cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+        cell.detailTextLabel?.textColor = UIColor(named: "createButtonGrayColor")
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.accessoryType = .disclosureIndicator
+        cell.selectionStyle = .none
         return cell
     }
     
@@ -200,12 +200,26 @@ extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDele
         if data == "Расписание" {
             let scheduleVC = ScheduleViewController()
             let navVC = UINavigationController(rootViewController: scheduleVC)
+            scheduleVC.scheduleToPass = { [weak self] schedule in
+                guard let self = self,
+                    let cell = tableView.cellForRow(at: indexPath) else { return }
+                cell.detailTextLabel?.text = schedule
+            }
             present(navVC, animated: true)
         } else {
             let categoryVC = ChoosingCategoryViewController()
             let navVC = UINavigationController(rootViewController: categoryVC)
+            categoryVC.updateCategory = { [weak self] categoryName in
+                guard let self = self,
+                      let cell = tableView.cellForRow(at: indexPath) else { return }
+                cell.detailTextLabel?.text = categoryName
+            }
             present(navVC, animated: true)
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 

@@ -73,9 +73,7 @@ final class CreatingNewCategoryViewController: UIViewController {
         print("doneButtonTapped")
         guard let newCategoryName = categoryNameTextField.text else { return }
         let newCategory: TrackerCategory = TrackerCategory(header: newCategoryName, trackers: [])
-//        categories.append(newCategory)
         updateTableClosure?(newCategory)
-//        print(TrackerViewController().categories)
         dismiss(animated: true)
     }
     

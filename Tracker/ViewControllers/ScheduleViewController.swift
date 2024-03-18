@@ -13,17 +13,18 @@ final class ScheduleViewController: UIViewController {
     private lazy var doneButton = setupButtons(title: "Готово")
 
     private let weekdays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
-    
     private let rowHeight = CGFloat(75)
     private lazy var tableViewHeight = CGFloat(weekdays.count) * rowHeight
-
+    private var arrayOfIndexes = [Int]()
+    
+    var scheduleToPass: ( (String) -> Void )?
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
         
         setupTableView()
-
     }
     
     private func setupUI() {
@@ -31,7 +32,6 @@ final class ScheduleViewController: UIViewController {
         self.title = "Расписание"
         view.backgroundColor = UIColor(named: "projectBackground")
 
-        
         view.addSubViews([tableView, doneButton])
         
         NSLayoutConstraint.activate([
@@ -53,7 +53,6 @@ final class ScheduleViewController: UIViewController {
         
         tableView.layer.cornerRadius = 10
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        
     }
     
     private func setupButtons(title: String) -> UIButton {
@@ -66,11 +65,33 @@ final class ScheduleViewController: UIViewController {
         button.layer.cornerRadius = 15
         button.translatesAutoresizingMaskIntoConstraints = false
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        button.addTarget(self, action: #selector(scheduleDoneButtonTapped), for: .touchUpInside)
         return button
     }
     
     @objc private func weekDayswitchValueChanded(_ sender: UISwitch) {
-        
+        guard let cell = sender.superview as? UITableViewCell,
+        let indexPath = tableView.indexPath(for: cell) else { return }
+        if sender.isOn {
+            arrayOfIndexes.append(indexPath.row)
+        } else {
+            arrayOfIndexes.remove(at: indexPath.row)
+        }
+    }
+    
+    func getStringFromArray(array: [Int]) -> String {
+        if array.count == 7 { return "Каждый день"} else {
+            let daysOfWeek = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+            let arrayOfStrings = array.map { daysOfWeek[$0] }
+            let resultString = arrayOfStrings.joined(separator: ", ")
+            return resultString
+        }
+    }
+    
+    @objc private func scheduleDoneButtonTapped(_ sender: UIButton) {
+        let scheduleString = getStringFromArray(array: arrayOfIndexes)
+        scheduleToPass?(scheduleString)
+        dismiss(animated: true)
     }
 }
 
@@ -88,11 +109,12 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.selectionStyle = .default
         let weekDayswitch = UISwitch()
+        weekDayswitch.onTintColor = UIColor(named: "switchOnColor")
         weekDayswitch.addTarget(self, action: #selector(weekDayswitchValueChanded), for: .valueChanged)
         cell.accessoryView = weekDayswitch
-        
         cell.textLabel?.text = weekdays[indexPath.row]
         cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        
         return cell
     }
     
