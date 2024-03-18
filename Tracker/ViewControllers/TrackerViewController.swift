@@ -8,8 +8,8 @@
 import UIKit
 
 final class TrackerViewController: UIViewController {
-
-// MARK: - UI Properties
+    
+    // MARK: - UI Properties
     private let swooshImage = UIImageView()
     private let textLabel = UILabel()
     private let searchController = UISearchController(searchResultsController: nil)
@@ -31,7 +31,10 @@ final class TrackerViewController: UIViewController {
     
     
     // MARK: - Private Properties
-    var categories: [TrackerCategory] = []
+    var categories: [TrackerCategory] = [
+        TrackerCategory(header: "Домашний уют", trackers:
+                            [Tracker(id: UUID(), name: "Поливать цветы", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "0")])
+    ]
         
 //        TrackerCategory(header: "Домашний уют", trackers:
 //                    [Tracker(id: UUID(), name: "Поливать цветы", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "0"),

@@ -180,10 +180,12 @@ extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDele
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        var cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
+        cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         cell.textLabel?.text = tableViewRows[indexPath.row]
+        cell.detailTextLabel?.text = "1234"
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.accessoryType = .disclosureIndicator
         return cell

@@ -11,6 +11,9 @@ final class CreatingNewCategoryViewController: UIViewController {
 
     private let categoryNameTextField = UITextField()
     private lazy var doneButton = setupButtons(title: "Готово")
+    
+    var categories = TrackerViewController().categories
+    var updateTableClosure: ( (TrackerCategory) -> Void )?
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,48 +23,17 @@ final class CreatingNewCategoryViewController: UIViewController {
     }
     
     private func setupTextField() {
-        
-        categoryNameTextField.delegate = self
-        categoryNameTextField.isUserInteractionEnabled = true
-        
-        let rightPaddingView = UIView()
-        let clearTextFieldButton: UIButton = {
-            let button = UIButton(type: .custom)
-            let configuration = UIImage.SymbolConfiguration(pointSize: 17)
-            let imageColor = UIColor(named: "createButtonGrayColor") ?? .lightGray
-            let image = UIImage(systemName: "xmark.circle.fill", withConfiguration: configuration)?
-                .withRenderingMode(.alwaysOriginal)
-                .withTintColor(imageColor)
-            button.setImage(image, for: .normal)
-            button.addTarget(self, action: #selector(clearTextButtonTapped), for: .touchUpInside)
-            return button
-        } ()
-        
-        lazy var clearTextStack: UIStackView = {
-            let stack = UIStackView()
-            stack.axis = .horizontal
-            stack.addArrangedSubview(clearTextFieldButton)
-            stack.addArrangedSubview(rightPaddingView)
-            stack.translatesAutoresizingMaskIntoConstraints = false
-            stack.widthAnchor.constraint(equalToConstant: 28).isActive = true
-            return stack
-        } ()
-        
+    
         categoryNameTextField.placeholder = "Введите название категории"
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
         categoryNameTextField.leftView = leftPaddingView
         categoryNameTextField.leftViewMode = .always
-        categoryNameTextField.rightView = clearTextStack
         categoryNameTextField.rightViewMode = .whileEditing
         categoryNameTextField.textAlignment = .left
         categoryNameTextField.layer.cornerRadius = 10
         categoryNameTextField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         categoryNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
-
-    }
-    
-    @objc private func clearTextButtonTapped(_ sender: UIButton) {
-        categoryNameTextField.text = ""
+        categoryNameTextField.addTarget(self, action: #selector(textFildEditing), for: .editingChanged)
     }
     
     private func setupUI() {
@@ -85,8 +57,26 @@ final class CreatingNewCategoryViewController: UIViewController {
         ])
     }
     
+    @objc private func textFildEditing(_ sender: UITextField) {
+        print(sender.text as Any)
+        if let text = sender.text,
+           !text.isEmpty {
+            doneButton.isEnabled = true
+            doneButton.backgroundColor = .black
+        } else {
+            doneButton.isEnabled = false
+            doneButton.backgroundColor = .systemGray4
+        }
+    }
+    
     @objc private func doneButtonTapped(_ sender: UIButton) {
         print("doneButtonTapped")
+        guard let newCategoryName = categoryNameTextField.text else { return }
+        let newCategory: TrackerCategory = TrackerCategory(header: newCategoryName, trackers: [])
+//        categories.append(newCategory)
+        updateTableClosure?(newCategory)
+//        print(TrackerViewController().categories)
+        dismiss(animated: true)
     }
     
     private func setupButtons(title: String) -> UIButton {
@@ -100,26 +90,11 @@ final class CreatingNewCategoryViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        button.isEnabled = false
         return button
     }
 }
-
-extension CreatingNewCategoryViewController: UITextFieldDelegate {
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let currentText = textField.text?.count ?? 0
-        if currentText > 0 {
-            print(currentText)
-            doneButton.isEnabled = false
-        } else {
-            doneButton.isEnabled = true
-            doneButton.backgroundColor = .black
-        }
-        return true
-    }
-}
-    
-
 //MARK: - SwiftUI
 import SwiftUI
 struct ProviderCreating : PreviewProvider {
