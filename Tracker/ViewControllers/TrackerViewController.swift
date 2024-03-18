@@ -31,15 +31,16 @@ final class TrackerViewController: UIViewController {
     
     
     // MARK: - Private Properties
-    private var categories: [TrackerCategory] = [
-        TrackerCategory(header: "Домашний уют", trackers:
-                    [Tracker(id: UUID(), name: "Поливать цветы", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "0"),
-                     Tracker(id: UUID(), name: "Вымыть окна", color: UIColor.green, emoji: "\u{1F61B}", schedule: "0")]),
-                        
-        TrackerCategory(header: "Животные", trackers:
-                        [Tracker(id: UUID(), name: "Погладить кота", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "0"),
-                        Tracker(id: UUID(), name: "Послушать мурчание", color: UIColor.green, emoji: "\u{1F61B}", schedule: "0")]
-                       )]
+    var categories: [TrackerCategory] = []
+        
+//        TrackerCategory(header: "Домашний уют", trackers:
+//                    [Tracker(id: UUID(), name: "Поливать цветы", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "0"),
+//                     Tracker(id: UUID(), name: "Вымыть окна", color: UIColor.green, emoji: "\u{1F61B}", schedule: "0")]),
+//                        
+//        TrackerCategory(header: "Животные", trackers:
+//                        [Tracker(id: UUID(), name: "Погладить кота", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "0"),
+//                        Tracker(id: UUID(), name: "Послушать мурчание", color: UIColor.green, emoji: "\u{1F61B}", schedule: "0")]
+//                       )]
             
     private var completedTrackers: [TrackerRecord]?
     
@@ -138,14 +139,16 @@ final class TrackerViewController: UIViewController {
     
     @objc private func datePickerTapped2(_ sender: UIDatePicker) {
         let selectedDate = sender.date
+        currentDate = selectedDate
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yy"
         let formattedDate = dateFormatter.string(from: selectedDate)
         datePickerButton.setTitle(formattedDate, for: .normal)
-        navigationItem.searchController = searchController
         sender.removeFromSuperview()
+        navigationItem.searchController = searchController
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationItem.largeTitleDisplayMode = .always
+        
     }
 
     private func setupSearchController() {

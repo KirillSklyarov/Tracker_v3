@@ -9,22 +9,12 @@ import UIKit
 
 final class CreatingNewHabitViewController: UIViewController {
 
-    private lazy var trackerNameTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Введите название трекера"
-        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
-        textField.leftView = leftPaddingView
-        textField.leftViewMode = .always
-        textField.textAlignment = .left
-        textField.layer.masksToBounds = true
-        textField.layer.cornerRadius = 10
-        textField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
-        return textField
-    } ()
+    private let trackerNameTextField = UITextField()
+    private let tableView = UITableView()
+    
     private lazy var cancelButton = setupButtons(title: "Отмена")
     private lazy var createButton = setupButtons(title: "Создать")
-    
-    private lazy var tableView = UITableView()
+    private lazy var exceedLabel = setupExceedLabel()
     
     private lazy var buttonsStack: UIStackView = {
         let stack = UIStackView()
@@ -36,7 +26,7 @@ final class CreatingNewHabitViewController: UIViewController {
         return stack
     } ()
     
-    let tableViewRows = ["Категории", "Расписание"]
+    private let tableViewRows = ["Категории", "Расписание"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,19 +36,63 @@ final class CreatingNewHabitViewController: UIViewController {
         setupUI()
     }
     
+    private func setupTextField() {
+        
+        let rightPaddingView = UIView()
+        let clearTextFieldButton: UIButton = {
+            let button = UIButton(type: .custom)
+            let configuration = UIImage.SymbolConfiguration(pointSize: 17)
+            let imageColor = UIColor(named: "createButtonGrayColor") ?? .lightGray
+            let image = UIImage(systemName: "xmark.circle.fill", withConfiguration: configuration)?
+                .withRenderingMode(.alwaysOriginal)
+                .withTintColor(imageColor)
+            button.setImage(image, for: .normal)
+            button.addTarget(self, action: #selector(clearTextButtonTapped), for: .touchUpInside)
+            return button
+        } ()
+        
+        lazy var clearTextStack: UIStackView = {
+            let stack = UIStackView()
+            stack.axis = .horizontal
+            stack.addArrangedSubview(clearTextFieldButton)
+            stack.addArrangedSubview(rightPaddingView)
+            stack.translatesAutoresizingMaskIntoConstraints = false
+            stack.widthAnchor.constraint(equalToConstant: 28).isActive = true
+            return stack
+        } ()
+        
+        trackerNameTextField.placeholder = "Введите название трекера"
+        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
+        trackerNameTextField.leftView = leftPaddingView
+        trackerNameTextField.leftViewMode = .always
+        trackerNameTextField.rightView = clearTextStack
+        trackerNameTextField.rightViewMode = .whileEditing
+        trackerNameTextField.textAlignment = .left
+        trackerNameTextField.layer.cornerRadius = 10
+        trackerNameTextField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        trackerNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
+
+        trackerNameTextField.delegate = self
+    }
+    
+    
+    @objc private func clearTextButtonTapped(_ sender: UIButton) {
+        trackerNameTextField.text = ""
+    }
+    
     private func setupTableView() {
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
-        tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 10
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-        
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
     
     private func setupUI() {
         
+        setupTextField()
+    
         self.title = "Новая привычка"
         view.backgroundColor = UIColor(named: "projectBackground")
         
@@ -72,19 +106,24 @@ final class CreatingNewHabitViewController: UIViewController {
         createButton.setTitleColor(.white, for: .normal)
         cancelButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         
-        view.addSubViews([trackerNameTextField, tableView, buttonsStack])
-        
+        let viewStack = UIStackView()
+        viewStack.axis = .vertical
+        viewStack.spacing = 10
+        viewStack.addArrangedSubview(trackerNameTextField)
+        viewStack.addArrangedSubview(exceedLabel)
+
+        view.addSubViews([viewStack, tableView, buttonsStack])
+
         NSLayoutConstraint.activate([
-            trackerNameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            trackerNameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            trackerNameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
+            viewStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            viewStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            viewStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
-            tableView.topAnchor.constraint(equalTo: trackerNameTextField.bottomAnchor, constant: 24),
+            tableView.topAnchor.constraint(equalTo: viewStack.bottomAnchor, constant: 24),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.heightAnchor.constraint(equalToConstant: CGFloat(tableViewRows.count) * 75),
-            
+                        
             buttonsStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             buttonsStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             buttonsStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
@@ -111,7 +150,24 @@ final class CreatingNewHabitViewController: UIViewController {
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         return button
     }
+    
+    private func setupExceedLabel() -> UILabel {
+        let label = UILabel()
+        label.text = "Ограничение 38 символов"
+        label.textColor = .red
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.isHidden = true
+        return label
+    }
+    
+    private func showLabelExceedTextFieldLimit() {
+        exceedLabel.isHidden = false
+    }
 
+    private func hideLabelExceedTextFieldLimit() {
+        exceedLabel.isHidden = true
+    }
 }
 
 extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDelegate {
@@ -143,10 +199,31 @@ extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDele
             let scheduleVC = ScheduleViewController()
             let navVC = UINavigationController(rootViewController: scheduleVC)
             present(navVC, animated: true)
+        } else {
+            let categoryVC = ChoosingCategoryViewController()
+            let navVC = UINavigationController(rootViewController: categoryVC)
+            present(navVC, animated: true)
         }
     }
 }
 
+extension CreatingNewHabitViewController: UITextFieldDelegate {
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentCharacterCount = textField.text?.count ?? 0
+        if currentCharacterCount <= 25 {
+            hideLabelExceedTextFieldLimit()
+            textField.textColor = .black
+            return true
+        } else {
+            print("Check: opps")
+            showLabelExceedTextFieldLimit()
+            textField.textColor = .red
+            return true
+        }
+    }
+}
+    
 
 //MARK: - SwiftUI
 import SwiftUI
