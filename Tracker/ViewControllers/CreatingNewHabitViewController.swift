@@ -37,10 +37,6 @@ final class CreatingNewHabitViewController: UIViewController {
     
     private let arrayOfColors = ["#FD4C49", "#FF881E", "#007BFA", "#6E44FE", "#33CF69", "#E66DD4", "#F9D4D4", "#34A7FE", "#46E69D", "#35347C", "#FF674D", "#FF99CC", "#F6C48B", "#7994F5", "#832CF1", "#AD56DA", "#8D72E6", "#2FD058"]
     
-//    private var contentSize: CGSize {
-//        CGSize(width: view.frame.width, height: view.frame.height + 400)
-//    }
-    
     private let contentView = UIView()
     
     private var newTaskName: String?
@@ -49,6 +45,10 @@ final class CreatingNewHabitViewController: UIViewController {
     private var selectedCategory: String?
     private var selectedSchedule: String?
     
+    var newTaskToPassToMainScreen: ( (TrackerCategory) -> Void )?
+    
+    var delegate: newTaskDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -56,7 +56,7 @@ final class CreatingNewHabitViewController: UIViewController {
                 
         setupTableView()
         
-        setupCollectionsView()
+        setupEmojiCollectionView()
         
         setupColorsCollectionView()
         
@@ -116,7 +116,7 @@ final class CreatingNewHabitViewController: UIViewController {
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
     }
     
-    private func setupCollectionsView() {
+    private func setupEmojiCollectionView() {
         emojiCollection.dataSource = self
         emojiCollection.delegate = self
         emojiCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
@@ -188,10 +188,10 @@ final class CreatingNewHabitViewController: UIViewController {
     
     private func isCreateButtonEnable() {
         if let text = trackerNameTextField.text, !text.isEmpty,
-           let selectedCategory = selectedCategory,
-           let selectedSchedule = selectedSchedule,
-           let selectedEmoji = selectedEmoji,
-           let selectedColor = selectedColor {
+           selectedCategory != nil,
+           selectedSchedule != nil,
+           selectedEmoji != nil,
+           selectedColor != nil {
             createButton.isEnabled = true
             createButton.backgroundColor = .black
         } else {
@@ -270,11 +270,22 @@ final class CreatingNewHabitViewController: UIViewController {
     
     @objc private func createButtonTapped(_ sender: UIButton) {
         print("We'are here too")
-        print("New task name \(String(describing: trackerNameTextField.text))")
-        print("Selected category \(String(describing: selectedCategory))")
-        print("Selected schedule \(String(describing: selectedSchedule))")
-        print("Selected Emoji \(String(describing: selectedEmoji))")
-        print("Selected Color \(String(describing: selectedColor))")
+        guard let selectedCategory = selectedCategory,
+              let name = trackerNameTextField.text,
+              let selectedColor = selectedColor,
+              let selectedEmoji = selectedEmoji,
+              let selectedSchedule = selectedSchedule else { print("Что-то пошло не так"); return }
+        let color = UIColor(hex: selectedColor)
+        
+        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: selectedSchedule)])
+        print(newTask)
+        newTaskToPassToMainScreen?(newTask)
+        let mainVC = TrackerViewController()
+        let navVC = UINavigationController(rootViewController: mainVC)
+        navVC.modalPresentationStyle = .fullScreen
+        self.delegate = mainVC
+        delegate?.getNewTaskFromAnotherVC(newTask: newTask)
+        present(navVC, animated: true)
     }
     
     private func setupButtons(title: String) -> UIButton {

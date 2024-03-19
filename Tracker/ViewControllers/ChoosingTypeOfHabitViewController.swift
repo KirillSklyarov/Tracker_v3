@@ -11,6 +11,9 @@ final class ChoosingTypeOfHabitViewController: UIViewController {
 
     private lazy var creatingHabitButton = setupButtons(title: "Привычка")
     private lazy var creatingEventButton = setupButtons(title: "Нерегулярные события")
+    
+    private var getNewTaskFromNextScreen: TrackerCategory?
+    var sendNewTaskToMainScreen: ( (TrackerCategory) -> Void )?
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,9 +46,13 @@ final class ChoosingTypeOfHabitViewController: UIViewController {
     }
     
     @objc private func creatingHabitButtonTapped(_ sender: UIButton) {
-          print("We'are here")
         let creatingNewHabit = CreatingNewHabitViewController()
         let creatingNavVC = UINavigationController(rootViewController: creatingNewHabit)
+        creatingNewHabit.newTaskToPassToMainScreen = { [weak self] newTask in
+            guard let self = self else { return }
+            self.getNewTaskFromNextScreen = newTask
+            print("We getNewTaskFromNextScreen \(self.getNewTaskFromNextScreen!)")
+        }
         present(creatingNavVC, animated: true)
     }
     

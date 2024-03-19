@@ -71,9 +71,7 @@ final class ChoosingCategoryViewController: UIViewController {
     private func setupUI() {
                 
         self.title = "Категория"
-        
         setupButton()
-        
         view.backgroundColor = .systemBackground
         view.addSubViews([categoryTableView, creatingCategoryButton])
         

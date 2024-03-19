@@ -52,9 +52,6 @@ final class TrackerViewController: UIViewController {
     private var isSearchMode = false
     private var currentDate = UIDatePicker().date
     
-//    private let colorsCollection = ["🟥"]🟧
-
-    
     private var newData: [TrackerCategory] {
         isSearchMode ? filteredData : categories
     }
@@ -72,6 +69,7 @@ final class TrackerViewController: UIViewController {
         setupCollectionView()
         
         setupUI()
+        
     }
     
     // MARK: - UI Actions
@@ -357,4 +355,11 @@ extension TrackerViewController: UISearchResultsUpdating {
         collectionView.reloadData()
         showOrHidePlaceholder()
      }
+}
+
+extension TrackerViewController: newTaskDelegate {
+    func getNewTaskFromAnotherVC(newTask: TrackerCategory) {
+        categories.append(newTask)
+        print(categories)
+    }
 }
