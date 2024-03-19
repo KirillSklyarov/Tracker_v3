@@ -35,16 +35,13 @@ final class TrackerViewController: UIViewController {
         TrackerCategory(header: "Домашний уют", trackers:
                             [Tracker(id: UUID(), name: "Поливать цветы", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "0")])
     ]
-        
-//        TrackerCategory(header: "Домашний уют", trackers:
-//                    [Tracker(id: UUID(), name: "Поливать цветы", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "0"),
-//                     Tracker(id: UUID(), name: "Вымыть окна", color: UIColor.green, emoji: "\u{1F61B}", schedule: "0")]),
-//                        
-//        TrackerCategory(header: "Животные", trackers:
-//                        [Tracker(id: UUID(), name: "Погладить кота", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "0"),
-//                        Tracker(id: UUID(), name: "Послушать мурчание", color: UIColor.green, emoji: "\u{1F61B}", schedule: "0")]
-//                       )]
-            
+    
+    private var categoryNames: [String] {
+            categories.map { $0.header }
+        }
+    
+    var categoryNamesDelegate: passCategoryNamesFromMainVC?
+    
     private var completedTrackers: [TrackerRecord]?
     
     private var isDoneForToday = false
@@ -70,11 +67,19 @@ final class TrackerViewController: UIViewController {
         
         setupUI()
         
+        passCategoryNamesToSingleton()
+        
+        
+//        let chooseCategoryVC = ChoosingCategoryViewController()
+//        self.categoryNamesDelegate = chooseCategoryVC
+//        categoryNamesDelegate?.passCategoryNames(categoryNames: categoryNames)
+    }
+    
+    private func passCategoryNamesToSingleton() {
+        Singeton.shared.getCategoryNames(categoryNames: categoryNames)
     }
     
     // MARK: - UI Actions
-    
-    
     @objc private func addNewHabit(_ sender: UIButton) {
         let creatingNewHabitVC = ChoosingTypeOfHabitViewController()
         let creatingNavi = UINavigationController(rootViewController: creatingNewHabitVC)

@@ -8,10 +8,10 @@
 import UIKit
 
 final class ChoosingCategoryViewController: UIViewController {
-
+    
     private let creatingCategoryButton = UIButton()
     private let categoryTableView = UITableView()
-    let swooshImage: UIImageView = {
+    private lazy var swooshImage: UIImageView = {
         let image = UIImageView()
         image.image = UIImage(named: "swoosh")
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -20,7 +20,7 @@ final class ChoosingCategoryViewController: UIViewController {
         return image
     } ()
     
-    let textLabel: UILabel = {
+    private lazy var textLabel: UILabel = {
         let label = UILabel()
         label.text = "Привычки и события можно \nобъединить по смыслу"
         label.numberOfLines = 0
@@ -32,10 +32,12 @@ final class ChoosingCategoryViewController: UIViewController {
     
     var updateCategory: ( (String) -> Void)?
     
-    var categories: [TrackerCategory] = []
+    var categories: [String]?
         
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        recieveCategoryNamesFromSingleton()
         
         setupUI()
         
@@ -43,17 +45,21 @@ final class ChoosingCategoryViewController: UIViewController {
         
     }
     
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        print("Check: \(categories)")
-        if categories.isEmpty {
+//        print("Check: \(categories)")
+        if categories!.isEmpty {
             showPlaceholderForEmptyScreen()
         } else {
             swooshImage.isHidden = true
             textLabel.isHidden = true
         }
+    }
+    
+    private func recieveCategoryNamesFromSingleton() {
+        self.categories = Singeton.shared.sendCategoryNames()
+        print(categories!)
     }
     
     private func setupTableView() {
@@ -101,7 +107,7 @@ final class ChoosingCategoryViewController: UIViewController {
             return stack
         } ()
         
-        if categories.isEmpty {
+        if categories!.isEmpty {
             swooshImage.isHidden = false
             textLabel.isHidden = false
         } else {
@@ -123,12 +129,12 @@ final class ChoosingCategoryViewController: UIViewController {
         let creatingCategoryNavVC = UINavigationController(rootViewController: creatingNewCategoryVC)
         creatingNewCategoryVC.updateTableClosure = { [weak self] newCategory in
             guard let self = self else { return }
-            self.categories.append(newCategory)
+            self.categories!.append(newCategory)
             self.categoryTableView.reloadData()
-            categoryTableView.heightAnchor.constraint(equalToConstant: 75 * CGFloat(categories.count)).isActive = true
+            categoryTableView.heightAnchor.constraint(equalToConstant: 75 * CGFloat(categories!.count)).isActive = true
             categoryTableView.layoutIfNeeded()
             
-            if categories.isEmpty {
+            if categories!.isEmpty {
                 showPlaceholderForEmptyScreen()
             } else {
                 swooshImage.isHidden = true
@@ -136,7 +142,7 @@ final class ChoosingCategoryViewController: UIViewController {
             }
             
             print(self.categories)
-            print(self.categories.count)
+            print(self.categories!.count)
         }
         present(creatingCategoryNavVC, animated: true)
     }
@@ -164,14 +170,14 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        categories.count
+        categories!.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        cell.textLabel?.text = categories[indexPath.row].header
+        cell.textLabel?.text = categories![indexPath.row]
         return cell
     }
     
@@ -181,6 +187,12 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
         cell?.accessoryType = .checkmark
         updateCategory?(categoryNameToPass)
         dismiss(animated: true)
+    }
+}
+
+extension ChoosingCategoryViewController: passCategoryNamesFromMainVC {
+    func passCategoryNames(categoryNames: [String]) {
+        self.categories = categoryNames
     }
 }
 

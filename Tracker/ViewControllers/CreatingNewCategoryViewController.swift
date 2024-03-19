@@ -13,7 +13,7 @@ final class CreatingNewCategoryViewController: UIViewController {
     private lazy var doneButton = setupButtons(title: "Готово")
     
     var categories = TrackerViewController().categories
-    var updateTableClosure: ( (TrackerCategory) -> Void )?
+    var updateTableClosure: ( (String) -> Void )?
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,8 +72,8 @@ final class CreatingNewCategoryViewController: UIViewController {
     @objc private func doneButtonTapped(_ sender: UIButton) {
         print("doneButtonTapped")
         guard let newCategoryName = categoryNameTextField.text else { return }
-        let newCategory: TrackerCategory = TrackerCategory(header: newCategoryName, trackers: [])
-        updateTableClosure?(newCategory)
+//        let newCategory: TrackerCategory = TrackerCategory(header: newCategoryName, trackers: [])
+        updateTableClosure?(newCategoryName)
         dismiss(animated: true)
     }
     
