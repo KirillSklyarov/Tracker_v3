@@ -69,9 +69,7 @@ final class ChoosingCategoryViewController: UIViewController {
         }
     
     private func setupUI() {
-        
-        let rowHeight = CGFloat(75)
-        
+                
         self.title = "Категория"
         
         setupButton()
