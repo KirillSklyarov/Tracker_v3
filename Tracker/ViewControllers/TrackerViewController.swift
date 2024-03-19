@@ -52,6 +52,9 @@ final class TrackerViewController: UIViewController {
     private var isSearchMode = false
     private var currentDate = UIDatePicker().date
     
+//    private let colorsCollection = ["🟥"]🟧
+
+    
     private var newData: [TrackerCategory] {
         isSearchMode ? filteredData : categories
     }

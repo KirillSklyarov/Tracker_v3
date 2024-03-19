@@ -11,6 +11,7 @@ final class CreatingNewHabitViewController: UIViewController {
 
     private let trackerNameTextField = UITextField()
     private let tableView = UITableView()
+    private let emojiCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
     private lazy var cancelButton = setupButtons(title: "Отмена")
     private lazy var createButton = setupButtons(title: "Создать")
@@ -28,10 +29,16 @@ final class CreatingNewHabitViewController: UIViewController {
     
     private let tableViewRows = ["Категории", "Расписание"]
     
+    private let arrayOfEmoji = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪",]
+    
+    private let arrayOfColors = ["#FD4C49", "#FF881E", "#007BFA", "#6E44FE", "#33CF69", "#E66DD4", "#F9D4D4", "#34A7FE", "#46E69D", "#35347C", "#FF674D", "#FF99CC", "#F6C48B", "#7994F5", "#832CF1", "#AD56DA", "#8D72E6", "#2FD058"]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupTableView()
+        
+        setupCollectionView()
         
         setupUI()
     }
@@ -89,6 +96,15 @@ final class CreatingNewHabitViewController: UIViewController {
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
     }
     
+    private func setupCollectionView() {
+        emojiCollection.dataSource = self
+        emojiCollection.delegate = self
+        emojiCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "collectionCell")
+        emojiCollection.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+
+        emojiCollection.backgroundColor = .white
+    }
+    
     private func setupUI() {
         
         setupTextField()
@@ -111,8 +127,8 @@ final class CreatingNewHabitViewController: UIViewController {
         viewStack.spacing = 10
         viewStack.addArrangedSubview(trackerNameTextField)
         viewStack.addArrangedSubview(exceedLabel)
-
-        view.addSubViews([viewStack, tableView, buttonsStack])
+        
+        view.addSubViews([viewStack, tableView, emojiCollection, buttonsStack])
 
         NSLayoutConstraint.activate([
             viewStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
@@ -123,6 +139,12 @@ final class CreatingNewHabitViewController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.heightAnchor.constraint(equalToConstant: CGFloat(tableViewRows.count) * 75),
+            
+            emojiCollection.topAnchor.constraint(equalTo: tableView.bottomAnchor),
+            emojiCollection.leadingAnchor.constraint(equalTo: view.leadingAnchor,
+            constant: 18),
+            emojiCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18),
+            emojiCollection.bottomAnchor.constraint(equalTo: buttonsStack.topAnchor, constant: -16),
                         
             buttonsStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             buttonsStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -239,7 +261,88 @@ extension CreatingNewHabitViewController: UITextFieldDelegate {
         }
     }
 }
+
+extension CreatingNewHabitViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        2
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if section == 0 {
+            arrayOfEmoji.count
+        } else {
+            arrayOfColors.count
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath)
+        
+        if indexPath.section == 0 {
+            let view = UILabel(frame: cell.contentView.bounds)
+            view.text = arrayOfEmoji[indexPath.row]
+            view.font = .systemFont(ofSize: 32)
+            view.textAlignment = .center
+            cell.addSubview(view)
+        } else {
+            let view = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+            view.layer.cornerRadius = 8
+            let colors = colorFromHexToRGB(hexColors: arrayOfColors)
+            view.backgroundColor = colors[indexPath.row]
+            cell.contentView.addSubview(view)
+            view.center = CGPoint(x: cell.contentView.bounds.midX,
+                                  y: cell.contentView.bounds.midY)
+            
+        }
+        return cell
+    }
+    
+    private func colorFromHexToRGB(hexColors: [String]) -> [UIColor] {
+        return hexColors.map { UIColor(hex: $0) }
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 52, height: 52)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        CGSize(width: collectionView.frame.width, height: 18)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        var id = ""
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            id = "header"
+        case UICollectionView.elementKindSectionFooter:
+            id = "footer"
+        default:
+            id = ""
+        }
+        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! SuplementaryView
+        if indexPath.section == 0 {
+            view.label.text = "Emoji"
+        } else {
+            view.label.text = "Цвет"
+        }
+        return view
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        UIEdgeInsets(top: 38, left: 0, bottom: 0, right: 0)
+    }
+}
+
 
 //MARK: - SwiftUI
 import SwiftUI

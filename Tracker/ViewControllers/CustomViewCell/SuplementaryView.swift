@@ -15,12 +15,13 @@ final class SuplementaryView: UICollectionReusableView {
         super.init(frame: frame)
         
         label.font = .systemFont(ofSize: 19, weight: .bold)
+        label.textAlignment = .left
         
         addSubViews([label])
                 
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: topAnchor, constant: 24),
-            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 28),
+            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
             label.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
     }
