@@ -163,7 +163,7 @@ final class CreatingOneOffVC: UIViewController {
               let selectedEmoji = selectedEmoji else { print("Что-то пошло не так"); return }
         let color = UIColor(hex: selectedColor)
         
-        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: nil)])
+        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
         print(newTask)
         newTaskToPassToMainScreen?(newTask)
         let mainVC = TrackerViewController()

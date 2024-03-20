@@ -46,7 +46,7 @@ final class ChoosingTypeOfHabitViewController: UIViewController {
     }
     
     @objc private func creatingHabitButtonTapped(_ sender: UIButton) {
-        let creatingNewHabit = CreatingOneOffVC()
+        let creatingNewHabit = CreatingNewHabitViewController()
         let creatingNavVC = UINavigationController(rootViewController: creatingNewHabit)
         creatingNewHabit.newTaskToPassToMainScreen = { [weak self] newTask in
             guard let self = self else { return }
