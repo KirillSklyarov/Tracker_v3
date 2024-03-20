@@ -13,8 +13,8 @@ final class ScheduleViewController: UIViewController {
     private lazy var doneButton = setupButtons(title: "Готово")
 
     private let weekdays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
+    
     private let rowHeight = CGFloat(75)
-    private lazy var tableViewHeight = CGFloat(weekdays.count) * rowHeight
     private var arrayOfIndexes = [Int]()
     
     var scheduleToPass: ( (String) -> Void )?
@@ -25,9 +25,12 @@ final class ScheduleViewController: UIViewController {
         setupUI()
         
         setupTableView()
+
     }
     
     private func setupUI() {
+        
+        let tableViewHeight = CGFloat(weekdays.count) * rowHeight
         
         self.title = "Расписание"
         view.backgroundColor = UIColor(named: "projectBackground")
@@ -40,9 +43,9 @@ final class ScheduleViewController: UIViewController {
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             tableView.heightAnchor.constraint(equalToConstant: tableViewHeight),
             
-            doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
         ])
     }
     
@@ -97,10 +100,6 @@ final class ScheduleViewController: UIViewController {
 
 extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        1
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         weekdays.count
     }
@@ -114,6 +113,10 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
         cell.accessoryView = weekDayswitch
         cell.textLabel?.text = weekdays[indexPath.row]
         cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        
+        if indexPath.row == weekdays.count - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        }
         
         return cell
     }

@@ -23,10 +23,16 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         
         emojiLabel.text = "\u{1F978}"
         titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        let plusButtonImage = UIImage(named: "plusButton")?.withTintColor(.systemGreen)
-        plusButton.setImage(plusButtonImage, for: .normal)
+        
+//        let plusButtonImage = UIImage(named: "plusButton")?.withTintColor(.systemGreen)
+//        let plusImage = UIImage(systemName: "plus")
         let emojiLabelSize = CGFloat(24)
         let plusButtonSize = CGFloat(34)
+        
+        let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        plusButton.setImage(plusImage, for: .normal)
+        plusButton.layer.cornerRadius = plusButton.frame.width / 2
+        plusButton.setImage(plusImage, for: .normal)
         daysLabel.text = "\(days) дней"
         daysLabel.font = .systemFont(ofSize: 12, weight: .medium)
 
@@ -53,8 +59,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             
             daysLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             daysLabel.topAnchor.constraint(equalTo: frameView.bottomAnchor, constant: 16),
-//            daysLabel.widthAnchor.constraint(equalToConstant: emojiLabelSize),
-//            daysLabel.heightAnchor.constraint(equalToConstant: emojiLabelSize),
             
             plusButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             plusButton.topAnchor.constraint(equalTo: frameView.bottomAnchor, constant: 8),
@@ -63,7 +67,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         ])
         
         contentView.backgroundColor = .systemBackground
-        self.layer.borderWidth = 1
         self.layer.cornerRadius = 10
     }
     

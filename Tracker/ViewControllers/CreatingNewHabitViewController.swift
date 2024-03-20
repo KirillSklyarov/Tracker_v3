@@ -50,6 +50,8 @@ final class CreatingNewHabitViewController: UIViewController {
         setupColorsCollectionView()
         
         isCreateButtonEnable()
+        
+        addTapGestureToHideKeyboard()
     }
     
     private func setupTextField() {

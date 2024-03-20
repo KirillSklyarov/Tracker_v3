@@ -17,10 +17,8 @@ final class TrackerViewController: UIViewController {
     
     private lazy var datePickerButton: UIButton = {
         let button = UIButton()
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yy"
-        let dateToString = formatter.string(from: currentDate)
-        button.setTitle(dateToString, for: .normal)
+        let date = dateToString(date: currentDate)
+        button.setTitle(date, for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.frame = CGRect(x: 0, y: 0, width: 77, height: 34)
         button.backgroundColor = UIColor(named: "textFieldBackgroundColor")
@@ -31,14 +29,7 @@ final class TrackerViewController: UIViewController {
     
     
     // MARK: - Private Properties
-    var categories: [TrackerCategory] = [
-        TrackerCategory(header: "Домашний уют", trackers:
-                            [Tracker(id: UUID(), name: "Поливать цветы", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "Вт"),
-                             Tracker(id: UUID(), name: "Снять шторы", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "Вт")])
-                             ,
-        TrackerCategory(header: "Работа", trackers:
-                            [Tracker(id: UUID(), name: "Делать уборку", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "Ср")])
-    ]
+    var categories: [TrackerCategory] = []
     
     private var categoryNames: [String] {
         newData.map { $0.header }
@@ -51,7 +42,9 @@ final class TrackerViewController: UIViewController {
     private var isDoneForToday = false
     private var filteredData: [TrackerCategory] = []
     private var isSearchMode = false
+   
     private var currentDate = UIDatePicker().date
+    
     private var newDateCategories: [TrackerCategory]?
     
     private var newData: [TrackerCategory] {
@@ -80,6 +73,13 @@ final class TrackerViewController: UIViewController {
                 
     }
     
+    private func dateToString(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yy"
+        let dateToString = formatter.string(from: currentDate)
+        return dateToString
+    }
+    
     private func passCategoryNamesToSingleton() {
         Singeton.shared.getCategoryNames(categoryNames: categoryNames)
     }
@@ -98,14 +98,12 @@ final class TrackerViewController: UIViewController {
               let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell else { return }
         
         let category = newData[indexPath.section]
-                
         let tracker = category.trackers[indexPath.row]
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yy"
-        let currentDate = formatter.string(from: Date())
+        let currentDateString = dateToString(date: self.currentDate)
+        
         guard let cellColor = cell.frameView.backgroundColor else { print("Color problem"); return }
         
-        let trackForAdd = TrackerRecord(id: tracker.id, date: currentDate)
+        let trackForAdd = TrackerRecord(id: tracker.id, date: currentDateString)
         
         guard let check = completedTrackers?.contains(where: { $0.id == trackForAdd.id && $0.date == trackForAdd.date}) else { return }
         if !check {
@@ -113,18 +111,6 @@ final class TrackerViewController: UIViewController {
         } else {
             makeTaskUndone(trackForAdd: trackForAdd, cellColor: cellColor, cell: cell)
         }
-    }
-    
-    // MARK: - UI, Navigation, Search
-    private func setupNavigation() {
-        
-        navigationItem.hidesSearchBarWhenScrolling = false
-            
-        let image = UIImage(systemName: "plus")?.withRenderingMode(.alwaysOriginal)
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePickerButton)
-            
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: image?.withTintColor(.black), style: .done, target: self, action: #selector(addNewHabit))
     }
     
     @objc private func dateButtonTapped(_ sender: UIButton) {
@@ -156,24 +142,35 @@ final class TrackerViewController: UIViewController {
         
         let selectedDate = sender.date
         currentDate = selectedDate
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yy"
-        let formattedDate = dateFormatter.string(from: selectedDate)
-        datePickerButton.setTitle(formattedDate, for: .normal)
+        let date = dateToString(date: selectedDate)
+        datePickerButton.setTitle(date, for: .normal)
+
         sender.removeFromSuperview()
         
         let calendar = Calendar.current
+        
         let dateComponents = calendar.dateComponents([.weekday], from: currentDate)
         let weekDay = dateComponents.weekday
         let weekDayString = dayNumberToDayString(weekDayNumber: weekDay)
-        print(weekDayString)
+
         newDateCategories = filterNewDataFromData(weekDay: weekDayString)
-        print(newDateCategories!)
         collectionView.reloadData()
         showOrHidePlaceholder()
         navigationItem.searchController = searchController
     }
-    
+
+    // MARK: - UI, Navigation, Search
+    private func setupNavigation() {
+        
+        navigationItem.hidesSearchBarWhenScrolling = false
+            
+        let image = UIImage(systemName: "plus")?.withRenderingMode(.alwaysOriginal)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePickerButton)
+            
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: image?.withTintColor(.black), style: .done, target: self, action: #selector(addNewHabit))
+    }
+            
     private func dayNumberToDayString(weekDayNumber: Int?) -> String {
         let weekDay: [Int:String] = [1: "Вс", 2: "Пн", 3: "Вт", 4: "Ср",
                                      5: "Чт", 6: "Пт", 7: "Сб"]
@@ -320,20 +317,29 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         let newButtonColor = cell.plusButton.currentImage?.withTintColor(frameColor)
         cell.plusButton.setImage(newButtonColor, for: .normal)
         cell.plusButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
+        
+        let today = Date()
+        cell.plusButton.isEnabled = currentDate > today ? false : true
     }
         
     private func makeTaskDone(trackForAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
         completedTrackers?.append(trackForAdd)
-        let config = UIImage.SymbolConfiguration(pointSize: 34)
-        let doneImage = UIImage(systemName: "checkmark.circle.fill", withConfiguration: config)?.withTintColor(cellColor, renderingMode: .alwaysOriginal)
+        let doneImage = UIImage(named: "done")
+        cell.plusButton.clipsToBounds = true
+        cell.plusButton.layer.cornerRadius = cell.plusButton.frame.width / 2
+        cell.plusButton.backgroundColor = cellColor.withAlphaComponent(0.3)
         cell.plusButton.setImage(doneImage, for: .normal)
         cell.days += 1
         cell.daysLabel.text = "\(cell.days) день"
+        print(completedTrackers!)
     }
     
     private func makeTaskUndone(trackForAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
-        let plusButtonImage = UIImage(named: "plusButton")?.withTintColor(cellColor)
-        cell.plusButton.setImage(plusButtonImage, for: .normal)
+        let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        cell.plusButton.backgroundColor = cellColor.withAlphaComponent(1)
+        cell.plusButton.setImage(plusImage, for: .normal)
+        cell.plusButton.layer.cornerRadius = cell.plusButton.frame.width / 2
+        
         cell.days -= 1
         cell.daysLabel.text = "\(cell.days) день"
         if let index = completedTrackers?.firstIndex(where: { $0.id == trackForAdd.id && $0.date == trackForAdd.date}) {
@@ -402,8 +408,7 @@ extension TrackerViewController: UISearchResultsUpdating {
 
 extension TrackerViewController: newTaskDelegate {
     func getNewTaskFromAnotherVC(newTask: TrackerCategory) {
-        categories.append(newTask)
-        print(categories)
+                categories.append(newTask)
     }
 }
 
