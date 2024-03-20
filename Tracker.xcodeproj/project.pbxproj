@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7311541D2BA23D0A0078C849 /* ChoosingTypeOfHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7311541C2BA23D0A0078C849 /* ChoosingTypeOfHabitViewController.swift */; };
-		7311541F2BA248D60078C849 /* CreatingNewHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7311541E2BA248D60078C849 /* CreatingNewHabitViewController.swift */; };
+		7311541F2BA248D60078C849 /* CreatingOneOffVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7311541E2BA248D60078C849 /* CreatingOneOffVC.swift */; };
 		7335BCB52BA1B3F3002271F3 /* TrackerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7335BCB42BA1B3F3002271F3 /* TrackerCollectionViewCell.swift */; };
 		7335BCB72BA1B701002271F3 /* SuplementaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7335BCB62BA1B701002271F3 /* SuplementaryView.swift */; };
 		7335BCBD2BA1FEE4002271F3 /* TrackerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7335BCBC2BA1FEE4002271F3 /* TrackerModel.swift */; };
@@ -29,11 +29,12 @@
 		73E562F22BA0ADA3003A61AB /* StatisticViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E562F12BA0ADA3003A61AB /* StatisticViewController.swift */; };
 		73E562F52BA0B14C003A61AB /* UIView-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E562F42BA0B14C003A61AB /* UIView-Extension.swift */; };
 		73E562F72BA0B411003A61AB /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E562F62BA0B411003A61AB /* TabBarController.swift */; };
+		73FE24122BAAEF9200D2AACA /* CreatingNewHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73FE24112BAAEF9200D2AACA /* CreatingNewHabitViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		7311541C2BA23D0A0078C849 /* ChoosingTypeOfHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoosingTypeOfHabitViewController.swift; sourceTree = "<group>"; };
-		7311541E2BA248D60078C849 /* CreatingNewHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatingNewHabitViewController.swift; sourceTree = "<group>"; };
+		7311541E2BA248D60078C849 /* CreatingOneOffVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatingOneOffVC.swift; sourceTree = "<group>"; };
 		7335BCB42BA1B3F3002271F3 /* TrackerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCollectionViewCell.swift; sourceTree = "<group>"; };
 		7335BCB62BA1B701002271F3 /* SuplementaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuplementaryView.swift; sourceTree = "<group>"; };
 		7335BCBC2BA1FEE4002271F3 /* TrackerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerModel.swift; sourceTree = "<group>"; };
@@ -56,6 +57,7 @@
 		73E562F12BA0ADA3003A61AB /* StatisticViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewController.swift; sourceTree = "<group>"; };
 		73E562F42BA0B14C003A61AB /* UIView-Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView-Extension.swift"; sourceTree = "<group>"; };
 		73E562F62BA0B411003A61AB /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		73FE24112BAAEF9200D2AACA /* CreatingNewHabitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreatingNewHabitViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,7 +88,8 @@
 				73C97E692BA85B2B00725D70 /* ChoosingCategoryViewController.swift */,
 				73E562E02BA0A936003A61AB /* TrackerViewController.swift */,
 				73E562F62BA0B411003A61AB /* TabBarController.swift */,
-				7311541E2BA248D60078C849 /* CreatingNewHabitViewController.swift */,
+				7311541E2BA248D60078C849 /* CreatingOneOffVC.swift */,
+				73FE24112BAAEF9200D2AACA /* CreatingNewHabitViewController.swift */,
 				73C97E6B2BA860BE00725D70 /* CreatingNewCategoryViewController.swift */,
 				735D83172BA2F7880071D090 /* ScheduleViewController.swift */,
 				7335BCB82BA1B787002271F3 /* CustomViewCell */,
@@ -107,6 +110,7 @@
 		73E1969D2BAA1A0600D7E734 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				73E196A32BAA29B800D7E734 /* Singleton.swift */,
 				73E1969E2BAA1A2400D7E734 /* passNewTaskToMainVC.swift */,
 				73E196A02BAA1FA400D7E734 /* passCateroryNamesFromMain.swift */,
 			);
@@ -116,7 +120,6 @@
 		73E562D02BA0A936003A61AB = {
 			isa = PBXGroup;
 			children = (
-				73E196A32BAA29B800D7E734 /* Singleton.swift */,
 				73E562DB2BA0A936003A61AB /* Tracker */,
 				73E562DA2BA0A936003A61AB /* Products */,
 			);
@@ -238,13 +241,14 @@
 				73E562DF2BA0A936003A61AB /* SceneDelegate.swift in Sources */,
 				7335BCC12BA1FF8D002271F3 /* TrackerRecord.swift in Sources */,
 				73E1969F2BAA1A2400D7E734 /* passNewTaskToMainVC.swift in Sources */,
-				7311541F2BA248D60078C849 /* CreatingNewHabitViewController.swift in Sources */,
+				7311541F2BA248D60078C849 /* CreatingOneOffVC.swift in Sources */,
 				735D83182BA2F7880071D090 /* ScheduleViewController.swift in Sources */,
 				73B28CFE2BA9667B00D4BF3E /* UIColor+Ext.swift in Sources */,
 				73C97E6C2BA860BE00725D70 /* CreatingNewCategoryViewController.swift in Sources */,
 				7335BCB52BA1B3F3002271F3 /* TrackerCollectionViewCell.swift in Sources */,
 				7335BCBF2BA1FF3F002271F3 /* TrackerCategory.swift in Sources */,
 				73E562F72BA0B411003A61AB /* TabBarController.swift in Sources */,
+				73FE24122BAAEF9200D2AACA /* CreatingNewHabitViewController.swift in Sources */,
 				7335BCB72BA1B701002271F3 /* SuplementaryView.swift in Sources */,
 				73E196A42BAA29B800D7E734 /* Singleton.swift in Sources */,
 				7335BCBD2BA1FEE4002271F3 /* TrackerModel.swift in Sources */,

@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class CreatingNewHabitViewController: UIViewController {
+final class CreatingOneOffVC: UIViewController {
 
     private let trackerNameTextField = UITextField()
     private let tableView = UITableView()
@@ -22,7 +22,7 @@ final class CreatingNewHabitViewController: UIViewController {
     private let contentView = UIView()
     private let contentStackView = UIStackView()
     
-    private let tableViewRows = ["Категория", "Расписание"]
+    private let tableViewRows = ["Категория"]
     
     private let arrayOfEmoji = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪",]
     
@@ -102,7 +102,6 @@ final class CreatingNewHabitViewController: UIViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
         tableView.layer.cornerRadius = 10
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
     }
     
     private func setupEmojiCollectionView() {
@@ -126,7 +125,6 @@ final class CreatingNewHabitViewController: UIViewController {
     private func isCreateButtonEnable() {
         if let text = trackerNameTextField.text, !text.isEmpty,
            selectedCategory != nil,
-           selectedSchedule != nil,
            selectedEmoji != nil,
            selectedColor != nil {
             createButton.isEnabled = true
@@ -147,7 +145,7 @@ final class CreatingNewHabitViewController: UIViewController {
         setupTextField()
         setupContentStack()
     
-        self.title = "Новая привычка"
+        self.title = "Новое нерегулярное событие"
         view.backgroundColor = UIColor(named: "projectBackground")
         
         setupScrollView()
@@ -162,11 +160,10 @@ final class CreatingNewHabitViewController: UIViewController {
         guard let selectedCategory = selectedCategory,
               let name = trackerNameTextField.text,
               let selectedColor = selectedColor,
-              let selectedEmoji = selectedEmoji,
-              let selectedSchedule = selectedSchedule else { print("Что-то пошло не так"); return }
+              let selectedEmoji = selectedEmoji else { print("Что-то пошло не так"); return }
         let color = UIColor(hex: selectedColor)
         
-        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: selectedSchedule)])
+        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: nil)])
         print(newTask)
         newTaskToPassToMainScreen?(newTask)
         let mainVC = TrackerViewController()
@@ -209,10 +206,7 @@ final class CreatingNewHabitViewController: UIViewController {
     }
 }
 
-extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDelegate {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        1
-    }
+extension CreatingOneOffVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         tableViewRows.count
@@ -235,30 +229,16 @@ extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDele
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let data = tableViewRows[indexPath.row]
-        if data == "Категория" {
-            let categoryVC = ChoosingCategoryViewController()
-            let navVC = UINavigationController(rootViewController: categoryVC)
-            categoryVC.updateCategory = { [weak self] categoryName in
-                guard let self = self,
-                      let cell = tableView.cellForRow(at: indexPath) else { return }
-                cell.detailTextLabel?.text = categoryName
-                self.selectedCategory = categoryName
-                self.isCreateButtonEnable()
-            }
-            present(navVC, animated: true)
-        } else {
-            let scheduleVC = ScheduleViewController()
-            let navVC = UINavigationController(rootViewController: scheduleVC)
-            scheduleVC.scheduleToPass = { [weak self] schedule in
-                guard let self = self,
-                    let cell = tableView.cellForRow(at: indexPath) else { return }
-                cell.detailTextLabel?.text = schedule
-                self.selectedSchedule = schedule
-                self.isCreateButtonEnable()
-            }
-            present(navVC, animated: true)
+        let categoryVC = ChoosingCategoryViewController()
+        let navVC = UINavigationController(rootViewController: categoryVC)
+        categoryVC.updateCategory = { [weak self] categoryName in
+            guard let self = self,
+                  let cell = tableView.cellForRow(at: indexPath) else { return }
+            cell.detailTextLabel?.text = categoryName
+            self.selectedCategory = categoryName
+            self.isCreateButtonEnable()
         }
+        present(navVC, animated: true)
     }
 
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -266,7 +246,7 @@ extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDele
     }
 }
 
-extension CreatingNewHabitViewController: UITextFieldDelegate {
+extension CreatingOneOffVC: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let currentCharacterCount = textField.text?.count ?? 0
@@ -284,7 +264,7 @@ extension CreatingNewHabitViewController: UITextFieldDelegate {
     }
 }
 
-extension CreatingNewHabitViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+extension CreatingOneOffVC: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == emojiCollection {
@@ -377,7 +357,6 @@ extension CreatingNewHabitViewController: UICollectionViewDataSource, UICollecti
             id = ""
         }
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! SuplementaryView
-//        view.layer.borderWidth = 1
         if collectionView == emojiCollection {
             view.label.text = "Emoji"
         } else {
@@ -391,7 +370,7 @@ extension CreatingNewHabitViewController: UICollectionViewDataSource, UICollecti
     }
 }
 
-private extension CreatingNewHabitViewController {
+private extension CreatingOneOffVC {
     
     func setupScrollView() {
         view.addSubViews([screenScrollView])
@@ -488,7 +467,7 @@ private extension CreatingNewHabitViewController {
         tableView.topAnchor.constraint(equalTo: textFieldViewStack.bottomAnchor, constant: 24),
         tableView.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
         tableView.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
-        tableView.heightAnchor.constraint(equalToConstant: 150),
+        tableView.heightAnchor.constraint(equalToConstant: 75),
         
         emojiCollection.topAnchor.constraint(equalTo: tableView.bottomAnchor),
         emojiCollection.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
@@ -498,7 +477,7 @@ private extension CreatingNewHabitViewController {
         colorsCollection.topAnchor.constraint(equalTo: emojiCollection.bottomAnchor, constant: 8),
         colorsCollection.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
         colorsCollection.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
-        colorsCollection.heightAnchor.constraint(equalToConstant: 238),
+        colorsCollection.heightAnchor.constraint(equalToConstant: 230),
         
         buttonsStack.topAnchor.constraint(equalTo: colorsCollection.bottomAnchor, constant: 16),
         buttonsStack.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
@@ -512,25 +491,25 @@ private extension CreatingNewHabitViewController {
 
 //MARK: - SwiftUI
 import SwiftUI
-struct Provider2 : PreviewProvider {
+struct Provider4 : PreviewProvider {
     static var previews: some View {
         ContainterView().edgesIgnoringSafeArea(.all)
     }
     
     struct ContainterView: UIViewControllerRepresentable {
         func makeUIViewController(context: Context) -> UIViewController {
-            return CreatingNewHabitViewController()
+            return CreatingOneOffVC()
         }
         
         typealias UIViewControllerType = UIViewController
         
         
-        let viewController = CreatingNewHabitViewController()
-        func makeUIViewController(context: UIViewControllerRepresentableContext<Provider2.ContainterView>) -> CreatingNewHabitViewController {
+        let viewController = CreatingOneOffVC()
+        func makeUIViewController(context: UIViewControllerRepresentableContext<Provider4.ContainterView>) -> CreatingOneOffVC {
             return viewController
         }
         
-        func updateUIViewController(_ uiViewController: Provider2.ContainterView.UIViewControllerType, context: UIViewControllerRepresentableContext<Provider2.ContainterView>) {
+        func updateUIViewController(_ uiViewController: Provider4.ContainterView.UIViewControllerType, context: UIViewControllerRepresentableContext<Provider4.ContainterView>) {
             
         }
     }

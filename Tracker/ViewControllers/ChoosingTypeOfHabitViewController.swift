@@ -46,7 +46,7 @@ final class ChoosingTypeOfHabitViewController: UIViewController {
     }
     
     @objc private func creatingHabitButtonTapped(_ sender: UIButton) {
-        let creatingNewHabit = CreatingNewHabitViewController()
+        let creatingNewHabit = CreatingOneOffVC()
         let creatingNavVC = UINavigationController(rootViewController: creatingNewHabit)
         creatingNewHabit.newTaskToPassToMainScreen = { [weak self] newTask in
             guard let self = self else { return }
@@ -57,7 +57,14 @@ final class ChoosingTypeOfHabitViewController: UIViewController {
     }
     
     @objc private func creatingEventButtonTapped(_ sender: UIButton) {
-        print("We'are here too")
+        let creatingOneOffEvent = CreatingOneOffVC()
+        let creatingNavVC = UINavigationController(rootViewController: creatingOneOffEvent)
+//        creatingNewHabit.newTaskToPassToMainScreen = { [weak self] newTask in
+//            guard let self = self else { return }
+//            self.getNewTaskFromNextScreen = newTask
+//            print("We getNewTaskFromNextScreen \(self.getNewTaskFromNextScreen!)")
+//        }
+        present(creatingNavVC, animated: true)
     }
     
     private func setupButtons(title: String) -> UIButton {

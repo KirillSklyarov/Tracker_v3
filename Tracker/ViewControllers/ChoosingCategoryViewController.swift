@@ -141,8 +141,8 @@ final class ChoosingCategoryViewController: UIViewController {
                 textLabel.isHidden = true
             }
             
-            print(self.categories)
-            print(self.categories!.count)
+//            print(self.categories)
+//            print(self.categories!.count)
         }
         present(creatingCategoryNavVC, animated: true)
     }

@@ -33,11 +33,18 @@ final class TrackerViewController: UIViewController {
     // MARK: - Private Properties
     var categories: [TrackerCategory] = [
         TrackerCategory(header: "Домашний уют", trackers:
-                            [Tracker(id: UUID(), name: "Поливать цветы", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "0")])
+                            [Tracker(id: UUID(), name: "Поливать цветы", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "0")]),
+        TrackerCategory(header: "Работа", trackers:
+                            [Tracker(id: UUID(), name: "Делать уборку", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "0")]),
+        TrackerCategory(header: "Домашний уют", trackers:
+                            [Tracker(id: UUID(), name: "Снять шторы", color: UIColor.systemBrown, emoji: "\u{1F929}", schedule: "0")])
     ]
     
     private var categoryNames: [String] {
-            categories.map { $0.header }
+        let categories = newData.map { $0.header }
+        let uniqueCategories = Set(categories)
+        let result = Array(uniqueCategories)
+        return result
         }
     
     var categoryNamesDelegate: passCategoryNamesFromMainVC?
@@ -68,11 +75,7 @@ final class TrackerViewController: UIViewController {
         setupUI()
         
         passCategoryNamesToSingleton()
-        
-        
-//        let chooseCategoryVC = ChoosingCategoryViewController()
-//        self.categoryNamesDelegate = chooseCategoryVC
-//        categoryNamesDelegate?.passCategoryNames(categoryNames: categoryNames)
+                
     }
     
     private func passCategoryNamesToSingleton() {
@@ -247,13 +250,14 @@ final class TrackerViewController: UIViewController {
 extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        isSearchMode(searchController)
-
-        return newData.count
+        categoryNames.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return newData[section].trackers.count
+        let trackersInSection = newData.filter({ $0.header == newData[section].header})
+        
+        print(trackersInSection)
+        return trackersInSection.count
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -271,9 +275,9 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     private func configureCell(cell: TrackerCollectionViewCell, indexPath: IndexPath) {
-        let category = newData[indexPath.section]
-                
-        let tracker = category.trackers[indexPath.row]
+        let categories = newData.filter({ $0.header == newData[indexPath.section].header})
+        let trackersInCategory = categories[indexPath.row]
+        let tracker = trackersInCategory.trackers[0]
         cell.titleLabel.text = tracker.name
         let frameColor = tracker.color
         cell.frameView.backgroundColor = frameColor
@@ -314,7 +318,6 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         }
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! SuplementaryView
         view.label.text = newData[indexPath.section].header
-                
         return view
     }
     
@@ -336,7 +339,7 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.width / 2 - 9, height: 148)
+        return CGSize(width: collectionView.frame.width / 2 - 9, height: 148)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
@@ -366,5 +369,30 @@ extension TrackerViewController: newTaskDelegate {
     func getNewTaskFromAnotherVC(newTask: TrackerCategory) {
         categories.append(newTask)
         print(categories)
+    }
+}
+
+//MARK: - SwiftUI
+import SwiftUI
+struct Provider01 : PreviewProvider {
+    static var previews: some View {
+        ContainterView().edgesIgnoringSafeArea(.all)
+    }
+    
+    struct ContainterView: UIViewControllerRepresentable {
+        func makeUIViewController(context: Context) -> UIViewController {
+            return TrackerViewController()
+        }
+        
+        typealias UIViewControllerType = UIViewController
+        
+        let viewController = TrackerViewController()
+        func makeUIViewController(context: UIViewControllerRepresentableContext<Provider01.ContainterView>) -> TrackerViewController {
+            return viewController
+        }
+        
+        func updateUIViewController(_ uiViewController: Provider01.ContainterView.UIViewControllerType, context: UIViewControllerRepresentableContext<Provider01.ContainterView>) {
+            
+        }
     }
 }
