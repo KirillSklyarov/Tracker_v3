@@ -11,21 +11,21 @@ final class ScheduleViewController: UIViewController {
     
     private let tableView = UITableView()
     private lazy var doneButton = setupButtons(title: "Готово")
-
+    
     private let weekdays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
     
     private let rowHeight = CGFloat(75)
     private var arrayOfIndexes = [Int]()
     
     var scheduleToPass: ( (String) -> Void )?
-        
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
         
         setupTableView()
-
+        
     }
     
     private func setupUI() {
@@ -34,7 +34,7 @@ final class ScheduleViewController: UIViewController {
         
         self.title = "Расписание"
         view.backgroundColor = UIColor(named: "projectBackground")
-
+        
         view.addSubViews([tableView, doneButton])
         
         NSLayoutConstraint.activate([
@@ -54,8 +54,9 @@ final class ScheduleViewController: UIViewController {
         tableView.delegate = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
-        tableView.layer.cornerRadius = 10
+        tableView.layer.cornerRadius = 16
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.tableHeaderView = UIView()
     }
     
     private func setupButtons(title: String) -> UIButton {
@@ -74,7 +75,7 @@ final class ScheduleViewController: UIViewController {
     
     @objc private func weekDayswitchValueChanded(_ sender: UISwitch) {
         guard let cell = sender.superview as? UITableViewCell,
-        let indexPath = tableView.indexPath(for: cell) else { return }
+              let indexPath = tableView.indexPath(for: cell) else { return }
         if sender.isOn {
             arrayOfIndexes.append(indexPath.row)
         } else {

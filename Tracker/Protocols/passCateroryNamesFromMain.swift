@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol passCategoryNamesFromMainVC: AnyObject {
+protocol PassCategoryNamesFromMainVC: AnyObject {
     func passCategoryNames(categoryNames: [String])
 }

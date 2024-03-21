@@ -32,8 +32,8 @@ final class ChoosingCategoryViewController: UIViewController {
     
     var updateCategory: ( (String) -> Void)?
     
-    var categories: [String]?
-        
+    var categories: [String] = []
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -48,8 +48,7 @@ final class ChoosingCategoryViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-//        print("Check: \(categories)")
-        if categories!.isEmpty {
+        if categories.isEmpty {
             showPlaceholderForEmptyScreen()
         } else {
             swooshImage.isHidden = true
@@ -58,8 +57,7 @@ final class ChoosingCategoryViewController: UIViewController {
     }
     
     private func recieveCategoryNamesFromSingleton() {
-        self.categories = Singeton.shared.sendCategoryNames()
-        print(categories!)
+        self.categories = CategoryStorage.shared.sendCategoryNames()
     }
     
     private func setupTableView() {
@@ -69,13 +67,13 @@ final class ChoosingCategoryViewController: UIViewController {
         categoryTableView.dataSource = self
         categoryTableView.delegate = self
         categoryTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-            
+        
         categoryTableView.layer.cornerRadius = 10
         categoryTableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        }
+    }
     
     private func setupUI() {
-                
+        
         self.title = "Категория"
         setupButton()
         view.backgroundColor = .systemBackground
@@ -86,7 +84,7 @@ final class ChoosingCategoryViewController: UIViewController {
             categoryTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             categoryTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             categoryTableView.bottomAnchor.constraint(equalTo: creatingCategoryButton.topAnchor, constant: -20),
-        
+            
             creatingCategoryButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             creatingCategoryButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             creatingCategoryButton.heightAnchor.constraint(equalToConstant: 60),
@@ -107,7 +105,7 @@ final class ChoosingCategoryViewController: UIViewController {
             return stack
         } ()
         
-        if categories!.isEmpty {
+        if categories.isEmpty {
             swooshImage.isHidden = false
             textLabel.isHidden = false
         } else {
@@ -129,20 +127,16 @@ final class ChoosingCategoryViewController: UIViewController {
         let creatingCategoryNavVC = UINavigationController(rootViewController: creatingNewCategoryVC)
         creatingNewCategoryVC.updateTableClosure = { [weak self] newCategory in
             guard let self = self else { return }
-            self.categories!.append(newCategory)
+            self.categories.append(newCategory)
             self.categoryTableView.reloadData()
-            categoryTableView.heightAnchor.constraint(equalToConstant: 75 * CGFloat(categories!.count)).isActive = true
             categoryTableView.layoutIfNeeded()
             
-            if categories!.isEmpty {
+            if categories.isEmpty {
                 showPlaceholderForEmptyScreen()
             } else {
                 swooshImage.isHidden = true
                 textLabel.isHidden = true
             }
-            
-//            print(self.categories)
-//            print(self.categories!.count)
         }
         present(creatingCategoryNavVC, animated: true)
     }
@@ -170,14 +164,21 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        categories!.count
+        categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+                
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        cell.textLabel?.text = categories![indexPath.row]
+        cell.textLabel?.text = categories[indexPath.row]
+        
+        if indexPath.row == categories.count - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+            cell.layer.cornerRadius = 8
+        }
+        
         return cell
     }
     
@@ -190,7 +191,7 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
     }
 }
 
-extension ChoosingCategoryViewController: passCategoryNamesFromMainVC {
+extension ChoosingCategoryViewController: PassCategoryNamesFromMainVC {
     func passCategoryNames(categoryNames: [String]) {
         self.categories = categoryNames
     }

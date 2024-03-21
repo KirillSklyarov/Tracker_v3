@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol newTaskDelegate: AnyObject {
+protocol NewTaskDelegate: AnyObject {
     func getNewTaskFromAnotherVC(newTask: TrackerCategory)
 }

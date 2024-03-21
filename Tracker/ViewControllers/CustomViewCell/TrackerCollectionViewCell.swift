@@ -16,31 +16,31 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     let emojiLabel = UILabel()
     let plusButton = UIButton()
     let daysLabel = UILabel()
+    
+    let emojiLabelSize = CGFloat(24)
+    let plusButtonSize = CGFloat(34)
     var days = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        emojiLabel.text = "\u{1F978}"
         titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
+
+        frameView.layer.masksToBounds = true
+        frameView.layer.cornerRadius = 10
         
-//        let plusButtonImage = UIImage(named: "plusButton")?.withTintColor(.systemGreen)
-//        let plusImage = UIImage(systemName: "plus")
-        let emojiLabelSize = CGFloat(24)
-        let plusButtonSize = CGFloat(34)
+        plusButton.frame.size.width = plusButtonSize
+        plusButton.frame.size.height = plusButtonSize
+        plusButton.layer.cornerRadius = plusButton.frame.width / 2
+        plusButton.clipsToBounds = true
         
         let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
         plusButton.setImage(plusImage, for: .normal)
-        plusButton.layer.cornerRadius = plusButton.frame.width / 2
-        plusButton.setImage(plusImage, for: .normal)
+
         daysLabel.text = "\(days) дней"
         daysLabel.font = .systemFont(ofSize: 12, weight: .medium)
-
-        contentView.addSubViews([frameView, titleLabel, emojiLabel, daysLabel, plusButton])
         
-        frameView.backgroundColor = .systemGreen
-        frameView.layer.masksToBounds = true
-        frameView.layer.cornerRadius = 10
+        contentView.addSubViews([frameView, titleLabel, emojiLabel, daysLabel, plusButton])
         
         NSLayoutConstraint.activate([
             frameView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -73,5 +73,4 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }

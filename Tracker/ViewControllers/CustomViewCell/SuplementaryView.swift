@@ -8,7 +8,7 @@
 import UIKit
 
 final class SuplementaryView: UICollectionReusableView {
-        
+    
     let label = UILabel()
     
     override init(frame: CGRect) {
@@ -18,7 +18,7 @@ final class SuplementaryView: UICollectionReusableView {
         label.textAlignment = .left
         
         addSubViews([label])
-                
+        
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: topAnchor, constant: 24),
             label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),

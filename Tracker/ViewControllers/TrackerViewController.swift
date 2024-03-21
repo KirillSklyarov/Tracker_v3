@@ -15,7 +15,9 @@ final class TrackerViewController: UIViewController {
     private let searchController = UISearchController(searchResultsController: nil)
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
-    private lazy var datePickerButton: UIButton = {
+    let datePicker = UIDatePicker()
+    
+    private lazy var dateButton: UIButton = {
         let button = UIButton()
         let date = dateToString(date: currentDate)
         button.setTitle(date, for: .normal)
@@ -29,20 +31,30 @@ final class TrackerViewController: UIViewController {
     
     
     // MARK: - Private Properties
-    var categories: [TrackerCategory] = []
     
     private var categoryNames: [String] {
         newData.map { $0.header }
-        }
+    }
     
-    var categoryNamesDelegate: passCategoryNamesFromMainVC?
+    let categoryStorage = CategoryStorage.shared
+    
+    var categories: [TrackerCategory] {
+        if let dataBase = categoryStorage.getDataBaseFromStorage() {
+            return  dataBase
+        } else {
+            print("Ooops we have a problem")
+            return []
+        }
+    }
+    
+    var categoryNamesDelegate: PassCategoryNamesFromMainVC?
     
     private var completedTrackers: [TrackerRecord]?
     
     private var isDoneForToday = false
     private var filteredData: [TrackerCategory] = []
     private var isSearchMode = false
-   
+    
     private var currentDate = UIDatePicker().date
     
     private var newDateCategories: [TrackerCategory]?
@@ -60,7 +72,7 @@ final class TrackerViewController: UIViewController {
         super.viewDidLoad()
         
         completedTrackers = []
-                
+        
         setupNavigation()
         
         setupSearchController()
@@ -70,6 +82,8 @@ final class TrackerViewController: UIViewController {
         setupUI()
         
         passCategoryNamesToSingleton()
+        
+        addTapGestureToHideDatePicker()
                 
     }
     
@@ -81,7 +95,7 @@ final class TrackerViewController: UIViewController {
     }
     
     private func passCategoryNamesToSingleton() {
-        Singeton.shared.getCategoryNames(categoryNames: categoryNames)
+        CategoryStorage.shared.getCategoryNames(categoryNames: categoryNames)
     }
     
     // MARK: - UI Actions
@@ -114,37 +128,43 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc private func dateButtonTapped(_ sender: UIButton) {
-        let picker = UIDatePicker()
-        picker.datePickerMode = .date
-        picker.layer.backgroundColor = UIColor.white.cgColor
-        picker.layer.cornerRadius = 13
+        setupDatePicker()
+    }
+    
+    private func setupDatePicker() {
+        datePicker.isHidden = false
+       
+        datePicker.datePickerMode = .date
+        datePicker.layer.backgroundColor = UIColor.white.cgColor
+        datePicker.layer.cornerRadius = 13
         if #available(iOS 14.0, *) {
-            picker.preferredDatePickerStyle = .inline
+            datePicker.preferredDatePickerStyle = .inline
         } else {
-            picker.preferredDatePickerStyle = .wheels
+            datePicker.preferredDatePickerStyle = .wheels
         }
-        picker.addTarget(self, action: #selector(datePickerTapped), for: .valueChanged)
+        datePicker.addTarget(self, action: #selector(datePickerTapped), for: .valueChanged)
         
         navigationItem.searchController = nil
-       
-        view.addSubViews([picker])
-
+        
+        view.addSubViews([datePicker])
+        
         NSLayoutConstraint.activate([
-            picker.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            picker.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            picker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            picker.heightAnchor.constraint(greaterThanOrEqualToConstant: 325)
+            datePicker.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            datePicker.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            datePicker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            datePicker.heightAnchor.constraint(greaterThanOrEqualToConstant: 325)
         ])
     }
     
     @objc private func datePickerTapped(_ sender: UIDatePicker) {
+        print("datePickerTapped")
         newDateCategories = nil
         
         let selectedDate = sender.date
         currentDate = selectedDate
         let date = dateToString(date: selectedDate)
-        datePickerButton.setTitle(date, for: .normal)
-
+        dateButton.setTitle(date, for: .normal)
+        
         sender.removeFromSuperview()
         
         let calendar = Calendar.current
@@ -152,25 +172,25 @@ final class TrackerViewController: UIViewController {
         let dateComponents = calendar.dateComponents([.weekday], from: currentDate)
         let weekDay = dateComponents.weekday
         let weekDayString = dayNumberToDayString(weekDayNumber: weekDay)
-
+        
         newDateCategories = filterNewDataFromData(weekDay: weekDayString)
         collectionView.reloadData()
         showOrHidePlaceholder()
         navigationItem.searchController = searchController
     }
-
+    
     // MARK: - UI, Navigation, Search
     private func setupNavigation() {
         
         navigationItem.hidesSearchBarWhenScrolling = false
-            
+        
         let image = UIImage(systemName: "plus")?.withRenderingMode(.alwaysOriginal)
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePickerButton)
-            
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: dateButton)
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: image?.withTintColor(.black), style: .done, target: self, action: #selector(addNewHabit))
     }
-            
+    
     private func dayNumberToDayString(weekDayNumber: Int?) -> String {
         let weekDay: [Int:String] = [1: "Вс", 2: "Пн", 3: "Вт", 4: "Ср",
                                      5: "Чт", 6: "Пт", 7: "Сб"]
@@ -196,7 +216,7 @@ final class TrackerViewController: UIViewController {
         }
         return result
     }
-        
+    
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
@@ -206,7 +226,7 @@ final class TrackerViewController: UIViewController {
         navigationItem.searchController = searchController
         definesPresentationContext = false
     }
-
+    
     private func setupCollectionView() {
         
         collectionView.dataSource = self
@@ -226,15 +246,15 @@ final class TrackerViewController: UIViewController {
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
     }
-
+    
     private func setupUI() {
         
         view.backgroundColor = .systemBackground
-                
+        
         showOrHidePlaceholder()
         
     }
-
+    
     // MARK: - Private Methods
     private func isSearchMode(_ searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text else { return }
@@ -273,7 +293,7 @@ final class TrackerViewController: UIViewController {
             textLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
         ])
     }
-
+    
     private func hidePlaceholderForEmptyScreen() {
         swooshImage.isHidden = true
         textLabel.isHidden = true
@@ -309,19 +329,17 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         let categories = newData[indexPath.section]
         let trackersInCategory = categories.trackers
         let tracker = trackersInCategory[indexPath.row]
+        let frameColor = tracker.color
+        let today = Date()
         
         cell.titleLabel.text = tracker.name
-        let frameColor = tracker.color
         cell.frameView.backgroundColor = frameColor
         cell.emojiLabel.text = tracker.emoji
-        let newButtonColor = cell.plusButton.currentImage?.withTintColor(frameColor)
-        cell.plusButton.setImage(newButtonColor, for: .normal)
+        cell.plusButton.backgroundColor = frameColor
         cell.plusButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
-        
-        let today = Date()
         cell.plusButton.isEnabled = currentDate > today ? false : true
     }
-        
+    
     private func makeTaskDone(trackForAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
         completedTrackers?.append(trackForAdd)
         let doneImage = UIImage(named: "done")
@@ -346,7 +364,7 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
             completedTrackers?.remove(at: index)
         }
     }
-        
+    
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         var id = ""
         switch kind {
@@ -403,14 +421,37 @@ extension TrackerViewController: UISearchResultsUpdating {
         }
         collectionView.reloadData()
         showOrHidePlaceholder()
-     }
-}
-
-extension TrackerViewController: newTaskDelegate {
-    func getNewTaskFromAnotherVC(newTask: TrackerCategory) {
-                categories.append(newTask)
     }
 }
+
+// MARK: - HideDatePicker
+extension TrackerViewController: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        let location = touch.location(in: view)
+        return !datePicker.frame.contains(location)
+    }
+    
+    func addTapGestureToHideDatePicker() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        tapGesture.delegate = self
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func handleTap(_ sender: UITapGestureRecognizer) {
+        let location = sender.location(in: view)
+        
+        if !datePicker.frame.contains(location) {
+            datePicker.isHidden = true
+        }
+    }
+}
+
+//extension TrackerViewController: NewTaskDelegate {
+//    func getNewTaskFromAnotherVC(newTask: TrackerCategory) {
+//        categories.append(newTask)
+//    }
+//}
 
 //MARK: - SwiftUI
 import SwiftUI

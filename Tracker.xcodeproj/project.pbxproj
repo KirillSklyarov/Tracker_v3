@@ -21,7 +21,7 @@
 		73C97E6C2BA860BE00725D70 /* CreatingNewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C97E6B2BA860BE00725D70 /* CreatingNewCategoryViewController.swift */; };
 		73E1969F2BAA1A2400D7E734 /* passNewTaskToMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E1969E2BAA1A2400D7E734 /* passNewTaskToMainVC.swift */; };
 		73E196A12BAA1FA400D7E734 /* passCateroryNamesFromMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E196A02BAA1FA400D7E734 /* passCateroryNamesFromMain.swift */; };
-		73E196A42BAA29B800D7E734 /* Singleton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E196A32BAA29B800D7E734 /* Singleton.swift */; };
+		73E196A42BAA29B800D7E734 /* CategoryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E196A32BAA29B800D7E734 /* CategoryStorage.swift */; };
 		73E562DD2BA0A936003A61AB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E562DC2BA0A936003A61AB /* AppDelegate.swift */; };
 		73E562DF2BA0A936003A61AB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E562DE2BA0A936003A61AB /* SceneDelegate.swift */; };
 		73E562E12BA0A936003A61AB /* TrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E562E02BA0A936003A61AB /* TrackerViewController.swift */; };
@@ -48,7 +48,7 @@
 		73C97E6B2BA860BE00725D70 /* CreatingNewCategoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreatingNewCategoryViewController.swift; sourceTree = "<group>"; };
 		73E1969E2BAA1A2400D7E734 /* passNewTaskToMainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = passNewTaskToMainVC.swift; sourceTree = "<group>"; };
 		73E196A02BAA1FA400D7E734 /* passCateroryNamesFromMain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = passCateroryNamesFromMain.swift; sourceTree = "<group>"; };
-		73E196A32BAA29B800D7E734 /* Singleton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Singleton.swift; sourceTree = "<group>"; };
+		73E196A32BAA29B800D7E734 /* CategoryStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryStorage.swift; sourceTree = "<group>"; };
 		73E562D92BA0A936003A61AB /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		73E562DC2BA0A936003A61AB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		73E562DE2BA0A936003A61AB /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -112,7 +112,7 @@
 		73E1969D2BAA1A0600D7E734 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				73E196A32BAA29B800D7E734 /* Singleton.swift */,
+				73E196A32BAA29B800D7E734 /* CategoryStorage.swift */,
 				73E1969E2BAA1A2400D7E734 /* passNewTaskToMainVC.swift */,
 				73E196A02BAA1FA400D7E734 /* passCateroryNamesFromMain.swift */,
 			);
@@ -254,7 +254,7 @@
 				73FE24122BAAEF9200D2AACA /* CreatingNewHabitViewController.swift in Sources */,
 				7335BCB72BA1B701002271F3 /* SuplementaryView.swift in Sources */,
 				732C40872BAB7C5100D34632 /* UIViewController+Ext.swift in Sources */,
-				73E196A42BAA29B800D7E734 /* Singleton.swift in Sources */,
+				73E196A42BAA29B800D7E734 /* CategoryStorage.swift in Sources */,
 				7335BCBD2BA1FEE4002271F3 /* Tracker.swift in Sources */,
 				7311541D2BA23D0A0078C849 /* ChoosingTypeOfHabitViewController.swift in Sources */,
 				73C97E6A2BA85B2B00725D70 /* ChoosingCategoryViewController.swift in Sources */,

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TabBarController: UITabBarController {
+final class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,13 +23,12 @@ class TabBarController: UITabBarController {
         
         trackerVC.tabBarItem = UITabBarItem(title: "Трекер", image: UIImage(systemName: "record.circle.fill"), tag: 0)
         statisticVC.tabBarItem = UITabBarItem(title: "Статистика", image: UIImage(systemName: "hare.fill"), tag: 1)
-
+        
         self.viewControllers = [trackerVC, statisticVC]
         
         self.tabBar.backgroundColor = .white
         self.tabBar.layer.borderWidth = 0.5
         self.tabBar.layer.borderColor = UIColor(named: "tabBarBorderColor")?.cgColor
-        
     }
     
     private func setupNavigationController(controller: UIViewController, title: String) -> UINavigationController {
@@ -43,5 +42,4 @@ class TabBarController: UITabBarController {
         navigationController.navigationItem.hidesSearchBarWhenScrolling = false
         return navigationController
     }
-
 }

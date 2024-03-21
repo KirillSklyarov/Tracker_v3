@@ -8,7 +8,7 @@
 import UIKit
 
 final class CreatingOneOffVC: UIViewController {
-
+    
     private let trackerNameTextField = UITextField()
     private let tableView = UITableView()
     private let emojiCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -17,7 +17,7 @@ final class CreatingOneOffVC: UIViewController {
     private lazy var cancelButton = setupButtons(title: "Отмена")
     private lazy var createButton = setupButtons(title: "Создать")
     private lazy var exceedLabel = setupExceedLabel()
-        
+    
     private let screenScrollView = UIScrollView()
     private let contentView = UIView()
     private let contentStackView = UIStackView()
@@ -36,13 +36,15 @@ final class CreatingOneOffVC: UIViewController {
     
     var newTaskToPassToMainScreen: ( (TrackerCategory) -> Void )?
     
-    var delegate: newTaskDelegate?
+    let categoryStorage = CategoryStorage.shared
+    
+    var delegate: NewTaskDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
-                
+        
         setupTableView()
         
         setupEmojiCollectionView()
@@ -50,6 +52,8 @@ final class CreatingOneOffVC: UIViewController {
         setupColorsCollectionView()
         
         isCreateButtonEnable()
+        
+        addTapGestureToHideKeyboard()
     }
     
     private func setupTextField() {
@@ -87,7 +91,7 @@ final class CreatingOneOffVC: UIViewController {
         trackerNameTextField.layer.cornerRadius = 10
         trackerNameTextField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         trackerNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
-
+        
         trackerNameTextField.delegate = self
     }
     
@@ -121,7 +125,7 @@ final class CreatingOneOffVC: UIViewController {
         colorsCollection.backgroundColor = .white
         colorsCollection.isScrollEnabled = false
     }
-        
+    
     private func isCreateButtonEnable() {
         if let text = trackerNameTextField.text, !text.isEmpty,
            selectedCategory != nil,
@@ -139,12 +143,12 @@ final class CreatingOneOffVC: UIViewController {
             createButton.backgroundColor = UIColor(named: "createButtonGrayColor")
         }
     }
-
+    
     private func setupUI() {
         
         setupTextField()
         setupContentStack()
-    
+        
         self.title = "Новое нерегулярное событие"
         view.backgroundColor = UIColor(named: "projectBackground")
         
@@ -166,12 +170,10 @@ final class CreatingOneOffVC: UIViewController {
         let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
         print(newTask)
         newTaskToPassToMainScreen?(newTask)
-        let mainVC = TrackerViewController()
-        let navVC = UINavigationController(rootViewController: mainVC)
-        navVC.modalPresentationStyle = .fullScreen
-        self.delegate = mainVC
-        delegate?.getNewTaskFromAnotherVC(newTask: newTask)
-        present(navVC, animated: true)
+        let tabBarVC = TabBarController()
+        tabBarVC.modalPresentationStyle = .fullScreen
+        categoryStorage.addToDataBase(dataBase: newTask)
+        present(tabBarVC, animated: true)
     }
     
     private func setupButtons(title: String) -> UIButton {
@@ -200,7 +202,7 @@ final class CreatingOneOffVC: UIViewController {
     private func showLabelExceedTextFieldLimit() {
         exceedLabel.isHidden = false
     }
-
+    
     private func hideLabelExceedTextFieldLimit() {
         exceedLabel.isHidden = true
     }
@@ -212,15 +214,23 @@ extension CreatingOneOffVC: UITableViewDataSource, UITableViewDelegate {
         tableViewRows.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {        
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         cell.textLabel?.text = tableViewRows[indexPath.row]
         cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.detailTextLabel?.textColor = UIColor(named: "createButtonGrayColor")
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        cell.accessoryType = .disclosureIndicator
         cell.selectionStyle = .none
+        
+        let disclosureImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 7, height: 12))
+        disclosureImage.image = UIImage(named: "chevron")
+        cell.accessoryView = disclosureImage
+        
+        if indexPath.row == tableViewRows.count - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        }
+        
         return cell
     }
     
@@ -240,7 +250,7 @@ extension CreatingOneOffVC: UITableViewDataSource, UITableViewDelegate {
         }
         present(navVC, animated: true)
     }
-
+    
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -261,6 +271,10 @@ extension CreatingOneOffVC: UITextFieldDelegate {
             textField.textColor = .red
             return true
         }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        trackerNameTextField.resignFirstResponder()
     }
 }
 
@@ -386,20 +400,20 @@ private extension CreatingOneOffVC {
             screenScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             screenScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             screenScrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-            ])
+        ])
         
         NSLayoutConstraint.activate([
             contentView.topAnchor.constraint(equalTo: screenScrollView.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: screenScrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: screenScrollView.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: screenScrollView.bottomAnchor),
-          
+            
             contentView.widthAnchor.constraint(equalTo: screenScrollView.widthAnchor),
         ])
         
         contentStackView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(contentStackView)
-
+        
         NSLayoutConstraint.activate([
             contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             contentStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -410,82 +424,82 @@ private extension CreatingOneOffVC {
     }
     
     func setupContentStack() {
-    
-    let textFieldViewStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 10
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.addArrangedSubview(trackerNameTextField)
-        stack.addArrangedSubview(exceedLabel)
-        return stack
-    } ()
-    
-    cancelButton.backgroundColor = .clear
-    cancelButton.layer.borderWidth = 1
-    cancelButton.layer.borderColor = UIColor(named: "cancelButtonRedColor")?.cgColor
-    cancelButton.setTitleColor(UIColor(named: "cancelButtonRedColor"), for: .normal)
-    cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
-    
-    createButton.setTitleColor(.white, for: .normal)
-    createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
-    
-    let buttonsStack: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.distribution = .fillEqually
-        stack.spacing = 8
-        stack.addArrangedSubview(cancelButton)
-        stack.addArrangedSubview(createButton)
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        return stack
-    } ()
-
-    
-    contentStackView.axis = .vertical
-    contentStackView.distribution = .equalCentering
-    contentStackView.translatesAutoresizingMaskIntoConstraints = false
-    
-    tableView.translatesAutoresizingMaskIntoConstraints = false
-    emojiCollection.translatesAutoresizingMaskIntoConstraints = false
-    colorsCollection.translatesAutoresizingMaskIntoConstraints = false
-    buttonsStack.translatesAutoresizingMaskIntoConstraints = false
-    
-    contentStackView.addArrangedSubview(textFieldViewStack)
-    contentStackView.addArrangedSubview(tableView)
-    contentStackView.addArrangedSubview(emojiCollection)
-    contentStackView.addArrangedSubview(colorsCollection)
-    contentStackView.addArrangedSubview(buttonsStack)
+        
+        let textFieldViewStack: UIStackView = {
+            let stack = UIStackView()
+            stack.axis = .vertical
+            stack.spacing = 10
+            stack.translatesAutoresizingMaskIntoConstraints = false
+            stack.addArrangedSubview(trackerNameTextField)
+            stack.addArrangedSubview(exceedLabel)
+            return stack
+        } ()
+        
+        cancelButton.backgroundColor = .clear
+        cancelButton.layer.borderWidth = 1
+        cancelButton.layer.borderColor = UIColor(named: "cancelButtonRedColor")?.cgColor
+        cancelButton.setTitleColor(UIColor(named: "cancelButtonRedColor"), for: .normal)
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
+        
+        createButton.setTitleColor(.white, for: .normal)
+        createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
+        
+        let buttonsStack: UIStackView = {
+            let stack = UIStackView()
+            stack.axis = .horizontal
+            stack.distribution = .fillEqually
+            stack.spacing = 8
+            stack.addArrangedSubview(cancelButton)
+            stack.addArrangedSubview(createButton)
+            stack.translatesAutoresizingMaskIntoConstraints = false
+            stack.heightAnchor.constraint(equalToConstant: 60).isActive = true
+            return stack
+        } ()
+        
+        
+        contentStackView.axis = .vertical
+        contentStackView.distribution = .equalCentering
+        contentStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        emojiCollection.translatesAutoresizingMaskIntoConstraints = false
+        colorsCollection.translatesAutoresizingMaskIntoConstraints = false
+        buttonsStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        contentStackView.addArrangedSubview(textFieldViewStack)
+        contentStackView.addArrangedSubview(tableView)
+        contentStackView.addArrangedSubview(emojiCollection)
+        contentStackView.addArrangedSubview(colorsCollection)
+        contentStackView.addArrangedSubview(buttonsStack)
+        
+        NSLayoutConstraint.activate([
+            textFieldViewStack.topAnchor.constraint(equalTo: contentStackView.topAnchor),
+            textFieldViewStack.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
+            textFieldViewStack.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
+            textFieldViewStack.heightAnchor.constraint(equalToConstant: 75),
             
-    NSLayoutConstraint.activate([
-        textFieldViewStack.topAnchor.constraint(equalTo: contentStackView.topAnchor),
-        textFieldViewStack.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
-        textFieldViewStack.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
-        textFieldViewStack.heightAnchor.constraint(equalToConstant: 75),
-        
-        tableView.topAnchor.constraint(equalTo: textFieldViewStack.bottomAnchor, constant: 24),
-        tableView.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
-        tableView.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
-        tableView.heightAnchor.constraint(equalToConstant: 75),
-        
-        emojiCollection.topAnchor.constraint(equalTo: tableView.bottomAnchor),
-        emojiCollection.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
-        emojiCollection.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
-        emojiCollection.heightAnchor.constraint(equalToConstant: 204),
-        
-        colorsCollection.topAnchor.constraint(equalTo: emojiCollection.bottomAnchor, constant: 8),
-        colorsCollection.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
-        colorsCollection.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
-        colorsCollection.heightAnchor.constraint(equalToConstant: 230),
-        
-        buttonsStack.topAnchor.constraint(equalTo: colorsCollection.bottomAnchor, constant: 16),
-        buttonsStack.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
-        buttonsStack.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
-        buttonsStack.bottomAnchor.constraint(equalTo: contentStackView.bottomAnchor)
-    ])
-}
-
+            tableView.topAnchor.constraint(equalTo: textFieldViewStack.bottomAnchor, constant: 24),
+            tableView.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
+            tableView.heightAnchor.constraint(equalToConstant: 75),
+            
+            emojiCollection.topAnchor.constraint(equalTo: tableView.bottomAnchor),
+            emojiCollection.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
+            emojiCollection.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
+            emojiCollection.heightAnchor.constraint(equalToConstant: 204),
+            
+            colorsCollection.topAnchor.constraint(equalTo: emojiCollection.bottomAnchor, constant: 8),
+            colorsCollection.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
+            colorsCollection.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
+            colorsCollection.heightAnchor.constraint(equalToConstant: 230),
+            
+            buttonsStack.topAnchor.constraint(equalTo: colorsCollection.bottomAnchor, constant: 16),
+            buttonsStack.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
+            buttonsStack.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
+            buttonsStack.bottomAnchor.constraint(equalTo: contentStackView.bottomAnchor)
+        ])
+    }
+    
 }
 
 

@@ -8,22 +8,24 @@
 import UIKit
 
 final class CreatingNewCategoryViewController: UIViewController {
-
+    
     private let categoryNameTextField = UITextField()
     private lazy var doneButton = setupButtons(title: "Готово")
     
     var categories = TrackerViewController().categories
     var updateTableClosure: ( (String) -> Void )?
-        
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
         setupUI()
+        
+        addTapGestureToHideKeyboard()
         
     }
     
     private func setupTextField() {
-    
+        
         categoryNameTextField.placeholder = "Введите название категории"
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
         categoryNameTextField.leftView = leftPaddingView
@@ -34,18 +36,20 @@ final class CreatingNewCategoryViewController: UIViewController {
         categoryNameTextField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         categoryNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
         categoryNameTextField.addTarget(self, action: #selector(textFildEditing), for: .editingChanged)
+        
+        categoryNameTextField.delegate = self
     }
     
     private func setupUI() {
         
         setupTextField()
-    
+        
         self.title = "Новая категория"
         
         view.backgroundColor = UIColor(named: "projectBackground")
-
+        
         view.addSubViews([categoryNameTextField, doneButton])
-
+        
         NSLayoutConstraint.activate([
             categoryNameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             categoryNameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -72,7 +76,6 @@ final class CreatingNewCategoryViewController: UIViewController {
     @objc private func doneButtonTapped(_ sender: UIButton) {
         print("doneButtonTapped")
         guard let newCategoryName = categoryNameTextField.text else { return }
-//        let newCategory: TrackerCategory = TrackerCategory(header: newCategoryName, trackers: [])
         updateTableClosure?(newCategoryName)
         dismiss(animated: true)
     }
@@ -92,7 +95,13 @@ final class CreatingNewCategoryViewController: UIViewController {
         return button
     }
 }
-    
+
+extension CreatingNewCategoryViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        categoryNameTextField.resignFirstResponder()
+    }
+}
+
 //MARK: - SwiftUI
 import SwiftUI
 struct ProviderCreating : PreviewProvider {
