@@ -39,25 +39,16 @@ final class ChoosingCategoryViewController: UIViewController {
         
         recieveCategoryNamesFromSingleton()
         
+        print(categories)
+        
         setupUI()
         
         setupTableView()
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        if categories.isEmpty {
-            showPlaceholderForEmptyScreen()
-        } else {
-            swooshImage.isHidden = true
-            textLabel.isHidden = true
-        }
-    }
-    
     private func recieveCategoryNamesFromSingleton() {
-        self.categories = CategoryStorage.shared.sendCategoryNames()
+        self.categories = CategoryStorage.shared.getCategoryNamesFromStorage()
     }
     
     private func setupTableView() {
@@ -68,8 +59,10 @@ final class ChoosingCategoryViewController: UIViewController {
         categoryTableView.delegate = self
         categoryTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
-        categoryTableView.layer.cornerRadius = 10
         categoryTableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        
+        categoryTableView.layer.cornerRadius = 16
+        categoryTableView.tableHeaderView = UIView()
     }
     
     private func setupUI() {
@@ -129,7 +122,7 @@ final class ChoosingCategoryViewController: UIViewController {
             guard let self = self else { return }
             self.categories.append(newCategory)
             self.categoryTableView.reloadData()
-            categoryTableView.layoutIfNeeded()
+            self.categoryTableView.layoutIfNeeded()
             
             if categories.isEmpty {
                 showPlaceholderForEmptyScreen()
@@ -153,6 +146,7 @@ final class ChoosingCategoryViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource, UITableViewDelegate
 extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDelegate {
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -173,10 +167,11 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
         cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.textLabel?.text = categories[indexPath.row]
-        
+          
         if indexPath.row == categories.count - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-            cell.layer.cornerRadius = 8
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
         }
         
         return cell
@@ -184,12 +179,23 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
+        cell?.selectionStyle = .none
+        let selectionImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 14, height: 14))
+        selectionImage.image = UIImage(named: "bluecheckmark")
+        cell?.accessoryView = selectionImage
+        
         guard let categoryNameToPass = cell?.textLabel?.text else { return }
-        cell?.accessoryType = .checkmark
         updateCategory?(categoryNameToPass)
         dismiss(animated: true)
     }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        
+        let cell = tableView.cellForRow(at: indexPath)
+        cell?.accessoryView = UIView()
+    }
 }
+
 
 extension ChoosingCategoryViewController: PassCategoryNamesFromMainVC {
     func passCategoryNames(categoryNames: [String]) {

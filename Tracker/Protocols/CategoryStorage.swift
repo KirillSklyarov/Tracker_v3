@@ -13,14 +13,16 @@ final class CategoryStorage {
     
     private init() { }
     
-    var categoryNames: [String]?
+    var categoryNames: [String] = ["First", "Second", "Third"]
     
-    func getCategoryNames(categoryNames: [String]) {
-        self.categoryNames = categoryNames
+    func addToCategoryNamesStorage(categoryNames: [String]) {
+        for categoryName in categoryNames {
+            self.categoryNames.append(categoryName)
+        }
     }
     
-    func sendCategoryNames() -> [String] {
-        self.categoryNames ?? []
+    func getCategoryNamesFromStorage() -> [String] {
+        self.categoryNames
     }
         
     var dataBase: [TrackerCategory] = []

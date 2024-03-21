@@ -95,7 +95,7 @@ final class TrackerViewController: UIViewController {
     }
     
     private func passCategoryNamesToSingleton() {
-        CategoryStorage.shared.getCategoryNames(categoryNames: categoryNames)
+        CategoryStorage.shared.addToCategoryNamesStorage(categoryNames: categoryNames)
     }
     
     // MARK: - UI Actions
