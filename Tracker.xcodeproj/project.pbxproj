@@ -17,6 +17,8 @@
 		7335BCC12BA1FF8D002271F3 /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7335BCC02BA1FF8D002271F3 /* TrackerRecord.swift */; };
 		735D83182BA2F7880071D090 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735D83172BA2F7880071D090 /* ScheduleViewController.swift */; };
 		73B28CFE2BA9667B00D4BF3E /* UIColor+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B28CFD2BA9667B00D4BF3E /* UIColor+Ext.swift */; };
+		73B5C00F2BAE0D3900FEF126 /* EditingCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B5C00E2BAE0D3800FEF126 /* EditingCategoryViewController.swift */; };
+		73B5C0112BAE112D00FEF126 /* passCategoryNameToEditingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B5C0102BAE112D00FEF126 /* passCategoryNameToEditingVC.swift */; };
 		73C97E6A2BA85B2B00725D70 /* ChoosingCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C97E692BA85B2B00725D70 /* ChoosingCategoryViewController.swift */; };
 		73C97E6C2BA860BE00725D70 /* CreatingNewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C97E6B2BA860BE00725D70 /* CreatingNewCategoryViewController.swift */; };
 		73E1969F2BAA1A2400D7E734 /* passNewTaskToMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E1969E2BAA1A2400D7E734 /* passNewTaskToMainVC.swift */; };
@@ -44,6 +46,8 @@
 		7335BCC02BA1FF8D002271F3 /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
 		735D83172BA2F7880071D090 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
 		73B28CFD2BA9667B00D4BF3E /* UIColor+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Ext.swift"; sourceTree = "<group>"; };
+		73B5C00E2BAE0D3800FEF126 /* EditingCategoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditingCategoryViewController.swift; sourceTree = "<group>"; };
+		73B5C0102BAE112D00FEF126 /* passCategoryNameToEditingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = passCategoryNameToEditingVC.swift; sourceTree = "<group>"; };
 		73C97E692BA85B2B00725D70 /* ChoosingCategoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChoosingCategoryViewController.swift; sourceTree = "<group>"; };
 		73C97E6B2BA860BE00725D70 /* CreatingNewCategoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreatingNewCategoryViewController.swift; sourceTree = "<group>"; };
 		73E1969E2BAA1A2400D7E734 /* passNewTaskToMainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = passNewTaskToMainVC.swift; sourceTree = "<group>"; };
@@ -93,6 +97,7 @@
 				7311541E2BA248D60078C849 /* CreatingOneOffVC.swift */,
 				73FE24112BAAEF9200D2AACA /* CreatingNewHabitViewController.swift */,
 				73C97E6B2BA860BE00725D70 /* CreatingNewCategoryViewController.swift */,
+				73B5C00E2BAE0D3800FEF126 /* EditingCategoryViewController.swift */,
 				735D83172BA2F7880071D090 /* ScheduleViewController.swift */,
 				7335BCB82BA1B787002271F3 /* CustomViewCell */,
 			);
@@ -115,6 +120,7 @@
 				73E196A32BAA29B800D7E734 /* CategoryStorage.swift */,
 				73E1969E2BAA1A2400D7E734 /* passNewTaskToMainVC.swift */,
 				73E196A02BAA1FA400D7E734 /* passCateroryNamesFromMain.swift */,
+				73B5C0102BAE112D00FEF126 /* passCategoryNameToEditingVC.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -242,6 +248,7 @@
 				73E562E12BA0A936003A61AB /* TrackerViewController.swift in Sources */,
 				73E562DD2BA0A936003A61AB /* AppDelegate.swift in Sources */,
 				73E562DF2BA0A936003A61AB /* SceneDelegate.swift in Sources */,
+				73B5C00F2BAE0D3900FEF126 /* EditingCategoryViewController.swift in Sources */,
 				7335BCC12BA1FF8D002271F3 /* TrackerRecord.swift in Sources */,
 				73E1969F2BAA1A2400D7E734 /* passNewTaskToMainVC.swift in Sources */,
 				7311541F2BA248D60078C849 /* CreatingOneOffVC.swift in Sources */,
@@ -252,6 +259,7 @@
 				7335BCBF2BA1FF3F002271F3 /* TrackerCategory.swift in Sources */,
 				73E562F72BA0B411003A61AB /* TabBarController.swift in Sources */,
 				73FE24122BAAEF9200D2AACA /* CreatingNewHabitViewController.swift in Sources */,
+				73B5C0112BAE112D00FEF126 /* passCategoryNameToEditingVC.swift in Sources */,
 				7335BCB72BA1B701002271F3 /* SuplementaryView.swift in Sources */,
 				732C40872BAB7C5100D34632 /* UIViewController+Ext.swift in Sources */,
 				73E196A42BAA29B800D7E734 /* CategoryStorage.swift in Sources */,

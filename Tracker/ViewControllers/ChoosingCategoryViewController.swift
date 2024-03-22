@@ -33,6 +33,8 @@ final class ChoosingCategoryViewController: UIViewController {
     var updateCategory: ( (String) -> Void)?
     
     var categories: [String] = []
+    
+    var delegateToPassCategoryNameToEdit: PassCategoryNamesToEditingVC?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +46,7 @@ final class ChoosingCategoryViewController: UIViewController {
         setupUI()
         
         setupTableView()
-        
+      
     }
     
     private func recieveCategoryNamesFromSingleton() {
@@ -149,10 +151,6 @@ final class ChoosingCategoryViewController: UIViewController {
 // MARK: - UITableViewDataSource, UITableViewDelegate
 extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDelegate {
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        1
-    }
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         75
     }
@@ -190,18 +188,55 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        
         let cell = tableView.cellForRow(at: indexPath)
         cell?.accessoryView = UIView()
     }
 }
 
 
-extension ChoosingCategoryViewController: PassCategoryNamesFromMainVC {
-    func passCategoryNames(categoryNames: [String]) {
-        self.categories = categoryNames
+//extension ChoosingCategoryViewController: PassCategoryNamesFromMainVC {
+//    func passCategoryNames(categoryNames: [String]) {
+//        self.categories = categoryNames
+//    }
+//}
+
+extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        return nil
+        }
+        
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        print("indexPath \(indexPath)")
+        return UIContextMenuConfiguration(actionProvider:
+                    { _ in return self.showContextMenu(indexPath: indexPath) }
+        )
     }
+                                          
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+            let interaction = UIContextMenuInteraction(delegate: self)
+            cell.addInteraction(interaction)
+        }
+                                          
+        func showContextMenu(indexPath: IndexPath) -> UIMenu {
+            let editAction = UIAction(title: "Редактировать") { [weak self, indexPath] _ in
+                guard let self = self,
+                      let cell = self.categoryTableView.cellForRow(at: indexPath),
+                      let categoryNameToPass = cell.textLabel?.text else { return }
+                let editingVC = EditingCategoryViewController()
+                let navVC = UINavigationController(rootViewController: editingVC)
+                self.delegateToPassCategoryNameToEdit = editingVC
+                delegateToPassCategoryNameToEdit?.getCategoryNameFromPreviuosVC(categoryName: categoryNameToPass)
+                present(navVC, animated: true)
+                print("Press on editButton")
+            }
+            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in
+                print("Press on deleteButton")
+            }
+            return UIMenu(children: [editAction, deleteAction])
+        }
 }
+                                          
 
 //MARK: - SwiftUI
 import SwiftUI
