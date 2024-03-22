@@ -78,8 +78,10 @@ final class ScheduleViewController: UIViewController {
               let indexPath = tableView.indexPath(for: cell) else { return }
         if sender.isOn {
             arrayOfIndexes.append(indexPath.row)
+            print(arrayOfIndexes)
         } else {
-            arrayOfIndexes.remove(at: indexPath.row)
+            arrayOfIndexes.removeAll(where: { $0 == indexPath.row })
+            print(arrayOfIndexes)
         }
     }
     
@@ -107,7 +109,7 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.selectionStyle = .default
+        cell.selectionStyle = .none
         let weekDayswitch = UISwitch()
         weekDayswitch.onTintColor = UIColor(named: "switchOnColor")
         weekDayswitch.addTarget(self, action: #selector(weekDayswitchValueChanded), for: .valueChanged)

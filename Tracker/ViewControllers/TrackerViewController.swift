@@ -19,7 +19,7 @@ final class TrackerViewController: UIViewController {
     
     private lazy var dateButton: UIButton = {
         let button = UIButton()
-        let date = dateToString(date: currentDate)
+        let date = dateToString(date: datePicker.date)
         button.setTitle(date, for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.frame = CGRect(x: 0, y: 0, width: 77, height: 34)
@@ -55,7 +55,7 @@ final class TrackerViewController: UIViewController {
     private var filteredData: [TrackerCategory] = []
     private var isSearchMode = false
     
-    private var currentDate = UIDatePicker().date
+    private lazy var currentDate = datePicker.date
     
     private var newDateCategories: [TrackerCategory]?
     
@@ -338,15 +338,38 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         cell.plusButton.backgroundColor = frameColor
         cell.plusButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
         cell.plusButton.isEnabled = currentDate > today ? false : true
+        
+        showDoneOrUndoneTaskForDatePickerDate(tracker: tracker, cell: cell)
+        
     }
+    
+    private func showDoneOrUndoneTaskForDatePickerDate(tracker: Tracker, cell: TrackerCollectionViewCell) {
+        let dateOnDatePicker = datePicker.date
+        let dateOnDatePickerString = dateToString(date: dateOnDatePicker)
+        let color = tracker.color
+        
+        guard let check = completedTrackers?.contains(where: { $0.id == tracker.id && $0.date == dateOnDatePickerString }) else { return }
+        
+        if !check {
+            print("Нет в списке - значит ставим плюсик")
+            let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+            cell.plusButton.setImage(plusImage, for: .normal)
+        } else {
+            print("Хм - есть в списке, значит галку ставим")
+            let doneImage = UIImage(named: "done")
+            cell.plusButton.setImage(doneImage, for: .normal)
+            cell.plusButton.backgroundColor = color.withAlphaComponent(0.3)
+        }
+    }
+    
     
     private func makeTaskDone(trackForAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
         completedTrackers?.append(trackForAdd)
+//        cell.plusButton.clipsToBounds = true
+//        cell.plusButton.layer.cornerRadius = cell.plusButton.frame.width / 2
         let doneImage = UIImage(named: "done")
-        cell.plusButton.clipsToBounds = true
-        cell.plusButton.layer.cornerRadius = cell.plusButton.frame.width / 2
-        cell.plusButton.backgroundColor = cellColor.withAlphaComponent(0.3)
         cell.plusButton.setImage(doneImage, for: .normal)
+        cell.plusButton.backgroundColor = cellColor.withAlphaComponent(0.3)
         cell.days += 1
         cell.daysLabel.text = "\(cell.days) день"
         print(completedTrackers!)
