@@ -49,10 +49,6 @@ final class ChoosingCategoryViewController: UIViewController {
       
     }
     
-    private func recieveCategoryNamesFromSingleton() {
-        self.categories = CategoryStorage.shared.getCategoryNamesFromStorage()
-    }
-    
     private func setupTableView() {
         
         showPlaceholderForEmptyScreen()
@@ -193,13 +189,7 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
     }
 }
 
-
-//extension ChoosingCategoryViewController: PassCategoryNamesFromMainVC {
-//    func passCategoryNames(categoryNames: [String]) {
-//        self.categories = categoryNames
-//    }
-//}
-
+// MARK: - Context Menu
 extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
@@ -207,7 +197,6 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
         }
         
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        print("indexPath \(indexPath)")
         return UIContextMenuConfiguration(actionProvider:
                     { _ in return self.showContextMenu(indexPath: indexPath) }
         )
@@ -218,26 +207,67 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
             cell.addInteraction(interaction)
         }
                                           
-        func showContextMenu(indexPath: IndexPath) -> UIMenu {
-            let editAction = UIAction(title: "Редактировать") { [weak self, indexPath] _ in
-                guard let self = self,
-                      let cell = self.categoryTableView.cellForRow(at: indexPath),
-                      let categoryNameToPass = cell.textLabel?.text else { return }
-                let editingVC = EditingCategoryViewController()
-                let navVC = UINavigationController(rootViewController: editingVC)
-                self.delegateToPassCategoryNameToEdit = editingVC
-                delegateToPassCategoryNameToEdit?.getCategoryNameFromPreviuosVC(categoryName: categoryNameToPass)
-                present(navVC, animated: true)
-                print("Press on editButton")
+    func showContextMenu(indexPath: IndexPath) -> UIMenu {
+        let editAction = UIAction(title: "Редактировать") { [weak self] _ in
+            guard let self = self,
+                  let cell = self.categoryTableView.cellForRow(at: indexPath),
+                  let categoryNameToPass = cell.textLabel?.text else { return }
+            let editingVC = EditingCategoryViewController()
+            let navVC = UINavigationController(rootViewController: editingVC)
+            self.delegateToPassCategoryNameToEdit = editingVC
+            delegateToPassCategoryNameToEdit?.getCategoryNameFromPreviuosVC(categoryName: categoryNameToPass)
+            
+            editingVC.updateCategoryNameClosure = { newName in
+                cell.textLabel?.text = newName
+                self.categories[indexPath.row] = newName
+                self.sendCategoryNamesToSingleton()
             }
-            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in
-                print("Press on deleteButton")
-            }
-            return UIMenu(children: [editAction, deleteAction])
+            present(navVC, animated: true)
         }
+        
+        let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in
+            
+            let alert = UIAlertController(title: "Эта категория точно не нужна", message: nil, preferredStyle: .actionSheet)
+            
+            let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+                guard let self = self else { return }
+                self.categories.remove(at: indexPath.row)
+                self.categoryTableView.deleteRows(at: [indexPath], with: .automatic)
+                self.sendCategoryNamesToSingleton()
+                
+                designLastCell(indexPath: indexPath)
+            }
+            
+            let cancelAction = UIAlertAction(title: "Отменить", style: .cancel)
+            alert.addAction(deleteAction)
+            alert.addAction(cancelAction)
+            self.present(alert, animated: true)
+            print("Press on deleteButton")
+        }
+        return UIMenu(children: [editAction, deleteAction])
+    }
+    
+    private func designLastCell(indexPath: IndexPath) {
+        let indexPathOfLastCell = IndexPath(row: self.categories.count - 1, section: indexPath.section)
+        guard let cell = self.categoryTableView.cellForRow(at: indexPathOfLastCell) else { return }
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+    }
+}
+
+// MARK: - Load&Save category names in Storage
+private extension ChoosingCategoryViewController {
+    
+    func recieveCategoryNamesFromSingleton() {
+        self.categories = CategoryStorage.shared.getCategoryNamesFromStorage()
+    }
+    
+    func sendCategoryNamesToSingleton() {
+        CategoryStorage.shared.updateCategoryNamesInStorage(categoryNames: categories)
+    }
 }
                                           
-
 //MARK: - SwiftUI
 import SwiftUI
 struct ProviderChoosingCategory : PreviewProvider {

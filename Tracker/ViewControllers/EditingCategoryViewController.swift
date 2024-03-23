@@ -12,8 +12,8 @@ final class EditingCategoryViewController: UIViewController {
     private let categoryNameTextField = UITextField()
     private lazy var doneButton = setupButtons(title: "Готово")
     
-    var categories = TrackerViewController().categories
-    var updateTableClosure: ( (String) -> Void )?
+//    var categories = TrackerViewController().categories
+    var updateCategoryNameClosure: ( (String) -> Void )?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,7 +21,6 @@ final class EditingCategoryViewController: UIViewController {
         setupUI()
         
         addTapGestureToHideKeyboard()
-        
     }
     
     private func setupTextField() {
@@ -50,7 +49,6 @@ final class EditingCategoryViewController: UIViewController {
             return stack
         } ()
         
-        categoryNameTextField.placeholder = "Введите название категории"
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
         categoryNameTextField.leftView = leftPaddingView
         categoryNameTextField.leftViewMode = .always
@@ -60,7 +58,7 @@ final class EditingCategoryViewController: UIViewController {
         categoryNameTextField.layer.cornerRadius = 10
         categoryNameTextField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         categoryNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
-        categoryNameTextField.addTarget(self, action: #selector(textFildEditing), for: .editingChanged)
+//        categoryNameTextField.addTarget(self, action: #selector(textFildEditing), for: .editingChanged)
         
         categoryNameTextField.delegate = self
     }
@@ -90,7 +88,7 @@ final class EditingCategoryViewController: UIViewController {
         ])
     }
     
-    @objc private func textFildEditing(_ sender: UITextField) {
+//    @objc private func textFildEditing(_ sender: UITextField) {
 //        print(sender.text as Any)
 //        if let text = sender.text,
 //           !text.isEmpty {
@@ -100,12 +98,12 @@ final class EditingCategoryViewController: UIViewController {
 //            doneButton.isEnabled = false
 //            doneButton.backgroundColor = .systemGray4
 //        }
-    }
+//    }
     
     @objc private func doneButtonTapped(_ sender: UIButton) {
         print("doneButtonTapped")
         guard let newCategoryName = categoryNameTextField.text else { return }
-        updateTableClosure?(newCategoryName)
+        updateCategoryNameClosure?(newCategoryName)
         dismiss(animated: true)
     }
     
@@ -134,8 +132,6 @@ extension EditingCategoryViewController: PassCategoryNamesToEditingVC {
     func getCategoryNameFromPreviuosVC(categoryName: String) {
         categoryNameTextField.text = categoryName
     }
-    
-    
 }
 
 //MARK: - SwiftUI

@@ -21,6 +21,10 @@ final class CategoryStorage {
         }
     }
     
+    func updateCategoryNamesInStorage(categoryNames: [String]) {
+            self.categoryNames = categoryNames
+    }
+    
     func getCategoryNamesFromStorage() -> [String] {
         self.categoryNames
     }
