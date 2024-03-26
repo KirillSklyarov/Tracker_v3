@@ -15,7 +15,7 @@ final class TrackerViewController: UIViewController {
     private let searchController = UISearchController(searchResultsController: nil)
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
-    let datePicker = UIDatePicker()
+    private let datePicker = UIDatePicker()
     
     private lazy var dateButton: UIButton = {
         let button = UIButton()
@@ -25,10 +25,20 @@ final class TrackerViewController: UIViewController {
         button.frame = CGRect(x: 0, y: 0, width: 77, height: 34)
         button.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         button.layer.cornerRadius = 8
-        button.addTarget(self, action: #selector(dateButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
         return button
     } ()
     
+    private lazy var filtersButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Фильтры", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor(named: "filterButtonBackground")
+        button.layer.cornerRadius = 16
+        button.addTarget(self, action: #selector(dateButtonTapped), for: .touchUpInside)
+        return button
+    } ()
     
     // MARK: - Private Properties
     
@@ -78,6 +88,8 @@ final class TrackerViewController: UIViewController {
         setupSearchController()
         
         setupCollectionView()
+        
+        setupFiltersButton()
         
         setupUI()
         
@@ -179,6 +191,11 @@ final class TrackerViewController: UIViewController {
         navigationItem.searchController = searchController
     }
     
+    @objc private func filterButtonTapped(_ sender: UIButton) {
+        
+    }
+    
+    
     // MARK: - UI, Navigation, Search
     private func setupNavigation() {
         
@@ -244,6 +261,17 @@ final class TrackerViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
+    }
+    
+    private func setupFiltersButton() {
+        view.addSubViews([filtersButton])
+        
+        NSLayoutConstraint.activate([
+            filtersButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filtersButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            filtersButton.widthAnchor.constraint(equalToConstant: 114),
+            filtersButton.heightAnchor.constraint(equalToConstant: 50),
         ])
     }
     
@@ -320,6 +348,9 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
             return UICollectionViewCell()
         }
         
+        let iteraction = UIContextMenuInteraction(delegate: self)
+        cell.frameView.addInteraction(iteraction)
+        
         configureCell(cell: cell, indexPath: indexPath)
         
         return cell
@@ -331,11 +362,13 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         let tracker = trackersInCategory[indexPath.row]
         let frameColor = tracker.color
         let today = Date()
-        
+                
         cell.titleLabel.text = tracker.name
-        cell.frameView.backgroundColor = frameColor
         cell.emojiLabel.text = tracker.emoji
+        
+        cell.frameView.backgroundColor = frameColor
         cell.plusButton.backgroundColor = frameColor
+        
         cell.plusButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
         cell.plusButton.isEnabled = currentDate > today ? false : true
         
@@ -351,11 +384,11 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         guard let check = completedTrackers?.contains(where: { $0.id == tracker.id && $0.date == dateOnDatePickerString }) else { return }
         
         if !check {
-            print("Нет в списке - значит ставим плюсик")
+//            print("Нет в списке - значит ставим плюсик")
             let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
             cell.plusButton.setImage(plusImage, for: .normal)
         } else {
-            print("Хм - есть в списке, значит галку ставим")
+//            print("Хм - есть в списке, значит галку ставим")
             let doneImage = UIImage(named: "done")
             cell.plusButton.setImage(doneImage, for: .normal)
             cell.plusButton.backgroundColor = color.withAlphaComponent(0.3)
@@ -365,8 +398,6 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
     
     private func makeTaskDone(trackForAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
         completedTrackers?.append(trackForAdd)
-//        cell.plusButton.clipsToBounds = true
-//        cell.plusButton.layer.cornerRadius = cell.plusButton.frame.width / 2
         let doneImage = UIImage(named: "done")
         cell.plusButton.setImage(doneImage, for: .normal)
         cell.plusButton.backgroundColor = cellColor.withAlphaComponent(0.3)
@@ -470,11 +501,66 @@ extension TrackerViewController: UIGestureRecognizerDelegate {
     }
 }
 
-//extension TrackerViewController: NewTaskDelegate {
-//    func getNewTaskFromAnotherVC(newTask: TrackerCategory) {
-//        categories.append(newTask)
+// MARK: - Context Menu
+extension TrackerViewController: UIContextMenuInteractionDelegate {
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(actionProvider: { (_) -> UIMenu? in
+            
+            let lockAction = UIAction(title: "Закрепить") { _ in }
+            let editAction = UIAction(title: "Редактировать") { _ in }
+            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in }
+            
+            return UIMenu(children: [lockAction, editAction, deleteAction]) }
+        )
+    }
+                                          
+
+   
+//    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+//        let touchPoint = interaction.view?.convert(location, from: self)
+//    }
+    
+    
+    
+//    
+//    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+//        guard indexPaths.count > 0 else { return nil }
+//        let indexPath = indexPaths[0]
+//        return UIContextMenuConfiguration(actionProvider: { _ in return self.showContextMenu(indexPath: indexPath) }
+//        )
+//    }
+    
+    func showContextMenu(indexPath: IndexPath) -> UIMenu {
+        let lockAction = UIAction(title: "Закрепить") { _ in }
+        let editAction = UIAction(title: "Редактировать") { _ in }
+        let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in }
+    
+        return UIMenu(children: [lockAction, editAction, deleteAction])
+    }
+}
+    
+    
+//    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+//        return UIContextMenuConfiguration(actionProvider:
+//                { _ in return self.showContextMenu(indexPath: indexPath) }
+//        )
+//    }
+    
+//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        let interaction = UIContextMenuInteraction(delegate: self)
+//        cell.addInteraction(interaction)
+//    }
+    
+//    private func designLastCell(indexPath: IndexPath) {
+//        let indexPathOfLastCell = IndexPath(row: self.categories.count - 1, section: indexPath.section)
+//        guard let cell = self.categoryTableView.cellForRow(at: indexPathOfLastCell) else { return }
+//            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+//            cell.layer.cornerRadius = 16
+//            cell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
 //    }
 //}
+
 
 //MARK: - SwiftUI
 import SwiftUI

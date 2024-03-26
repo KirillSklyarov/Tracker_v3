@@ -208,6 +208,7 @@ final class CreatingOneOffVC: UIViewController {
     }
 }
 
+// MARK: -  UITableViewDataSource, UITableViewDelegate
 extension CreatingOneOffVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -256,11 +257,12 @@ extension CreatingOneOffVC: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
+// MARK: - TextFieldDelegate - control of TextField length
 extension CreatingOneOffVC: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let currentCharacterCount = textField.text?.count ?? 0
-        if currentCharacterCount <= 25 {
+        if currentCharacterCount <= 38 {
             hideLabelExceedTextFieldLimit()
             isCreateButtonEnable()
             textField.textColor = .black
@@ -278,6 +280,7 @@ extension CreatingOneOffVC: UITextFieldDelegate {
     }
 }
 
+// MARK: - UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
 extension CreatingOneOffVC: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

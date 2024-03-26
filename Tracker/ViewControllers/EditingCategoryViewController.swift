@@ -88,18 +88,6 @@ final class EditingCategoryViewController: UIViewController {
         ])
     }
     
-//    @objc private func textFildEditing(_ sender: UITextField) {
-//        print(sender.text as Any)
-//        if let text = sender.text,
-//           !text.isEmpty {
-//            doneButton.isEnabled = true
-//            doneButton.backgroundColor = .black
-//        } else {
-//            doneButton.isEnabled = false
-//            doneButton.backgroundColor = .systemGray4
-//        }
-//    }
-    
     @objc private func doneButtonTapped(_ sender: UIButton) {
         print("doneButtonTapped")
         guard let newCategoryName = categoryNameTextField.text else { return }
