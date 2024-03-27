@@ -48,8 +48,10 @@ final class TrackerViewController: UIViewController {
     
     let categoryStorage = CategoryStorage.shared
     
+    let coreDataStorage = TrackerCoreManager.shared
+    
     var categories: [TrackerCategory] {
-        if let dataBase = categoryStorage.getDataBaseFromStorage() {
+        if let dataBase = coreDataStorage.getDataBaseFromStorage() {
             return  dataBase
         } else {
             print("Ooops we have a problem")
@@ -77,6 +79,8 @@ final class TrackerViewController: UIViewController {
         }
     }
     
+    private let dataFormCoreData = TrackerCoreManager.shared.trackers
+    
     // MARK: - Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,6 +94,8 @@ final class TrackerViewController: UIViewController {
         setupCollectionView()
         
         setupFiltersButton()
+        
+        print(dataFormCoreData)
         
         setupUI()
         

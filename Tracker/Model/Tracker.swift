@@ -14,3 +14,19 @@ struct Tracker {
     let emoji: String
     let schedule: String
 }
+
+extension Tracker {
+    init(coreDataObject: TrackerCoreData) {
+        self.id = coreDataObject.id  ?? UUID()
+        self.name = coreDataObject.name ?? ""
+
+        if let colorHex = coreDataObject.colorHex {
+            self.color = UIColor(hex: colorHex)
+        } else {
+            self.color = UIColor.green
+        }
+        
+        self.emoji = coreDataObject.emoji ?? ""
+        self.schedule = coreDataObject.schedule ?? ""
+    }
+}

@@ -35,6 +35,8 @@ final class ChoosingCategoryViewController: UIViewController {
     var categories: [String] = []
     
     var delegateToPassCategoryNameToEdit: PassCategoryNamesToEditingVC?
+    
+    let coreDataStorage = TrackerCoreManager.shared
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -260,7 +262,9 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
 private extension ChoosingCategoryViewController {
     
     func recieveCategoryNamesFromSingleton() {
-        self.categories = CategoryStorage.shared.getCategoryNamesFromStorage()
+        self.categories = coreDataStorage.getCategoryNamesFromStorage()
+        
+//        CategoryStorage.shared.getCategoryNamesFromStorage()
     }
     
     func sendCategoryNamesToSingleton() {

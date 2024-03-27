@@ -14,29 +14,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         return true
     }
-    
-    lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "TrackerCoreData")
-        container.loadPersistentStores { (description, error) in
-            if let error = error as NSError? {
-                fatalError(error.localizedDescription)
-            } else {
-                print("DB url: ", description.url ?? "Oooops")
-            }
-        }
-        return container
-    } ()
-    
-    func saveContext() {
-        let context = persistentContainer.viewContext
-        if context.hasChanges {
-            do  {
-                try context.save()
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-    }
 
     // MARK: UISceneSession Lifecycle
 
