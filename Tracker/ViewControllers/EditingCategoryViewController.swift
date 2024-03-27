@@ -12,7 +12,6 @@ final class EditingCategoryViewController: UIViewController {
     private let categoryNameTextField = UITextField()
     private lazy var doneButton = setupButtons(title: "Готово")
     
-//    var categories = TrackerViewController().categories
     var updateCategoryNameClosure: ( (String) -> Void )?
     
     override func viewDidLoad() {

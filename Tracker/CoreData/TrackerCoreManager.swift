@@ -10,17 +10,16 @@ import CoreData
 import UIKit
 
 
-final class TrackerCoreManager {
-    
+final class TrackerCoreManager: NSObject {
+        
     static let shared = TrackerCoreManager()
     
-    private init() {    }
+    private override init() {
+        
+    }
     
-//    var trackers = [TrackerCategory]()
     
-//    var categories = [String]()
-    
-    // MARK: - Continer, context
+    // MARK: - Container, context
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "TrackerCoreData")
         container.loadPersistentStores { (description, error) in
@@ -36,6 +35,35 @@ final class TrackerCoreManager {
     private var context: NSManagedObjectContext {
         persistentContainer.viewContext
     }
+    
+    
+    // MARK: - FetchResultsController
+    
+    private var insertedIndexes: IndexSet?
+    private var deletedIndexes: IndexSet?
+    
+    var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
+    
+    func setupFetchedResultsController() {
+        let request = TrackerCoreData.fetchRequest()
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.returnsObjectsAsFaults = false
+        request.sortDescriptors = [sort]
+        
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: request,
+                                                              managedObjectContext: context,
+                                                              sectionNameKeyPath: "category.header",
+                                                              cacheName: nil)
+        
+        fetchedResultsController?.delegate = self
+        
+        do {
+            try fetchedResultsController?.performFetch()
+        } catch {
+            print("Fetch failed: \(error.localizedDescription)")
+        }
+    }
+    
     
     // MARK: - CRUD
     func fetchData() -> [TrackerCategory] {
@@ -74,7 +102,6 @@ final class TrackerCoreManager {
         }
     }
 
-    
     func createNewCategory(newCategoryName: String) {
         print("We're here - createNewCategory")
         let newCategory = TrackerCategoryCoreData(context: context)
@@ -104,7 +131,6 @@ final class TrackerCoreManager {
                 newTrackerToAdd.schedule = newTracker.trackers.first?.schedule
                 
                 foundCategory.addToTrackers(newTrackerToAdd)
-                //                newTrackerToAdd.category = foundCategory
                 save()
                 print("New Tracker created and Added TO EXISTING CAT ✅")
             }
@@ -123,7 +149,6 @@ final class TrackerCoreManager {
             newTrackerToAdd.schedule = newTracker.trackers.first?.schedule
             
             newTrackerCategory.addToTrackers(newTrackerToAdd)
-            //            newTrackerToAdd.category = newTrackerCategory
             save()
             print("New Tracker created and Added TO NEW CAT ✅")
         }
@@ -141,10 +166,6 @@ final class TrackerCoreManager {
         }
     }
     
-//    func getDataBaseFromStorage() -> [TrackerCategory]? {
-//        self.trackers
-//    }
-    
     func getCategoryNamesFromStorage() -> [String] {
         var arrayOfCategoryNames = [String]()
         
@@ -161,3 +182,54 @@ final class TrackerCoreManager {
        return uniqueCategoryNames
     }
 }
+
+extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
+    
+    var isCoreDataEmpty: Bool {
+        fetchedResultsController?.sections?.isEmpty ?? true
+    }
+        
+    var numberOfSections: Int {
+        fetchedResultsController?.sections?.count ?? 0
+    }
+    
+    func numberOfRowsInSection(_ section: Int) -> Int {
+        fetchedResultsController?.sections?[section].numberOfObjects ?? 0
+    }
+    
+    func object(at indexPath: IndexPath) -> TrackerCoreData? {
+        fetchedResultsController?.object(at: indexPath)
+    }
+    
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
+        insertedIndexes = IndexSet()
+        deletedIndexes = IndexSet()
+    }
+    
+//    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+//        delegate?.didUpdate(NotepadStoreUpdate(
+//                insertedIndexes: insertedIndexes!,
+//                deletedIndexes: deletedIndexes!
+//            )
+//        )
+//        insertedIndexes = nil
+//        deletedIndexes = nil
+//    }
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        
+        switch type {
+        case .delete:
+            if let indexPath = indexPath {
+                deletedIndexes?.insert(indexPath.item)
+            }
+        case .insert:
+            if let indexPath = newIndexPath {
+                insertedIndexes?.insert(indexPath.item)
+            }
+        default:
+            break
+        }
+    }
+}
+    
