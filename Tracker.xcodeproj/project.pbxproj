@@ -16,9 +16,7 @@
 		7335BCBF2BA1FF3F002271F3 /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7335BCBE2BA1FF3F002271F3 /* TrackerCategory.swift */; };
 		7335BCC12BA1FF8D002271F3 /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7335BCC02BA1FF8D002271F3 /* TrackerRecord.swift */; };
 		735D83182BA2F7880071D090 /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735D83172BA2F7880071D090 /* ScheduleViewController.swift */; };
-		735FAC032BB34F8C004F671D /* TrackerCoreData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735FABFF2BB34F8C004F671D /* TrackerCoreData+CoreDataClass.swift */; };
 		735FAC042BB34F8C004F671D /* TrackerCoreData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735FAC002BB34F8C004F671D /* TrackerCoreData+CoreDataProperties.swift */; };
-		735FAC052BB34F8C004F671D /* TrackerCategoryCoreData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735FAC012BB34F8C004F671D /* TrackerCategoryCoreData+CoreDataClass.swift */; };
 		735FAC062BB34F8C004F671D /* TrackerCategoryCoreData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735FAC022BB34F8C004F671D /* TrackerCategoryCoreData+CoreDataProperties.swift */; };
 		73A6304A2BAF6CFB00CDD02C /* TrackerCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 73A630482BAF6CFB00CDD02C /* TrackerCoreData.xcdatamodeld */; };
 		73A7F59C2BB304B4006BE2C2 /* TrackerCoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A7F59B2BB304B4006BE2C2 /* TrackerCoreManager.swift */; };
@@ -52,9 +50,7 @@
 		7335BCBE2BA1FF3F002271F3 /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
 		7335BCC02BA1FF8D002271F3 /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
 		735D83172BA2F7880071D090 /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
-		735FABFF2BB34F8C004F671D /* TrackerCoreData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerCoreData+CoreDataClass.swift"; sourceTree = "<group>"; };
 		735FAC002BB34F8C004F671D /* TrackerCoreData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerCoreData+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		735FAC012BB34F8C004F671D /* TrackerCategoryCoreData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerCategoryCoreData+CoreDataClass.swift"; sourceTree = "<group>"; };
 		735FAC022BB34F8C004F671D /* TrackerCategoryCoreData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerCategoryCoreData+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		73A630492BAF6CFB00CDD02C /* TrackerCoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TrackerCoreData.xcdatamodel; sourceTree = "<group>"; };
 		73A7F59B2BB304B4006BE2C2 /* TrackerCoreManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackerCoreManager.swift; sourceTree = "<group>"; };
@@ -140,9 +136,7 @@
 		73A630522BB17B6600CDD02C /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				735FABFF2BB34F8C004F671D /* TrackerCoreData+CoreDataClass.swift */,
 				735FAC002BB34F8C004F671D /* TrackerCoreData+CoreDataProperties.swift */,
-				735FAC012BB34F8C004F671D /* TrackerCategoryCoreData+CoreDataClass.swift */,
 				735FAC022BB34F8C004F671D /* TrackerCategoryCoreData+CoreDataProperties.swift */,
 				73A630482BAF6CFB00CDD02C /* TrackerCoreData.xcdatamodeld */,
 			);
@@ -290,9 +284,7 @@
 				7335BCC12BA1FF8D002271F3 /* TrackerRecord.swift in Sources */,
 				73A7F59C2BB304B4006BE2C2 /* TrackerCoreManager.swift in Sources */,
 				73E1969F2BAA1A2400D7E734 /* passNewTaskToMainVC.swift in Sources */,
-				735FAC032BB34F8C004F671D /* TrackerCoreData+CoreDataClass.swift in Sources */,
 				735FAC042BB34F8C004F671D /* TrackerCoreData+CoreDataProperties.swift in Sources */,
-				735FAC052BB34F8C004F671D /* TrackerCategoryCoreData+CoreDataClass.swift in Sources */,
 				735FAC062BB34F8C004F671D /* TrackerCategoryCoreData+CoreDataProperties.swift in Sources */,
 				7311541F2BA248D60078C849 /* CreatingOneOffVC.swift in Sources */,
 				735D83182BA2F7880071D090 /* ScheduleViewController.swift in Sources */,

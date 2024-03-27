@@ -14,13 +14,13 @@ final class TrackerCoreManager {
     
     static let shared = TrackerCoreManager()
     
-    private init() { 
-//        deleteAllItems()
-        trackers = fetchData()
-    }
+    private init() {    }
     
-    var trackers = [TrackerCategory]()
+//    var trackers = [TrackerCategory]()
     
+//    var categories = [String]()
+    
+    // MARK: - Continer, context
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "TrackerCoreData")
         container.loadPersistentStores { (description, error) in
@@ -64,39 +64,71 @@ final class TrackerCoreManager {
     
     func deleteAllItems() {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
-        let allTrackers = try? context.fetch(fetchRequest)
-        
-        if let allTrackers = allTrackers {
-            for i in allTrackers {
-                context.delete(i)
-            }
+        do {
+            var allTrackers = try context.fetch(fetchRequest)
+            allTrackers.removeAll()
             save()
+            print("Data deleted ✅")
+        } catch  {
+            print(error.localizedDescription)
         }
     }
 
-    func createNewTracker(newTracker: TrackerCategory) {
-        print("We're here")
-        let newTrackerCategory = TrackerCategoryCoreData(context: context)
-        newTrackerCategory.header = newTracker.header
-        
-        guard let color = newTracker.trackers.first?.color else { return }
-        let colorInString = color.hexStringFromUIColor()
     
-        let newTrackerToAdd = TrackerCoreData(context: context)
-        newTrackerToAdd.id = newTracker.trackers.first?.id
-        newTrackerToAdd.name = newTracker.trackers.first?.name
-        newTrackerToAdd.colorHex = colorInString
-        newTrackerToAdd.emoji = newTracker.trackers.first?.emoji
-        newTrackerToAdd.schedule = newTracker.trackers.first?.schedule
-        
-        newTrackerToAdd.category = newTrackerCategory
-        
-//        print("newTrackerToAdd: \(newTrackerToAdd)")
-//        print("newTrackerCategory: \(newTrackerCategory)")
-
+    func createNewCategory(newCategoryName: String) {
+        print("We're here - createNewCategory")
+        let newCategory = TrackerCategoryCoreData(context: context)
+        newCategory.header = newCategoryName
         save()
-//        print("DataBase in CoreData: \(trackers)")
+        print("New Category created ✅")
     }
+
+    func createNewTracker(newTracker: TrackerCategory) {
+        print("We're here - createNewTracker")
+        let header = newTracker.header
+        
+        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "header = %@", header)
+        
+        do {
+            let result = try context.fetch(fetchRequest)
+            if let foundCategory = result.first {
+                guard let color = newTracker.trackers.first?.color else { return }
+                let colorInString = color.hexStringFromUIColor()
+                
+                let newTrackerToAdd = TrackerCoreData(context: context)
+                newTrackerToAdd.id = newTracker.trackers.first?.id
+                newTrackerToAdd.name = newTracker.trackers.first?.name
+                newTrackerToAdd.colorHex = colorInString
+                newTrackerToAdd.emoji = newTracker.trackers.first?.emoji
+                newTrackerToAdd.schedule = newTracker.trackers.first?.schedule
+                
+                foundCategory.addToTrackers(newTrackerToAdd)
+                //                newTrackerToAdd.category = foundCategory
+                save()
+                print("New Tracker created and Added TO EXISTING CAT ✅")
+            }
+        } catch  {
+            let newTrackerCategory = TrackerCategoryCoreData(context: context)
+            newTrackerCategory.header = newTracker.header
+            
+            guard let color = newTracker.trackers.first?.color else { return }
+            let colorInString = color.hexStringFromUIColor()
+            
+            let newTrackerToAdd = TrackerCoreData(context: context)
+            newTrackerToAdd.id = newTracker.trackers.first?.id
+            newTrackerToAdd.name = newTracker.trackers.first?.name
+            newTrackerToAdd.colorHex = colorInString
+            newTrackerToAdd.emoji = newTracker.trackers.first?.emoji
+            newTrackerToAdd.schedule = newTracker.trackers.first?.schedule
+            
+            newTrackerCategory.addToTrackers(newTrackerToAdd)
+            //            newTrackerToAdd.category = newTrackerCategory
+            save()
+            print("New Tracker created and Added TO NEW CAT ✅")
+        }
+    }
+        
     
     func save() {
         let context = persistentContainer.viewContext
@@ -109,11 +141,9 @@ final class TrackerCoreManager {
         }
     }
     
-    func getDataBaseFromStorage() -> [TrackerCategory]? {
-        self.trackers
-    }
-    
-    
+//    func getDataBaseFromStorage() -> [TrackerCategory]? {
+//        self.trackers
+//    }
     
     func getCategoryNamesFromStorage() -> [String] {
         var arrayOfCategoryNames = [String]()
@@ -126,6 +156,8 @@ final class TrackerCoreManager {
                 arrayOfCategoryNames.append(i.header ?? "ЭЭ")
             }
         }
-       return arrayOfCategoryNames
+        let uniqueCategoryNames = Array(Set(arrayOfCategoryNames))
+        
+       return uniqueCategoryNames
     }
 }

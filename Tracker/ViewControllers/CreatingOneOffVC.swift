@@ -36,7 +36,7 @@ final class CreatingOneOffVC: UIViewController {
     
     var newTaskToPassToMainScreen: ( (TrackerCategory) -> Void )?
     
-    let categoryStorage = CategoryStorage.shared
+//    let categoryStorage = CategoryStorage.shared
     
     var delegate: NewTaskDelegate?
     

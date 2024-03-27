@@ -41,30 +41,15 @@ final class TrackerViewController: UIViewController {
     } ()
     
     // MARK: - Private Properties
+        
+//    let coreDataStorage = TrackerCoreManager.shared
     
-    private var categoryNames: [String] {
-        newData.map { $0.header }
-    }
-    
-    let categoryStorage = CategoryStorage.shared
-    
-    let coreDataStorage = TrackerCoreManager.shared
-    
-    var categories: [TrackerCategory] {
-        if let dataBase = coreDataStorage.getDataBaseFromStorage() {
-            return  dataBase
-        } else {
-            print("Ooops we have a problem")
-            return []
-        }
-    }
-    
-    var categoryNamesDelegate: PassCategoryNamesFromMainVC?
-    
+    var categories = [TrackerCategory]()
+        
     private var completedTrackers: [TrackerRecord]?
     
     private var isDoneForToday = false
-    private var filteredData: [TrackerCategory] = []
+    private var filteredData = [TrackerCategory]()
     private var isSearchMode = false
     
     private lazy var currentDate = datePicker.date
@@ -72,18 +57,18 @@ final class TrackerViewController: UIViewController {
     private var newDateCategories: [TrackerCategory]?
     
     private var newData: [TrackerCategory] {
-        if let newDateCategories = newDateCategories {
-            newDateCategories
-        } else {
             isSearchMode ? filteredData : categories
-        }
     }
-    
-    private let dataFormCoreData = TrackerCoreManager.shared.trackers
-    
+        
+    private var categoryNames: [String] {
+            newData.map { $0.header }
+        }
+        
     // MARK: - Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        getDataFromCoreData()
         
         completedTrackers = []
         
@@ -95,11 +80,14 @@ final class TrackerViewController: UIViewController {
         
         setupFiltersButton()
         
-        print(dataFormCoreData)
-        
+//        print("dataFormCoreData \(dataFormCoreData)")
+//        
+//        print("categoriesFromCoreData \(categoriesFromCoreData)")
+//        print("categoryNames \(categoryNames)")
+
         setupUI()
         
-        passCategoryNamesToSingleton()
+//        passCategoryNamesToSingleton()
         
         addTapGestureToHideDatePicker()
                 
@@ -112,9 +100,14 @@ final class TrackerViewController: UIViewController {
         return dateToString
     }
     
-    private func passCategoryNamesToSingleton() {
-        CategoryStorage.shared.addToCategoryNamesStorage(categoryNames: categoryNames)
+    private func getDataFromCoreData() {
+        self.categories = TrackerCoreManager.shared.fetchData()
+        collectionView.reloadData()
     }
+    
+//    private func passCategoryNamesToSingleton() {
+//        CategoryStorage.shared.addToCategoryNamesStorage(categoryNames: categoryNames)
+//    }
     
     // MARK: - UI Actions
     @objc private func addNewHabit(_ sender: UIButton) {
@@ -332,7 +325,6 @@ final class TrackerViewController: UIViewController {
         swooshImage.isHidden = true
         textLabel.isHidden = true
     }
-    
 }
 // MARK: - UICollectionViewDataSource, UICollectionViewDelegate
 extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -342,6 +334,9 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        print("newData \(newData)")
+//        print("newData[section].trackers.count \(newData[section].trackers.count)")
+        
         return newData[section].trackers.count
     }
     

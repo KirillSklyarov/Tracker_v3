@@ -32,23 +32,20 @@ final class ChoosingCategoryViewController: UIViewController {
     
     var updateCategory: ( (String) -> Void)?
     
-    var categories: [String] = []
-    
     var delegateToPassCategoryNameToEdit: PassCategoryNamesToEditingVC?
     
     let coreDataStorage = TrackerCoreManager.shared
+    
+    lazy var categories: [String] = coreDataStorage.getCategoryNamesFromStorage()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        recieveCategoryNamesFromSingleton()
-        
-        print(categories)
+                
+//         print("categories in choosing VC \(categories)")
         
         setupUI()
         
         setupTableView()
-      
     }
     
     private func setupTableView() {
@@ -120,10 +117,13 @@ final class ChoosingCategoryViewController: UIViewController {
         let creatingCategoryNavVC = UINavigationController(rootViewController: creatingNewCategoryVC)
         creatingNewCategoryVC.updateTableClosure = { [weak self] newCategory in
             guard let self = self else { return }
-            self.categories.append(newCategory)
+            TrackerCoreManager.shared.createNewCategory(newCategoryName: newCategory)
+            recieveCategoryNamesFromCoreData()
+            print(self.categories)
             self.categoryTableView.reloadData()
             self.categoryTableView.layoutIfNeeded()
             
+          
             if categories.isEmpty {
                 showPlaceholderForEmptyScreen()
             } else {
@@ -222,7 +222,7 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
             editingVC.updateCategoryNameClosure = { newName in
                 cell.textLabel?.text = newName
                 self.categories[indexPath.row] = newName
-                self.sendCategoryNamesToSingleton()
+//                self.sendCategoryNamesToSingleton()
             }
             present(navVC, animated: true)
         }
@@ -235,7 +235,7 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
                 guard let self = self else { return }
                 self.categories.remove(at: indexPath.row)
                 self.categoryTableView.deleteRows(at: [indexPath], with: .automatic)
-                self.sendCategoryNamesToSingleton()
+//                self.sendCategoryNamesToSingleton()
                 
                 designLastCell(indexPath: indexPath)
             }
@@ -261,15 +261,13 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
 // MARK: - Load&Save category names in Storage
 private extension ChoosingCategoryViewController {
     
-    func recieveCategoryNamesFromSingleton() {
+    func recieveCategoryNamesFromCoreData() {
         self.categories = coreDataStorage.getCategoryNamesFromStorage()
-        
-//        CategoryStorage.shared.getCategoryNamesFromStorage()
     }
     
-    func sendCategoryNamesToSingleton() {
-        CategoryStorage.shared.updateCategoryNamesInStorage(categoryNames: categories)
-    }
+//    func sendCategoryNamesToSingleton() {
+//        CategoryStorage.shared.updateCategoryNamesInStorage(categoryNames: categories)
+//    }
 }
                                           
 //MARK: - SwiftUI
