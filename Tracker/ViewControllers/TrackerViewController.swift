@@ -15,7 +15,7 @@ final class TrackerViewController: UIViewController {
     private let searchController = UISearchController(searchResultsController: nil)
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
-    let datePicker = UIDatePicker()
+    private let datePicker = UIDatePicker()
     
     private lazy var dateButton: UIButton = {
         let button = UIButton()
@@ -29,30 +29,27 @@ final class TrackerViewController: UIViewController {
         return button
     } ()
     
+    private lazy var filtersButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Фильтры", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor(named: "filterButtonBackground")
+        button.layer.cornerRadius = 16
+        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        return button
+    } ()
     
     // MARK: - Private Properties
     
-    private var categoryNames: [String] {
-        newData.map { $0.header }
-    }
+    private let coreDataStorage = TrackerCoreManager.shared
     
-    let categoryStorage = CategoryStorage.shared
-    
-    var categories: [TrackerCategory] {
-        if let dataBase = categoryStorage.getDataBaseFromStorage() {
-            return  dataBase
-        } else {
-            print("Ooops we have a problem")
-            return []
-        }
-    }
-    
-    var categoryNamesDelegate: PassCategoryNamesFromMainVC?
+    private var categories = [TrackerCategory]()
     
     private var completedTrackers: [TrackerRecord]?
     
     private var isDoneForToday = false
-    private var filteredData: [TrackerCategory] = []
+    private var filteredData = [TrackerCategory]()
     private var isSearchMode = false
     
     private lazy var currentDate = datePicker.date
@@ -60,16 +57,24 @@ final class TrackerViewController: UIViewController {
     private var newDateCategories: [TrackerCategory]?
     
     private var newData: [TrackerCategory] {
-        if let newDateCategories = newDateCategories {
-            newDateCategories
-        } else {
-            isSearchMode ? filteredData : categories
-        }
+        isSearchMode ? filteredData : categories
     }
     
+    private lazy var weekDay: String = {
+        let calendar = Calendar.current
+        let dateComponents = calendar.dateComponents([.weekday], from: currentDate)
+        let weekDay = dateComponents.weekday
+        let weekDayString = dayNumberToDayString(weekDayNumber: weekDay)
+        return weekDayString
+    } ()
+            
     // MARK: - Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        coreDataStorage.setupFetchedResultsController(weekDay: weekDay)
+                
+        coreDataStorage.delegate = self
         
         completedTrackers = []
         
@@ -79,23 +84,12 @@ final class TrackerViewController: UIViewController {
         
         setupCollectionView()
         
+        setupFiltersButton()
+        
         setupUI()
         
-        passCategoryNamesToSingleton()
-        
         addTapGestureToHideDatePicker()
-                
-    }
-    
-    private func dateToString(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yy"
-        let dateToString = formatter.string(from: currentDate)
-        return dateToString
-    }
-    
-    private func passCategoryNamesToSingleton() {
-        CategoryStorage.shared.addToCategoryNamesStorage(categoryNames: categoryNames)
+        
     }
     
     // MARK: - UI Actions
@@ -128,6 +122,7 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc private func dateButtonTapped(_ sender: UIButton) {
+        print("Date button tapped")
         setupDatePicker()
     }
     
@@ -173,10 +168,15 @@ final class TrackerViewController: UIViewController {
         let weekDay = dateComponents.weekday
         let weekDayString = dayNumberToDayString(weekDayNumber: weekDay)
         
-        newDateCategories = filterNewDataFromData(weekDay: weekDayString)
-        collectionView.reloadData()
+//        newDateCategories = filterNewDataFromData(weekDay: weekDayString)
+        coreDataStorage.getTrackersForWeekDay(weekDay: weekDayString)
+//        collectionView.reloadData()
         showOrHidePlaceholder()
         navigationItem.searchController = searchController
+    }
+    
+    @objc private func filterButtonTapped(_ sender: UIButton) {
+        
     }
     
     // MARK: - UI, Navigation, Search
@@ -247,12 +247,22 @@ final class TrackerViewController: UIViewController {
         ])
     }
     
+    private func setupFiltersButton() {
+        view.addSubViews([filtersButton])
+        
+        NSLayoutConstraint.activate([
+            filtersButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filtersButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            filtersButton.widthAnchor.constraint(equalToConstant: 114),
+            filtersButton.heightAnchor.constraint(equalToConstant: 50),
+        ])
+    }
+    
     private func setupUI() {
         
         view.backgroundColor = .systemBackground
         
         showOrHidePlaceholder()
-        
     }
     
     // MARK: - Private Methods
@@ -263,8 +273,16 @@ final class TrackerViewController: UIViewController {
         }
     }
     
+    private func dateToString(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yy"
+        let dateToString = formatter.string(from: currentDate)
+        return dateToString
+    }
+    
     private func showOrHidePlaceholder() {
-        newData.isEmpty ? showPlaceholderForEmptyScreen() : hidePlaceholderForEmptyScreen()
+        let isDataEmpty = coreDataStorage.isCoreDataEmpty
+        isDataEmpty ? showPlaceholderForEmptyScreen() : hidePlaceholderForEmptyScreen()
     }
     
     private func showPlaceholderForEmptyScreen() {
@@ -298,17 +316,16 @@ final class TrackerViewController: UIViewController {
         swooshImage.isHidden = true
         textLabel.isHidden = true
     }
-    
 }
 // MARK: - UICollectionViewDataSource, UICollectionViewDelegate
 extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        categoryNames.count
+        coreDataStorage.numberOfSections
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return newData[section].trackers.count
+        coreDataStorage.numberOfRowsInSection(section)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -326,47 +343,47 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     private func configureCell(cell: TrackerCollectionViewCell, indexPath: IndexPath) {
-        let categories = newData[indexPath.section]
-        let trackersInCategory = categories.trackers
-        let tracker = trackersInCategory[indexPath.row]
-        let frameColor = tracker.color
-        let today = Date()
+        guard let tracker = coreDataStorage.object(at: indexPath) else { return }
         
+        let trackercolor = UIColor(hex: tracker.colorHex ?? "#000000")
+        let frameColor = trackercolor
+        let today = Date()
+                
         cell.titleLabel.text = tracker.name
-        cell.frameView.backgroundColor = frameColor
         cell.emojiLabel.text = tracker.emoji
+        cell.frameView.backgroundColor = frameColor
         cell.plusButton.backgroundColor = frameColor
         cell.plusButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
         cell.plusButton.isEnabled = currentDate > today ? false : true
         
         showDoneOrUndoneTaskForDatePickerDate(tracker: tracker, cell: cell)
         
+        let iteraction = UIContextMenuInteraction(delegate: self)
+        cell.frameView.addInteraction(iteraction)
+        
     }
     
-    private func showDoneOrUndoneTaskForDatePickerDate(tracker: Tracker, cell: TrackerCollectionViewCell) {
+    private func showDoneOrUndoneTaskForDatePickerDate(tracker: TrackerCoreData, cell: TrackerCollectionViewCell) {
         let dateOnDatePicker = datePicker.date
         let dateOnDatePickerString = dateToString(date: dateOnDatePicker)
-        let color = tracker.color
+        
+        let trackercolor = UIColor(hex: tracker.colorHex ?? "#000000")
+        let color = trackercolor
         
         guard let check = completedTrackers?.contains(where: { $0.id == tracker.id && $0.date == dateOnDatePickerString }) else { return }
         
         if !check {
-            print("Нет в списке - значит ставим плюсик")
             let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
             cell.plusButton.setImage(plusImage, for: .normal)
         } else {
-            print("Хм - есть в списке, значит галку ставим")
             let doneImage = UIImage(named: "done")
             cell.plusButton.setImage(doneImage, for: .normal)
             cell.plusButton.backgroundColor = color.withAlphaComponent(0.3)
         }
     }
     
-    
     private func makeTaskDone(trackForAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
         completedTrackers?.append(trackForAdd)
-//        cell.plusButton.clipsToBounds = true
-//        cell.plusButton.layer.cornerRadius = cell.plusButton.frame.width / 2
         let doneImage = UIImage(named: "done")
         cell.plusButton.setImage(doneImage, for: .normal)
         cell.plusButton.backgroundColor = cellColor.withAlphaComponent(0.3)
@@ -399,7 +416,10 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
             id = ""
         }
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! SuplementaryView
-        view.label.text = newData[indexPath.section].header
+        
+        if let headers = coreDataStorage.fetchedResultsController?.sectionIndexTitles  {
+            view.label.text = headers[indexPath.section]
+        }
         return view
     }
     
@@ -470,33 +490,34 @@ extension TrackerViewController: UIGestureRecognizerDelegate {
     }
 }
 
-//extension TrackerViewController: NewTaskDelegate {
-//    func getNewTaskFromAnotherVC(newTask: TrackerCategory) {
-//        categories.append(newTask)
-//    }
-//}
-
-//MARK: - SwiftUI
-import SwiftUI
-struct Provider01 : PreviewProvider {
-    static var previews: some View {
-        ContainterView().edgesIgnoringSafeArea(.all)
-    }
+// MARK: - Context Menu
+extension TrackerViewController: UIContextMenuInteractionDelegate {
     
-    struct ContainterView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> UIViewController {
-            return TrackerViewController()
-        }
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         
-        typealias UIViewControllerType = UIViewController
-        
-        let viewController = TrackerViewController()
-        func makeUIViewController(context: UIViewControllerRepresentableContext<Provider01.ContainterView>) -> TrackerViewController {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: Provider01.ContainterView.UIViewControllerType, context: UIViewControllerRepresentableContext<Provider01.ContainterView>) {
+        return UIContextMenuConfiguration(actionProvider: { (_) -> UIMenu? in
             
-        }
+            let lockAction = UIAction(title: "Закрепить") { _ in }
+            let editAction = UIAction(title: "Редактировать") { _ in }
+            
+            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in
+                let convertedLocation = self.collectionView.convert(location, from: interaction.view)
+                
+                guard let indexPath = self.collectionView.indexPathForItem(at: convertedLocation) else {
+                            print("Ooops"); return
+                        }
+                self.coreDataStorage.deleteTracker(at: indexPath)
+            }
+            
+            return UIMenu(children: [lockAction, editAction, deleteAction]) }
+        )
+    }
+}
+
+extension TrackerViewController: DataProviderDelegate {
+    
+    func didUpdate(_ update: TrackersStoreUpdate) {
+        collectionView.reloadData()
+        showOrHidePlaceholder()
     }
 }

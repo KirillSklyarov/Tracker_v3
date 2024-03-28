@@ -12,7 +12,6 @@ final class EditingCategoryViewController: UIViewController {
     private let categoryNameTextField = UITextField()
     private lazy var doneButton = setupButtons(title: "Готово")
     
-//    var categories = TrackerViewController().categories
     var updateCategoryNameClosure: ( (String) -> Void )?
     
     override func viewDidLoad() {
@@ -87,18 +86,6 @@ final class EditingCategoryViewController: UIViewController {
             doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         ])
     }
-    
-//    @objc private func textFildEditing(_ sender: UITextField) {
-//        print(sender.text as Any)
-//        if let text = sender.text,
-//           !text.isEmpty {
-//            doneButton.isEnabled = true
-//            doneButton.backgroundColor = .black
-//        } else {
-//            doneButton.isEnabled = false
-//            doneButton.backgroundColor = .systemGray4
-//        }
-//    }
     
     @objc private func doneButtonTapped(_ sender: UIButton) {
         print("doneButtonTapped")

@@ -36,7 +36,7 @@ final class CreatingOneOffVC: UIViewController {
     
     var newTaskToPassToMainScreen: ( (TrackerCategory) -> Void )?
     
-    let categoryStorage = CategoryStorage.shared
+//    let categoryStorage = CategoryStorage.shared
     
     var delegate: NewTaskDelegate?
     
@@ -134,11 +134,6 @@ final class CreatingOneOffVC: UIViewController {
             createButton.isEnabled = true
             createButton.backgroundColor = .black
         } else {
-            print("New task name \(String(describing: trackerNameTextField.text))")
-            print("Selected category \(String(describing: selectedCategory))")
-            print("Selected schedule \(String(describing: selectedSchedule))")
-            print("Selected Emoji \(String(describing: selectedEmoji))")
-            print("Selected Color \(String(describing: selectedColor))")
             createButton.isEnabled = false
             createButton.backgroundColor = UIColor(named: "createButtonGrayColor")
         }
@@ -168,11 +163,13 @@ final class CreatingOneOffVC: UIViewController {
         let color = UIColor(hex: selectedColor)
         
         let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
-        print(newTask)
-        newTaskToPassToMainScreen?(newTask)
+//        print(newTask)
+//        newTaskToPassToMainScreen?(newTask)
+//        categoryStorage.addToDataBase(dataBase: newTask)
+
+        TrackerCoreManager.shared.createNewTracker(newTracker: newTask)
         let tabBarVC = TabBarController()
         tabBarVC.modalPresentationStyle = .fullScreen
-        categoryStorage.addToDataBase(dataBase: newTask)
         present(tabBarVC, animated: true)
     }
     
@@ -208,6 +205,7 @@ final class CreatingOneOffVC: UIViewController {
     }
 }
 
+// MARK: -  UITableViewDataSource, UITableViewDelegate
 extension CreatingOneOffVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -256,11 +254,12 @@ extension CreatingOneOffVC: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
+// MARK: - TextFieldDelegate - control of TextField length
 extension CreatingOneOffVC: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let currentCharacterCount = textField.text?.count ?? 0
-        if currentCharacterCount <= 25 {
+        if currentCharacterCount <= 38 {
             hideLabelExceedTextFieldLimit()
             isCreateButtonEnable()
             textField.textColor = .black
@@ -278,6 +277,7 @@ extension CreatingOneOffVC: UITextFieldDelegate {
     }
 }
 
+// MARK: - UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
 extension CreatingOneOffVC: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

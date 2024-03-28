@@ -38,7 +38,9 @@ final class CreatingNewHabitViewController: UIViewController {
     
     var delegate: NewTaskDelegate?
     
-    let singleton = CategoryStorage.shared
+//    let singleton = CategoryStorage.shared
+    
+    let coreDataManager = TrackerCoreManager.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -172,12 +174,15 @@ final class CreatingNewHabitViewController: UIViewController {
         let color = UIColor(hex: selectedColor)
         
         let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: selectedSchedule)])
-        newTaskToPassToMainScreen?(newTask)
+//        newTaskToPassToMainScreen?(newTask)
         // Попробую сделать это через синглтон
-        singleton.addToDataBase(dataBase: newTask)
-        let mainVC = TabBarController()
-        mainVC.modalPresentationStyle = .fullScreen
-        present(mainVC, animated: true)
+//        singleton.addToDataBase(dataBase: newTask)
+        
+        coreDataManager.createNewTracker(newTracker: newTask)
+        
+        let tabBarVC = TabBarController()
+        tabBarVC.modalPresentationStyle = .fullScreen
+        present(tabBarVC, animated: true)
     }
     
     private func setupButtons(title: String) -> UIButton {

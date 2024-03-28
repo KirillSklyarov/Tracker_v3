@@ -12,7 +12,6 @@ final class CreatingNewCategoryViewController: UIViewController {
     private let categoryNameTextField = UITextField()
     private lazy var doneButton = setupButtons(title: "Готово")
     
-    var categories = TrackerViewController().categories
     var updateTableClosure: ( (String) -> Void )?
     
     override func viewDidLoad() {
