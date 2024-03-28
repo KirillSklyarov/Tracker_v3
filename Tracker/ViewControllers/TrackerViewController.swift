@@ -25,7 +25,7 @@ final class TrackerViewController: UIViewController {
         button.frame = CGRect(x: 0, y: 0, width: 77, height: 34)
         button.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         button.layer.cornerRadius = 8
-        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(dateButtonTapped), for: .touchUpInside)
         return button
     } ()
     
@@ -36,15 +36,15 @@ final class TrackerViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(named: "filterButtonBackground")
         button.layer.cornerRadius = 16
-        button.addTarget(self, action: #selector(dateButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
         return button
     } ()
     
     // MARK: - Private Properties
     
-    let coreDataStorage = TrackerCoreManager.shared
+    private let coreDataStorage = TrackerCoreManager.shared
     
-    var categories = [TrackerCategory]()
+    private var categories = [TrackerCategory]()
     
     private var completedTrackers: [TrackerRecord]?
     
@@ -60,11 +60,21 @@ final class TrackerViewController: UIViewController {
         isSearchMode ? filteredData : categories
     }
     
+    private lazy var weekDay: String = {
+        let calendar = Calendar.current
+        let dateComponents = calendar.dateComponents([.weekday], from: currentDate)
+        let weekDay = dateComponents.weekday
+        let weekDayString = dayNumberToDayString(weekDayNumber: weekDay)
+        return weekDayString
+    } ()
+            
     // MARK: - Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        coreDataStorage.setupFetchedResultsController()
+        coreDataStorage.setupFetchedResultsController(weekDay: weekDay)
+                
+        coreDataStorage.delegate = self
         
         completedTrackers = []
         
@@ -80,20 +90,6 @@ final class TrackerViewController: UIViewController {
         
         addTapGestureToHideDatePicker()
         
-        
-//        print(isDataEmpty)
-        
-//        print(coreDataStorage.object(at: IndexPath(row: 1, section: 0)))
-//         
-//        print(coreDataStorage.fetchedResultsController?.sectionIndexTitles)
-//        let section = coreDataStorage.fetchedResultsController?.sectionIndexTitles
-    }
-    
-    private func dateToString(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yy"
-        let dateToString = formatter.string(from: currentDate)
-        return dateToString
     }
     
     // MARK: - UI Actions
@@ -126,6 +122,7 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc private func dateButtonTapped(_ sender: UIButton) {
+        print("Date button tapped")
         setupDatePicker()
     }
     
@@ -171,8 +168,9 @@ final class TrackerViewController: UIViewController {
         let weekDay = dateComponents.weekday
         let weekDayString = dayNumberToDayString(weekDayNumber: weekDay)
         
-        newDateCategories = filterNewDataFromData(weekDay: weekDayString)
-        collectionView.reloadData()
+//        newDateCategories = filterNewDataFromData(weekDay: weekDayString)
+        coreDataStorage.getTrackersForWeekDay(weekDay: weekDayString)
+//        collectionView.reloadData()
         showOrHidePlaceholder()
         navigationItem.searchController = searchController
     }
@@ -180,7 +178,6 @@ final class TrackerViewController: UIViewController {
     @objc private func filterButtonTapped(_ sender: UIButton) {
         
     }
-    
     
     // MARK: - UI, Navigation, Search
     private func setupNavigation() {
@@ -266,7 +263,6 @@ final class TrackerViewController: UIViewController {
         view.backgroundColor = .systemBackground
         
         showOrHidePlaceholder()
-        
     }
     
     // MARK: - Private Methods
@@ -275,6 +271,13 @@ final class TrackerViewController: UIViewController {
         if !searchText.isEmpty {
             isSearchMode = true
         }
+    }
+    
+    private func dateToString(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yy"
+        let dateToString = formatter.string(from: currentDate)
+        return dateToString
     }
     
     private func showOrHidePlaceholder() {
@@ -319,16 +322,10 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         coreDataStorage.numberOfSections
-//        categoryNames.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        print("newData \(newData)")
-//        print("newData[section].trackers.count \(newData[section].trackers.count)")
         coreDataStorage.numberOfRowsInSection(section)
-        
-//        numberOfRowsInSection(section)
-//        return newData[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -346,26 +343,16 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
     }
     
     private func configureCell(cell: TrackerCollectionViewCell, indexPath: IndexPath) {
-        let trackerFromFetchedResultController = coreDataStorage.object(at: indexPath)
-//        print("trackerFromFetchedResultController \(trackerFromFetchedResultController)")
-        
-//        let categories = newData[indexPath.section]
-//        let trackersInCategory = categories.trackers
-        
-        let tracker = trackerFromFetchedResultController!
-        //        trackersInCategory[indexPath.row]
+        guard let tracker = coreDataStorage.object(at: indexPath) else { return }
         
         let trackercolor = UIColor(hex: tracker.colorHex ?? "#000000")
-     
         let frameColor = trackercolor
         let today = Date()
                 
         cell.titleLabel.text = tracker.name
         cell.emojiLabel.text = tracker.emoji
-        
         cell.frameView.backgroundColor = frameColor
         cell.plusButton.backgroundColor = frameColor
-        
         cell.plusButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
         cell.plusButton.isEnabled = currentDate > today ? false : true
         
@@ -386,17 +373,14 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         guard let check = completedTrackers?.contains(where: { $0.id == tracker.id && $0.date == dateOnDatePickerString }) else { return }
         
         if !check {
-//            print("Нет в списке - значит ставим плюсик")
             let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
             cell.plusButton.setImage(plusImage, for: .normal)
         } else {
-//            print("Хм - есть в списке, значит галку ставим")
             let doneImage = UIImage(named: "done")
             cell.plusButton.setImage(doneImage, for: .normal)
             cell.plusButton.backgroundColor = color.withAlphaComponent(0.3)
         }
     }
-    
     
     private func makeTaskDone(trackForAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
         completedTrackers?.append(trackForAdd)
@@ -510,84 +494,30 @@ extension TrackerViewController: UIGestureRecognizerDelegate {
 extension TrackerViewController: UIContextMenuInteractionDelegate {
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        
         return UIContextMenuConfiguration(actionProvider: { (_) -> UIMenu? in
             
             let lockAction = UIAction(title: "Закрепить") { _ in }
             let editAction = UIAction(title: "Редактировать") { _ in }
-            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in }
+            
+            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in
+                let convertedLocation = self.collectionView.convert(location, from: interaction.view)
+                
+                guard let indexPath = self.collectionView.indexPathForItem(at: convertedLocation) else {
+                            print("Ooops"); return
+                        }
+                self.coreDataStorage.deleteTracker(at: indexPath)
+            }
             
             return UIMenu(children: [lockAction, editAction, deleteAction]) }
         )
     }
-                                          
-
-   
-//    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-//        let touchPoint = interaction.view?.convert(location, from: self)
-//    }
-    
-    
-    
-//    
-//    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
-//        guard indexPaths.count > 0 else { return nil }
-//        let indexPath = indexPaths[0]
-//        return UIContextMenuConfiguration(actionProvider: { _ in return self.showContextMenu(indexPath: indexPath) }
-//        )
-//    }
-    
-    func showContextMenu(indexPath: IndexPath) -> UIMenu {
-        let lockAction = UIAction(title: "Закрепить") { _ in }
-        let editAction = UIAction(title: "Редактировать") { _ in }
-        let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in }
-    
-        return UIMenu(children: [lockAction, editAction, deleteAction])
-    }
 }
-    
-    
-//    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-//        return UIContextMenuConfiguration(actionProvider:
-//                { _ in return self.showContextMenu(indexPath: indexPath) }
-//        )
-//    }
-    
-//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        let interaction = UIContextMenuInteraction(delegate: self)
-//        cell.addInteraction(interaction)
-//    }
-    
-//    private func designLastCell(indexPath: IndexPath) {
-//        let indexPathOfLastCell = IndexPath(row: self.categories.count - 1, section: indexPath.section)
-//        guard let cell = self.categoryTableView.cellForRow(at: indexPathOfLastCell) else { return }
-//            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-//            cell.layer.cornerRadius = 16
-//            cell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
-//    }
-//}
 
-
-//MARK: - SwiftUI
-import SwiftUI
-struct Provider01 : PreviewProvider {
-    static var previews: some View {
-        ContainterView().edgesIgnoringSafeArea(.all)
-    }
+extension TrackerViewController: DataProviderDelegate {
     
-    struct ContainterView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> UIViewController {
-            return TrackerViewController()
-        }
-        
-        typealias UIViewControllerType = UIViewController
-        
-        let viewController = TrackerViewController()
-        func makeUIViewController(context: UIViewControllerRepresentableContext<Provider01.ContainterView>) -> TrackerViewController {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: Provider01.ContainterView.UIViewControllerType, context: UIViewControllerRepresentableContext<Provider01.ContainterView>) {
-            
-        }
+    func didUpdate(_ update: TrackersStoreUpdate) {
+        collectionView.reloadData()
+        showOrHidePlaceholder()
     }
 }

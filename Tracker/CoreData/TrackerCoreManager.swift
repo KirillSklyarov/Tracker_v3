@@ -9,15 +9,23 @@ import Foundation
 import CoreData
 import UIKit
 
+struct TrackersStoreUpdate {
+    let insertedIndexes: IndexSet
+    let deletedIndexes: IndexSet
+}
+
+protocol DataProviderDelegate: AnyObject {
+    func didUpdate(_ update: TrackersStoreUpdate)
+}
 
 final class TrackerCoreManager: NSObject {
-        
+    
     static let shared = TrackerCoreManager()
     
     private override init() {
-        
     }
     
+    weak var delegate: DataProviderDelegate?
     
     // MARK: - Container, context
     lazy var persistentContainer: NSPersistentContainer = {
@@ -36,19 +44,20 @@ final class TrackerCoreManager: NSObject {
         persistentContainer.viewContext
     }
     
+    var insertedIndexes: IndexSet?
+    var deletedIndexes: IndexSet?
+        
     
     // MARK: - FetchResultsController
-    
-    private var insertedIndexes: IndexSet?
-    private var deletedIndexes: IndexSet?
-    
+        
     var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
-    
-    func setupFetchedResultsController() {
+        
+    func setupFetchedResultsController(weekDay: String) {
         let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "schedule CONTAINS %@", weekDay)
         let sort = NSSortDescriptor(key: "category.header", ascending: true)
-        request.returnsObjectsAsFaults = false
         request.sortDescriptors = [sort]
+        request.predicate = predicate
         
         fetchedResultsController = NSFetchedResultsController(fetchRequest: request,
                                                               managedObjectContext: context,
@@ -64,7 +73,6 @@ final class TrackerCoreManager: NSObject {
         }
     }
     
-    
     // MARK: - CRUD
     func fetchData() -> [TrackerCategory] {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
@@ -77,7 +85,12 @@ final class TrackerCoreManager: NSObject {
             return []
         }
     }
+    
+    
+    func renameCategory() {
         
+    }
+    
     func transformCoreDataToModel(TrackerСategoryCoreData: [TrackerCategoryCoreData]) -> [TrackerCategory] {
         let trackersCategory = TrackerСategoryCoreData.compactMap({
             TrackerCategory(coreDataObject: $0)
@@ -101,7 +114,7 @@ final class TrackerCoreManager: NSObject {
             print(error.localizedDescription)
         }
     }
-
+    
     func createNewCategory(newCategoryName: String) {
         print("We're here - createNewCategory")
         let newCategory = TrackerCategoryCoreData(context: context)
@@ -109,7 +122,7 @@ final class TrackerCoreManager: NSObject {
         save()
         print("New Category created ✅")
     }
-
+    
     func createNewTracker(newTracker: TrackerCategory) {
         print("We're here - createNewTracker")
         let header = newTracker.header
@@ -153,7 +166,7 @@ final class TrackerCoreManager: NSObject {
             print("New Tracker created and Added TO NEW CAT ✅")
         }
     }
-        
+    
     
     func save() {
         let context = persistentContainer.viewContext
@@ -179,7 +192,7 @@ final class TrackerCoreManager: NSObject {
         }
         let uniqueCategoryNames = Array(Set(arrayOfCategoryNames))
         
-       return uniqueCategoryNames
+        return uniqueCategoryNames
     }
 }
 
@@ -188,7 +201,7 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
     var isCoreDataEmpty: Bool {
         fetchedResultsController?.sections?.isEmpty ?? true
     }
-        
+    
     var numberOfSections: Int {
         fetchedResultsController?.sections?.count ?? 0
     }
@@ -201,20 +214,78 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
         fetchedResultsController?.object(at: indexPath)
     }
     
+    func deleteTracker(at indexPath: IndexPath) {
+        guard let tracker = fetchedResultsController?.object(at: indexPath) else { print("Smth is going wrong"); return }
+        context.delete(tracker)
+        print("Tracker deleted ✅")
+        save()
+    }
+    
+    func printAllTrackersInCategory(header: String) {
+        let request = TrackerCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "category.header == %@", header)
+        do {
+            let results = try context.fetch(request)
+            for trackers in results {
+                print("trackers: \(trackers)")
+            }
+        } catch  {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func isCategoryEmpty(header: String) -> Bool? {
+        let request = TrackerCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "category.header == %@", header)
+        do {
+            let count = try context.count(for: request)
+            return count <= 1 ? true : false
+        } catch  {
+            print(error.localizedDescription)
+            return nil
+        }
+    }
+    
+    func getTrackersForWeekDay(weekDay: String) {
+        let request = fetchedResultsController?.fetchRequest
+        let predicate = NSPredicate(format: "%K CONTAINS %@",
+                                    #keyPath(TrackerCoreData.schedule), weekDay)
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request?.sortDescriptors = [sort]
+        request?.predicate = predicate
+        do {
+            try? fetchedResultsController?.performFetch()
+            print("Tracker updated to weekday ✅")
+        }
+    }
+}
+
+
+
+//func fetchTrackers(currentWeekDay: WeekDay) {
+//    fetchedResultsController.fetchRequest.predicate = NSPredicate(
+//        format: "%K CONTAINS[cd] %@",
+//        #keyPath(TrackerCoreData.weekDays), currentWeekDay.englishStringRepresentation)
+//    try? fetchedResultsController.performFetch()
+//}
+
+
+extension TrackerCoreManager {
+    
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
         insertedIndexes = IndexSet()
         deletedIndexes = IndexSet()
     }
     
-//    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        delegate?.didUpdate(NotepadStoreUpdate(
-//                insertedIndexes: insertedIndexes!,
-//                deletedIndexes: deletedIndexes!
-//            )
-//        )
-//        insertedIndexes = nil
-//        deletedIndexes = nil
-//    }
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
+        delegate?.didUpdate(TrackersStoreUpdate(
+            insertedIndexes: insertedIndexes!,
+            deletedIndexes: deletedIndexes!
+        )
+        )
+        insertedIndexes = nil
+        deletedIndexes = nil
+    }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         
@@ -232,4 +303,6 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
         }
     }
 }
-    
+
+
+
