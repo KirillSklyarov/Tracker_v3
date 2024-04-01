@@ -5,9 +5,8 @@
 //  Created by Kirill Sklyarov on 26.03.2024.
 //
 
-import Foundation
-import CoreData
 import UIKit
+import CoreData
 
 struct TrackersStoreUpdate {
     let insertedIndexes: IndexSet
@@ -23,6 +22,8 @@ final class TrackerCoreManager: NSObject {
     static let shared = TrackerCoreManager()
     
     weak var delegate: DataProviderDelegate?
+    
+    private override init() { }
     
     // MARK: - Container, context
     lazy var persistentContainer: NSPersistentContainer = {
@@ -50,10 +51,12 @@ final class TrackerCoreManager: NSObject {
     
     func setupFetchedResultsController(weekDay: String) {
         let request = TrackerCoreData.fetchRequest()
-        let predicate = NSPredicate(format: "schedule CONTAINS %@", weekDay)
+        let predicate1 = NSPredicate(format: "schedule CONTAINS %@", weekDay)
+        let predicate2 = NSPredicate(format: "schedule CONTAINS %@", "Каждый день")
+        let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2])
         let sort = NSSortDescriptor(key: "category.header", ascending: true)
         request.sortDescriptors = [sort]
-        request.predicate = predicate
+        request.predicate = compoundPredicate
         
         fetchedResultsController = NSFetchedResultsController(fetchRequest: request,
                                                               managedObjectContext: context,

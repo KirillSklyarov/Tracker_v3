@@ -89,7 +89,7 @@ final class TrackerViewController: UIViewController {
         setupNotification()
         
         addTapGestureToHideDatePicker()
-        
+                
     }
     
     // MARK: - UI Actions
@@ -395,7 +395,9 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         default:
             id = ""
         }
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! SuplementaryView
+        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SuplementaryView else {
+            print("We have some problems with header"); return UICollectionReusableView()
+        }
         
         if let headers = coreDataManager.fetchedResultsController?.sections  {
             view.label.text = headers[indexPath.section].name

@@ -364,7 +364,11 @@ extension CreatingOneOffVC: UICollectionViewDataSource, UICollectionViewDelegate
         default:
             id = ""
         }
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! SuplementaryView
+       
+        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SuplementaryView else {
+            print("We have some problems with header"); return UICollectionReusableView()
+        }
+        
         if collectionView == emojiCollection {
             view.label.text = "Emoji"
         } else {
