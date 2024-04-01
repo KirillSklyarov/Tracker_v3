@@ -8,5 +8,5 @@
 import Foundation
 
 protocol PassCategoryNamesToEditingVC: AnyObject {
-    func getCategoryNameFromPreviuosVC(categoryName: String)
+    func getCategoryNameFromPreviousVC(categoryName: String)
 }

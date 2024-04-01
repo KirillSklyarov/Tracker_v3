@@ -15,7 +15,4 @@ class StatisticViewController: UIViewController {
         view.backgroundColor = .systemBlue
         
     }
-    
-    
-    
 }

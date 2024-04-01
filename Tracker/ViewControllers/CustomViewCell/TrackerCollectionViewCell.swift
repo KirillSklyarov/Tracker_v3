@@ -21,37 +21,39 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     let emojiViewSize = CGFloat(24)
     let plusButtonSize = CGFloat(34)
     let titleLabelHeight = CGFloat(34)
-
-    var days = 0
     
-    var fewlinesText = ""
+    var days = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         contentView.backgroundColor = .systemBackground
         self.layer.cornerRadius = 16
+        
         frameView.layer.cornerRadius = 16
         
         emojiView.frame.size.width = emojiViewSize
         emojiView.frame.size.height = emojiViewSize
         emojiView.layer.cornerRadius = emojiView.frame.width / 2
-                
+        
         emojiLabel.font = .systemFont(ofSize: 12, weight: .medium)
         emojiLabel.textAlignment = .center
         
         emojiView.backgroundColor = .white.withAlphaComponent(0.1)
-
+        
         emojiView.addSubViews([emojiLabel])
         NSLayoutConstraint.activate([
             emojiLabel.centerXAnchor.constraint(equalTo: emojiView.centerXAnchor),
-            emojiLabel.centerYAnchor.constraint(equalTo: emojiView.centerYAnchor),
+            emojiLabel.centerYAnchor.constraint(equalTo: emojiView.centerYAnchor)
         ])
         
         titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
         titleLabel.numberOfLines = 0
         titleLabel.textColor = .white
-
+        
+        frameView.addSubViews([titleLabel, emojiView])
+        
+        
         plusButton.frame.size.width = plusButtonSize
         plusButton.frame.size.height = plusButtonSize
         plusButton.layer.cornerRadius = plusButton.frame.width / 2
@@ -59,11 +61,11 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         
         let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
         plusButton.setImage(plusImage, for: .normal)
-
+        
         daysLabel.text = "\(days) дней"
         daysLabel.font = .systemFont(ofSize: 12, weight: .medium)
         
-        contentView.addSubViews([frameView, titleLabel, emojiView, daysLabel, plusButton])
+        contentView.addSubViews([frameView, daysLabel, plusButton])
         
         NSLayoutConstraint.activate([
             frameView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -71,8 +73,8 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             frameView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             frameView.heightAnchor.constraint(equalToConstant: 90),
             
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            titleLabel.leadingAnchor.constraint(equalTo: frameView.leadingAnchor, constant: 12),
+            titleLabel.trailingAnchor.constraint(equalTo: frameView.trailingAnchor, constant: -12),
             titleLabel.bottomAnchor.constraint(equalTo: frameView.bottomAnchor, constant: -12),
             titleLabel.heightAnchor.constraint(equalToConstant: titleLabelHeight),
             

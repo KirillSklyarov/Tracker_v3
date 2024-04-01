@@ -36,8 +36,6 @@ final class CreatingOneOffVC: UIViewController {
     
     var newTaskToPassToMainScreen: ( (TrackerCategory) -> Void )?
     
-//    let categoryStorage = CategoryStorage.shared
-    
     var delegate: NewTaskDelegate?
     
     override func viewDidLoad() {
@@ -163,10 +161,6 @@ final class CreatingOneOffVC: UIViewController {
         let color = UIColor(hex: selectedColor)
         
         let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
-//        print(newTask)
-//        newTaskToPassToMainScreen?(newTask)
-//        categoryStorage.addToDataBase(dataBase: newTask)
-
         TrackerCoreManager.shared.createNewTracker(newTracker: newTask)
         let tabBarVC = TabBarController()
         tabBarVC.modalPresentationStyle = .fullScreen

@@ -22,9 +22,6 @@ final class TrackerCoreManager: NSObject {
     
     static let shared = TrackerCoreManager()
     
-    private override init() {
-    }
-    
     weak var delegate: DataProviderDelegate?
     
     // MARK: - Container, context
@@ -34,7 +31,7 @@ final class TrackerCoreManager: NSObject {
             if let error = error as NSError? {
                 fatalError(error.localizedDescription)
             } else {
-                print("DB url: ", description.url ?? "Oooops")
+                print("DB loaded successfully ✅ url: ", description.url ?? "Oooops")
             }
         }
         return container
@@ -46,12 +43,11 @@ final class TrackerCoreManager: NSObject {
     
     var insertedIndexes: IndexSet?
     var deletedIndexes: IndexSet?
-        
     
     // MARK: - FetchResultsController
-        
+    
     var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
-        
+    
     func setupFetchedResultsController(weekDay: String) {
         let request = TrackerCoreData.fetchRequest()
         let predicate = NSPredicate(format: "schedule CONTAINS %@", weekDay)
@@ -68,12 +64,38 @@ final class TrackerCoreManager: NSObject {
         
         do {
             try fetchedResultsController?.performFetch()
-        } catch {
-            print("Fetch failed: \(error.localizedDescription)")
+            if let results = fetchedResultsController?.fetchedObjects {
+                for element in results {
+                    print(element.name as Any)
+                    print(element.schedule as Any)
+                }
+            }
+        } catch  {
+            print(error.localizedDescription)
         }
     }
     
     // MARK: - CRUD
+    
+    func printCoreData() {
+        let request = TrackerCoreData.fetchRequest()
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.sortDescriptors = [sort]
+        
+        do {
+            let result = try context.fetch(request)
+            for element in result {
+                print(element)
+                print(element.name as Any)
+                print(element.schedule as Any)
+                print(element.category?.header as Any)
+            }
+        } catch  {
+            print(error.localizedDescription)
+        }
+        
+    }
+    
     func fetchData() -> [TrackerCategory] {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         do {
@@ -84,11 +106,6 @@ final class TrackerCoreManager: NSObject {
             print(error.localizedDescription)
             return []
         }
-    }
-    
-    
-    func renameCategory() {
-        
     }
     
     func transformCoreDataToModel(TrackerСategoryCoreData: [TrackerCategoryCoreData]) -> [TrackerCategory] {
@@ -116,7 +133,6 @@ final class TrackerCoreManager: NSObject {
     }
     
     func createNewCategory(newCategoryName: String) {
-        print("We're here - createNewCategory")
         let newCategory = TrackerCategoryCoreData(context: context)
         newCategory.header = newCategoryName
         save()
@@ -124,7 +140,6 @@ final class TrackerCoreManager: NSObject {
     }
     
     func createNewTracker(newTracker: TrackerCategory) {
-        print("We're here - createNewTracker")
         let header = newTracker.header
         
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
@@ -180,19 +195,13 @@ final class TrackerCoreManager: NSObject {
     }
     
     func getCategoryNamesFromStorage() -> [String] {
-        var arrayOfCategoryNames = [String]()
+        let request = TrackerCategoryCoreData.fetchRequest()
+        let result = try? context.fetch(request)
         
-        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
-        let allTrackers = try? context.fetch(fetchRequest)
+        guard let result = result else { return ["Ошибка"]}
+        let headers = result.map { $0.header ?? "Ooops" }
         
-        if let allTrackers = allTrackers {
-            for i in allTrackers {
-                arrayOfCategoryNames.append(i.header ?? "ЭЭ")
-            }
-        }
-        let uniqueCategoryNames = Array(Set(arrayOfCategoryNames))
-        
-        return uniqueCategoryNames
+        return headers
     }
 }
 
@@ -258,17 +267,41 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
             print("Tracker updated to weekday ✅")
         }
     }
+    
+    func renameCategory(header: String, newHeader: String) {
+        let request = TrackerCategoryCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerCategoryCoreData.header), header)
+        request.predicate = predicate
+        
+        let categoryHeader = try? context.fetch(request).first
+        categoryHeader?.header = newHeader
+        print("TrackerCategoryHeader renamed successfully ✅")
+        save()
+    }
+    
+    func deleteCategory(header: String) {
+        
+        guard !header.isEmpty else { print("Hmmmmm"); return }
+        
+        let request = TrackerCategoryCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "%K == %@",
+                                        #keyPath(TrackerCategoryCoreData.header), header)
+        guard let categoryHeader = try? context.fetch(request).first else {
+            print("We have some problems here"); return
+        }
+        
+        guard let trackers = categoryHeader.trackers as? Set<TrackerCoreData> else { print("U-la-la"); return }
+        
+        for tracker in trackers {
+            context.delete(tracker)
+        }
+        
+        context.delete(categoryHeader)
+        print("TrackerCategoryHeader deleted successfully ✅")
+        save()
+    }
 }
-
-
-
-//func fetchTrackers(currentWeekDay: WeekDay) {
-//    fetchedResultsController.fetchRequest.predicate = NSPredicate(
-//        format: "%K CONTAINS[cd] %@",
-//        #keyPath(TrackerCoreData.weekDays), currentWeekDay.englishStringRepresentation)
-//    try? fetchedResultsController.performFetch()
-//}
-
 
 extension TrackerCoreManager {
     

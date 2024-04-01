@@ -38,8 +38,6 @@ final class CreatingNewHabitViewController: UIViewController {
     
     var delegate: NewTaskDelegate?
     
-//    let singleton = CategoryStorage.shared
-    
     let coreDataManager = TrackerCoreManager.shared
     
     override func viewDidLoad() {
@@ -174,10 +172,6 @@ final class CreatingNewHabitViewController: UIViewController {
         let color = UIColor(hex: selectedColor)
         
         let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: selectedSchedule)])
-//        newTaskToPassToMainScreen?(newTask)
-        // Попробую сделать это через синглтон
-//        singleton.addToDataBase(dataBase: newTask)
-        
         coreDataManager.createNewTracker(newTracker: newTask)
         
         let tabBarVC = TabBarController()
@@ -226,7 +220,7 @@ extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDele
         tableViewRows.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {        
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         cell.textLabel?.text = tableViewRows[indexPath.row]
         cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")

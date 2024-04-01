@@ -34,7 +34,7 @@ final class CreatingNewCategoryViewController: UIViewController {
         categoryNameTextField.layer.cornerRadius = 10
         categoryNameTextField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         categoryNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
-        categoryNameTextField.addTarget(self, action: #selector(textFildEditing), for: .editingChanged)
+        categoryNameTextField.addTarget(self, action: #selector(textFieldEditing), for: .editingChanged)
         
         categoryNameTextField.delegate = self
     }
@@ -60,8 +60,7 @@ final class CreatingNewCategoryViewController: UIViewController {
         ])
     }
     
-    @objc private func textFildEditing(_ sender: UITextField) {
-        print(sender.text as Any)
+    @objc private func textFieldEditing(_ sender: UITextField) {
         if let text = sender.text,
            !text.isEmpty {
             doneButton.isEnabled = true
@@ -73,7 +72,6 @@ final class CreatingNewCategoryViewController: UIViewController {
     }
     
     @objc private func doneButtonTapped(_ sender: UIButton) {
-        print("doneButtonTapped")
         guard let newCategoryName = categoryNameTextField.text else { return }
         updateTableClosure?(newCategoryName)
         dismiss(animated: true)
