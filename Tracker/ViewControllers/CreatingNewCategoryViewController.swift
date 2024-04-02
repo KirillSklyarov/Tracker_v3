@@ -9,11 +9,14 @@ import UIKit
 
 final class CreatingNewCategoryViewController: UIViewController {
     
+    // MARK: - UI Properties
     private let categoryNameTextField = UITextField()
     private lazy var doneButton = setupButtons(title: "Готово")
     
+    // MARK: - Public Properties
     var updateTableClosure: ( (String) -> Void )?
     
+    // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -23,6 +26,26 @@ final class CreatingNewCategoryViewController: UIViewController {
         
     }
     
+    // MARK: - IB Actions
+    @objc private func textFieldEditing(_ sender: UITextField) {
+        if let text = sender.text,
+           !text.isEmpty {
+            doneButton.isEnabled = true
+            doneButton.backgroundColor = .black
+        } else {
+            doneButton.isEnabled = false
+            doneButton.backgroundColor = .systemGray4
+        }
+    }
+    
+    @objc private func doneButtonTapped(_ sender: UIButton) {
+        guard let newCategoryName = categoryNameTextField.text else { return }
+        updateTableClosure?(newCategoryName)
+        dismiss(animated: true)
+    }
+    
+    // MARK: - Private Methods
+
     private func setupTextField() {
         
         categoryNameTextField.placeholder = "Введите название категории"
@@ -60,23 +83,6 @@ final class CreatingNewCategoryViewController: UIViewController {
         ])
     }
     
-    @objc private func textFieldEditing(_ sender: UITextField) {
-        if let text = sender.text,
-           !text.isEmpty {
-            doneButton.isEnabled = true
-            doneButton.backgroundColor = .black
-        } else {
-            doneButton.isEnabled = false
-            doneButton.backgroundColor = .systemGray4
-        }
-    }
-    
-    @objc private func doneButtonTapped(_ sender: UIButton) {
-        guard let newCategoryName = categoryNameTextField.text else { return }
-        updateTableClosure?(newCategoryName)
-        dismiss(animated: true)
-    }
-    
     private func setupButtons(title: String) -> UIButton {
         let button = UIButton()
         button.setTitle(title, for: .normal)
@@ -93,34 +99,9 @@ final class CreatingNewCategoryViewController: UIViewController {
     }
 }
 
+// MARK: - UITextFieldDelegate
 extension CreatingNewCategoryViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         categoryNameTextField.resignFirstResponder()
-    }
-}
-
-//MARK: - SwiftUI
-import SwiftUI
-struct ProviderCreating : PreviewProvider {
-    static var previews: some View {
-        ContainterView().edgesIgnoringSafeArea(.all)
-    }
-    
-    struct ContainterView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> UIViewController {
-            return CreatingNewCategoryViewController()
-        }
-        
-        typealias UIViewControllerType = UIViewController
-        
-        
-        let viewController = CreatingNewCategoryViewController()
-        func makeUIViewController(context: UIViewControllerRepresentableContext<ProviderCreating.ContainterView>) -> CreatingNewCategoryViewController {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: ProviderCreating.ContainterView.UIViewControllerType, context: UIViewControllerRepresentableContext<ProviderCreating.ContainterView>) {
-            
-        }
     }
 }

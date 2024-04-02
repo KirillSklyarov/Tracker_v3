@@ -93,10 +93,11 @@ final class TrackerViewController: UIViewController {
     }
     
     // MARK: - UI Actions
-    @objc private func addNewHabit(_ sender: UIButton) {
+    @objc private func addNewHabitButtonTapped(_ sender: UIButton) {
         let creatingNewHabitVC = ChoosingTypeOfHabitViewController()
         let creatingNavi = UINavigationController(rootViewController: creatingNewHabitVC)
         present(creatingNavi, animated: true)
+        creatingNewHabitVC.closeScreenDelegate = self
     }
     
     @objc private func updateDataWithNewCategoryNames(notification: Notification) {
@@ -145,7 +146,10 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc private func filterButtonTapped(_ sender: UIButton) {
-        
+        let filterVC = FilterTrackersViewController()
+        let navVC = UINavigationController(rootViewController: filterVC)
+        filterVC.filterDelegate = self
+        present(navVC, animated: true)
     }
     
     // MARK: - UI, Navigation, Search
@@ -157,7 +161,7 @@ final class TrackerViewController: UIViewController {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: dateButton)
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: image?.withTintColor(.black), style: .done, target: self, action: #selector(addNewHabit))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: image?.withTintColor(.black), style: .done, target: self, action: #selector(addNewHabitButtonTapped))
     }
     
     private func setupSearchController() {
@@ -277,6 +281,7 @@ final class TrackerViewController: UIViewController {
         
         swooshImage.isHidden = false
         textLabel.isHidden = false
+        filtersButton.isHidden = true
         
         textLabel.font = .systemFont(ofSize: 12, weight: .medium)
         textLabel.textAlignment = .center
@@ -296,6 +301,7 @@ final class TrackerViewController: UIViewController {
     private func hidePlaceholderForEmptyScreen() {
         swooshImage.isHidden = true
         textLabel.isHidden = true
+        filtersButton.isHidden = false
     }
 }
 // MARK: - UICollectionViewDataSource, UICollectionViewDelegate
@@ -483,16 +489,35 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
             let editAction = UIAction(title: "Редактировать") { _ in }
             
             let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in
-                let convertedLocation = self.collectionView.convert(location, from: interaction.view)
-                
-                guard let indexPath = self.collectionView.indexPathForItem(at: convertedLocation) else {
-                    print("Ooops"); return
-                }
-                self.coreDataManager.deleteTracker(at: indexPath)
+                self.showAlert(location: location, interaction: interaction)
             }
             
-            return UIMenu(children: [lockAction, editAction, deleteAction]) }
+            let menu = UIMenu(children: [lockAction, editAction, deleteAction])
+            
+            return  menu
+        }
         )
+    }
+    
+    private func showAlert(location: CGPoint, interaction: UIContextMenuInteraction) {
+        let alert = UIAlertController(title: "Уверены, что хотите удалить трекер", message: nil, preferredStyle: .actionSheet)
+        
+        let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+            guard let self = self else { return }
+            
+            let convertedLocation = self.collectionView.convert(location, from: interaction.view)
+            
+            guard let indexPath = self.collectionView.indexPathForItem(at: convertedLocation) else {
+                print("We have a problem with deleting a tracker"); return
+            }
+            
+            self.coreDataManager.deleteTracker(at: indexPath)
+        }
+        
+        let cancelAction = UIAlertAction(title: "Отменить", style: .cancel)
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        self.present(alert, animated: true)
     }
 }
 
@@ -501,5 +526,37 @@ extension TrackerViewController: DataProviderDelegate {
     func didUpdate(_ update: TrackersStoreUpdate) {
         collectionView.reloadData()
         showOrHidePlaceholder()
+    }
+}
+
+extension TrackerViewController: FilterCategoryDelegate {
+    func getFilterFromPreviousVC(filter: String) {
+        switch filter {
+        case "Все трекеры":
+            coreDataManager.setupFetchedResultsController(weekDay: weekDay)
+        case "Трекеры на сегодня":
+            let calendar = Calendar.current
+            let date = Date()
+            let dateComponents = calendar.dateComponents([.weekday], from: date)
+            let weekDay = dateComponents.weekday
+            let weekDayString = dayNumberToDayString(weekDayNumber: weekDay)
+            print(weekDayString)
+            coreDataManager.setupFetchedResultsController(weekDay: weekDayString)
+            collectionView.reloadData()
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd.MM.yy"
+            let dateToString = formatter.string(from: date)
+            dateButton.setTitle(dateToString, for: .normal)
+            datePicker.date = date
+            
+        case "Завершенные": dismiss(animated: true)
+        default: dismiss(animated: true)
+        }
+    }
+}
+
+extension TrackerViewController: CloseScreenDelegate {
+    func closeFewVCAfterCreatingTracker() {
+        self.dismiss(animated: true)
     }
 }

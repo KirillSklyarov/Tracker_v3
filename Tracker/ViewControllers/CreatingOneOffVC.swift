@@ -9,6 +9,7 @@ import UIKit
 
 final class CreatingOneOffVC: UIViewController {
     
+    // MARK: - UI Properties
     private let trackerNameTextField = UITextField()
     private let tableView = UITableView()
     private let emojiCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -22,6 +23,7 @@ final class CreatingOneOffVC: UIViewController {
     private let contentView = UIView()
     private let contentStackView = UIStackView()
     
+    // MARK: - Private Properties
     private let tableViewRows = ["Категория"]
     
     private let arrayOfEmoji = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪",]
@@ -34,10 +36,10 @@ final class CreatingOneOffVC: UIViewController {
     private var selectedCategory: String?
     private var selectedSchedule: String?
     
-    var newTaskToPassToMainScreen: ( (TrackerCategory) -> Void )?
-    
-    var delegate: NewTaskDelegate?
-    
+    private let coreDataManager = TrackerCoreManager.shared
+    var informAnotherVCofCreatingTracker: ( () -> Void )?
+        
+    // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -54,6 +56,29 @@ final class CreatingOneOffVC: UIViewController {
         addTapGestureToHideKeyboard()
     }
     
+    // MARK: - IB Actions
+    @objc private func clearTextButtonTapped(_ sender: UIButton) {
+        trackerNameTextField.text = ""
+        isCreateButtonEnable()
+    }
+    
+    @objc private func cancelButtonTapped(_ sender: UIButton) {
+        dismiss(animated: true)
+    }
+    
+    @objc private func createButtonTapped(_ sender: UIButton) {
+        guard let selectedCategory = selectedCategory,
+              let name = trackerNameTextField.text,
+              let selectedColor = selectedColor,
+              let selectedEmoji = selectedEmoji else { print("Что-то пошло не так"); return }
+        let color = UIColor(hex: selectedColor)
+        
+        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
+        coreDataManager.createNewTracker(newTracker: newTask)
+        informAnotherVCofCreatingTracker?()
+    }
+        
+    // MARK: - Private Methods
     private func setupTextField() {
         
         let rightPaddingView = UIView()
@@ -91,11 +116,6 @@ final class CreatingOneOffVC: UIViewController {
         trackerNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
         
         trackerNameTextField.delegate = self
-    }
-    
-    @objc private func clearTextButtonTapped(_ sender: UIButton) {
-        trackerNameTextField.text = ""
-        isCreateButtonEnable()
     }
     
     private func setupTableView() {
@@ -146,25 +166,6 @@ final class CreatingOneOffVC: UIViewController {
         view.backgroundColor = UIColor(named: "projectBackground")
         
         setupScrollView()
-    }
-    
-    @objc private func cancelButtonTapped(_ sender: UIButton) {
-        dismiss(animated: true)
-    }
-    
-    @objc private func createButtonTapped(_ sender: UIButton) {
-        print("We'are here too")
-        guard let selectedCategory = selectedCategory,
-              let name = trackerNameTextField.text,
-              let selectedColor = selectedColor,
-              let selectedEmoji = selectedEmoji else { print("Что-то пошло не так"); return }
-        let color = UIColor(hex: selectedColor)
-        
-        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
-        TrackerCoreManager.shared.createNewTracker(newTracker: newTask)
-        let tabBarVC = TabBarController()
-        tabBarVC.modalPresentationStyle = .fullScreen
-        present(tabBarVC, animated: true)
     }
     
     private func setupButtons(title: String) -> UIButton {
@@ -382,6 +383,7 @@ extension CreatingOneOffVC: UICollectionViewDataSource, UICollectionViewDelegate
     }
 }
 
+// MARK: - setupScrollView
 private extension CreatingOneOffVC {
     
     func setupScrollView() {
@@ -499,7 +501,6 @@ private extension CreatingOneOffVC {
     }
     
 }
-
 
 //MARK: - SwiftUI
 import SwiftUI
