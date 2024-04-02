@@ -44,10 +44,8 @@ final class TrackerViewController: UIViewController {
     private let coreDataManager = TrackerCoreManager.shared
     
     private var categories = [TrackerCategory]()
-    private var completedTrackers: [TrackerRecord]?
     private var filteredData = [TrackerCategory]()
     
-    private var isDoneForToday = false
     private var isSearchMode = false
     
     private lazy var currentDate = datePicker.date
@@ -75,9 +73,7 @@ final class TrackerViewController: UIViewController {
         categories = coreDataManager.fetchData()
                 
         coreDataManager.delegate = self
-        
-        completedTrackers = []
-        
+                
         setupNavigation()
         
         setupSearchController()
@@ -115,9 +111,12 @@ final class TrackerViewController: UIViewController {
         guard let indexPath = collectionView.indexPathForItem(at: buttonIndexPath),
               let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell else { return }
         
+        print("categories \(categories[indexPath.section])")
+        print("newData \(newData[indexPath.section])")
+
         let category = newData[indexPath.section]
         let tracker = category.trackers[indexPath.row]
-        let currentDateString = dateToString(date: self.currentDate)
+        let currentDateString = dateToString(date: datePicker.date)
         
         guard let cellColor = cell.frameView.backgroundColor else { print("Color problem"); return }
         
@@ -266,7 +265,7 @@ final class TrackerViewController: UIViewController {
     private func dateToString(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yy"
-        let dateToString = formatter.string(from: currentDate)
+        let dateToString = formatter.string(from: date)
         return dateToString
     }
     
@@ -308,51 +307,15 @@ final class TrackerViewController: UIViewController {
         textLabel.isHidden = true
         filtersButton.isHidden = false
     }
-}
-// MARK: - UICollectionViewDataSource, UICollectionViewDelegate
-extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        coreDataManager.numberOfSections
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        coreDataManager.numberOfRowsInSection(section)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCollectionViewCell.identifier, for: indexPath) as? TrackerCollectionViewCell else { print("We have some problems with CustomCell");
-            return UICollectionViewCell()
+    private func daysLetters(count: Int) -> String {
+        if count % 10 == 1 && count % 100 != 11 {
+            return "\(count) день"
+        } else if [2, 3, 4].contains(count % 10) && ![12, 13, 14].contains(count % 10) {
+            return "\(count) дня"
+        } else {
+            return "\(count) дней"
         }
-        
-        configureCell(cell: cell, indexPath: indexPath)
-        
-        return cell
-    }
-    
-    private func configureCell(cell: TrackerCollectionViewCell, indexPath: IndexPath) {
-        guard let tracker = coreDataManager.object(at: indexPath) else { return }
-        
-        let trackerColor = UIColor(hex: tracker.colorHex ?? "#000000")
-        let frameColor = trackerColor
-        let today = Date()
-        
-        cell.titleLabel.text = tracker.name
-        cell.emojiLabel.text = tracker.emoji
-        cell.frameView.backgroundColor = frameColor
-        cell.plusButton.backgroundColor = frameColor
-        cell.plusButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
-        cell.plusButton.isEnabled = currentDate > today ? false : true
-        
-        showDoneOrUndoneTaskForDatePickerDate(tracker: tracker, cell: cell)
-        
-        let interaction = UIContextMenuInteraction(delegate: self)
-        cell.frameView.addInteraction(interaction)
-        
     }
     
     private func showDoneOrUndoneTaskForDatePickerDate(tracker: TrackerCoreData, cell: TrackerCollectionViewCell) {
@@ -380,23 +343,86 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
     private func makeTaskDone(trackToAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
         coreDataManager.addTrackerRecord(trackerToAdd: trackToAdd)
         
+        let trackerCount = coreDataManager.countOfTrackerInRecords(trackerIDToCount: trackToAdd.id.uuidString)
+        let correctDaysInRussian = daysLetters(count: trackerCount)
+        cell.daysLabel.text = correctDaysInRussian
+        
+        
         let doneImage = UIImage(named: "done")
         cell.plusButton.setImage(doneImage, for: .normal)
         cell.plusButton.backgroundColor = cellColor.withAlphaComponent(0.3)
-        cell.days += 1
-        cell.daysLabel.text = "\(cell.days) день"
+        
+//        cell.days += 1
+//        cell.daysLabel.text = "\(cell.days) день"
     }
     
     private func makeTaskUndone(trackToRemove: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
+        
+        coreDataManager.removeTrackerRecord(trackerToRemove: trackToRemove)
+        
+        let trackerCount = coreDataManager.countOfTrackerInRecords(trackerIDToCount: trackToRemove.id.uuidString)
+        let correctDaysInRussian = daysLetters(count: trackerCount)
+        cell.daysLabel.text = correctDaysInRussian
+        
         let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
         cell.plusButton.backgroundColor = cellColor.withAlphaComponent(1)
         cell.plusButton.setImage(plusImage, for: .normal)
         cell.plusButton.layer.cornerRadius = cell.plusButton.frame.width / 2
         
-        cell.days -= 1
-        cell.daysLabel.text = "\(cell.days) день"
+//        cell.days -= 1
+//        cell.daysLabel.text = "\(cell.days) день"
         
-        coreDataManager.removeTrackerRecord(trackerToRemove: trackToRemove)
+        
+    }
+}
+// MARK: - UICollectionViewDataSource, UICollectionViewDelegate
+extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        coreDataManager.numberOfSections
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        coreDataManager.numberOfRowsInSection(section)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        UIEdgeInsets(top: 40, left: 0, bottom: 0, right: 0)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackerCollectionViewCell.identifier, for: indexPath) as? TrackerCollectionViewCell else { print("We have some problems with CustomCell");
+            return UICollectionViewCell()
+        }
+        
+        configureCell(cell: cell, indexPath: indexPath)
+        
+        return cell
+    }
+    
+    private func configureCell(cell: TrackerCollectionViewCell, indexPath: IndexPath) {
+        guard let tracker = coreDataManager.object(at: indexPath),
+              let trackerID = tracker.id else { return }
+        
+        let trackerColor = UIColor(hex: tracker.colorHex ?? "#000000")
+        let frameColor = trackerColor
+        let today = Date()
+        
+        cell.titleLabel.text = tracker.name
+        cell.emojiLabel.text = tracker.emoji
+        cell.frameView.backgroundColor = frameColor
+        cell.plusButton.backgroundColor = frameColor
+        cell.plusButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
+        cell.plusButton.isEnabled = currentDate > today ? false : true
+        
+        let trackerCount = coreDataManager.countOfTrackerInRecords(trackerIDToCount: trackerID.uuidString)
+        let correctDaysInRussian = daysLetters(count: trackerCount)
+        cell.daysLabel.text = correctDaysInRussian
+                
+        showDoneOrUndoneTaskForDatePickerDate(tracker: tracker, cell: cell)
+        
+        let interaction = UIContextMenuInteraction(delegate: self)
+        cell.frameView.addInteraction(interaction)
         
     }
     
@@ -567,6 +593,7 @@ extension TrackerViewController: FilterCategoryDelegate {
 
 extension TrackerViewController: CloseScreenDelegate {
     func closeFewVCAfterCreatingTracker() {
+        categories = coreDataManager.fetchData()
         self.dismiss(animated: true)
     }
 }

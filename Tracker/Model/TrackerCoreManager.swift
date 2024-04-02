@@ -385,8 +385,6 @@ extension TrackerCoreManager {
         }
     }
     
-    
-    
     func isTrackerExistInTrackerRecord(trackerToCheck: TrackerRecord) -> Bool {
         let request = TrackerRecordCoreData.fetchRequest()
         let predicate1 = NSPredicate(format: "%K == %@",
@@ -404,6 +402,22 @@ extension TrackerCoreManager {
         } catch  {
             print(error.localizedDescription)
             return false
+        }
+    }
+    
+    func countOfTrackerInRecords(trackerIDToCount: String) -> Int {
+//        guard let trackerToCountId = trackerToCount.id else { return 0}
+        let request = TrackerRecordCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerRecordCoreData.id),
+                                    trackerIDToCount)
+        request.predicate = predicate
+        
+        do {
+           return try context.count(for: request)
+        } catch  {
+            print(error.localizedDescription)
+            return 0
         }
     }
 }
