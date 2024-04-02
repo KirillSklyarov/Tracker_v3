@@ -103,7 +103,7 @@ final class TrackerCoreManager: NSObject {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         do {
             let allTrackers = try context.fetch(fetchRequest)
-            let result = transformCoreDataToModel(TrackerСategoryCoreData: allTrackers)
+            let result = transformCoreDataToModel(TrackerCategoryCoreData: allTrackers)
             return result
         } catch  {
             print(error.localizedDescription)
@@ -111,8 +111,8 @@ final class TrackerCoreManager: NSObject {
         }
     }
     
-    func transformCoreDataToModel(TrackerСategoryCoreData: [TrackerCategoryCoreData]) -> [TrackerCategory] {
-        let trackersCategory = TrackerСategoryCoreData.compactMap({
+    func transformCoreDataToModel(TrackerCategoryCoreData: [TrackerCategoryCoreData]) -> [TrackerCategory] {
+        let trackersCategory = TrackerCategoryCoreData.compactMap({
             TrackerCategory(coreDataObject: $0)
         })
         return trackersCategory
@@ -340,5 +340,70 @@ extension TrackerCoreManager {
     }
 }
 
-
-
+// MARK: - TrackerRecord
+extension TrackerCoreManager {
+    
+    func printTrackerRecord() {
+        let request = TrackerRecordCoreData.fetchRequest()
+        
+        do {
+            let result = try context.fetch(request)
+            print(result)
+        } catch  {
+            print(error.localizedDescription)
+        }
+    }
+        
+    func addTrackerRecord(trackerToAdd: TrackerRecord) {
+        let newTrackerRecord = TrackerRecordCoreData(context: context)
+        newTrackerRecord.id = trackerToAdd.id
+        newTrackerRecord.date = trackerToAdd.date
+        save()
+        print("New TrackerRecord created ✅")
+    }
+    
+    func removeTrackerRecord(trackerToRemove: TrackerRecord) {
+        let request = TrackerRecordCoreData.fetchRequest()
+        let predicate1 = NSPredicate(format: "%K == %@",
+                                     #keyPath(TrackerRecordCoreData.id), trackerToRemove.id.uuidString )
+        let predicate2 = NSPredicate(format: "%K == %@",
+                                     #keyPath(TrackerRecordCoreData.date), trackerToRemove.date)
+        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
+        request.predicate = compoundPredicate
+        
+        do {
+            let result = try context.fetch(request)
+            if let trackerToDelete = result.first {
+                context.delete(trackerToDelete)
+                print("Tracker deleted ✅")
+                save()
+            } else {
+                print("We can't find the tracker")
+            }
+        } catch  {
+            print(error.localizedDescription)
+        }
+    }
+    
+    
+    
+    func isTrackerExistInTrackerRecord(trackerToCheck: TrackerRecord) -> Bool {
+        let request = TrackerRecordCoreData.fetchRequest()
+        let predicate1 = NSPredicate(format: "%K == %@",
+                                     #keyPath(TrackerRecordCoreData.id), 
+                                     trackerToCheck.id.uuidString)
+        let predicate2 = NSPredicate(format: "%K == %@",
+                                     #keyPath(TrackerRecordCoreData.date), 
+                                     trackerToCheck.date)
+        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
+        request.predicate = compoundPredicate
+        
+        do {
+            let result = try context.count(for: request)
+            return result > 0
+        } catch  {
+            print(error.localizedDescription)
+            return false
+        }
+    }
+}

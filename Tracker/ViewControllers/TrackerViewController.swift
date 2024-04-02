@@ -72,6 +72,8 @@ final class TrackerViewController: UIViewController {
         
         coreDataManager.setupFetchedResultsController(weekDay: weekDay)
         
+        categories = coreDataManager.fetchData()
+                
         coreDataManager.delegate = self
         
         completedTrackers = []
@@ -89,7 +91,9 @@ final class TrackerViewController: UIViewController {
         setupNotification()
         
         addTapGestureToHideDatePicker()
-                
+        
+        coreDataManager.printTrackerRecord()
+                        
     }
     
     // MARK: - UI Actions
@@ -117,13 +121,14 @@ final class TrackerViewController: UIViewController {
         
         guard let cellColor = cell.frameView.backgroundColor else { print("Color problem"); return }
         
-        let trackForAdd = TrackerRecord(id: tracker.id, date: currentDateString)
+        let trackerToOperate = TrackerRecord(id: tracker.id, date: currentDateString)
         
-        guard let check = completedTrackers?.contains(where: { $0.id == trackForAdd.id && $0.date == trackForAdd.date}) else { return }
+        let check = coreDataManager.isTrackerExistInTrackerRecord(trackerToCheck: trackerToOperate)
+        
         if !check {
-            makeTaskDone(trackForAdd: trackForAdd, cellColor: cellColor, cell: cell)
+            makeTaskDone(trackToAdd: trackerToOperate, cellColor: cellColor, cell: cell)
         } else {
-            makeTaskUndone(trackForAdd: trackForAdd, cellColor: cellColor, cell: cell)
+            makeTaskUndone(trackToRemove: trackerToOperate, cellColor: cellColor, cell: cell)
         }
     }
     
@@ -345,8 +350,8 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         
         showDoneOrUndoneTaskForDatePickerDate(tracker: tracker, cell: cell)
         
-        let iteraction = UIContextMenuInteraction(delegate: self)
-        cell.frameView.addInteraction(iteraction)
+        let interaction = UIContextMenuInteraction(delegate: self)
+        cell.frameView.addInteraction(interaction)
         
     }
     
@@ -357,7 +362,10 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         let trackerColor = UIColor(hex: tracker.colorHex ?? "#000000")
         let color = trackerColor
         
-        guard let check = completedTrackers?.contains(where: { $0.id == tracker.id && $0.date == dateOnDatePickerString }) else { return }
+        guard let trackerId = tracker.id else { return }
+        let trackerToCheck = TrackerRecord(id: trackerId, date: dateOnDatePickerString)
+        
+        let check = coreDataManager.isTrackerExistInTrackerRecord(trackerToCheck: trackerToCheck)
         
         if !check {
             let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
@@ -369,8 +377,9 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         }
     }
     
-    private func makeTaskDone(trackForAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
-        completedTrackers?.append(trackForAdd)
+    private func makeTaskDone(trackToAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
+        coreDataManager.addTrackerRecord(trackerToAdd: trackToAdd)
+        
         let doneImage = UIImage(named: "done")
         cell.plusButton.setImage(doneImage, for: .normal)
         cell.plusButton.backgroundColor = cellColor.withAlphaComponent(0.3)
@@ -378,7 +387,7 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         cell.daysLabel.text = "\(cell.days) день"
     }
     
-    private func makeTaskUndone(trackForAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
+    private func makeTaskUndone(trackToRemove: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
         let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
         cell.plusButton.backgroundColor = cellColor.withAlphaComponent(1)
         cell.plusButton.setImage(plusImage, for: .normal)
@@ -386,9 +395,9 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         
         cell.days -= 1
         cell.daysLabel.text = "\(cell.days) день"
-        if let index = completedTrackers?.firstIndex(where: { $0.id == trackForAdd.id && $0.date == trackForAdd.date}) {
-            completedTrackers?.remove(at: index)
-        }
+        
+        coreDataManager.removeTrackerRecord(trackerToRemove: trackToRemove)
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -411,15 +420,16 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         return view
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell
-        cell?.titleLabel.font = .systemFont(ofSize: 17, weight: .bold)
-    }
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell
+//        cell?.titleLabel.font = .systemFont(ofSize: 17, weight: .bold)
+//    }
     
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell
-        cell?.titleLabel.font = .systemFont(ofSize: 17, weight: .regular)
-    }
+//    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+//        let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell
+//        cell?.titleLabel.font = .systemFont(ofSize: 17, weight: .regular)
+//    }
+    
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
