@@ -22,4 +22,12 @@ extension UIColor {
         
         self.init(red: red, green: green, blue: blue, alpha: 1.0)
     }
+    
+    func hexStringFromUIColor(color: UIColor? = nil) -> String {
+        let components = (color ?? self).cgColor.components
+        guard let red = components?[0], let green = components?[1], let blue = components?[2] else {
+            return ""
+        }
+        return String(format: "#%02lX%02lX%02lX", lroundf(Float(red * 255)), lroundf(Float(green * 255)), lroundf(Float(blue * 255)))
+    }
 }

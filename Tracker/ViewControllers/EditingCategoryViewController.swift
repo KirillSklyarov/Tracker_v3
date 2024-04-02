@@ -9,12 +9,17 @@ import UIKit
 
 final class EditingCategoryViewController: UIViewController {
     
+    // MARK: - UI Properties
     private let categoryNameTextField = UITextField()
     private lazy var doneButton = setupButtons(title: "Готово")
     
-//    var categories = TrackerViewController().categories
-    var updateCategoryNameClosure: ( (String) -> Void )?
+    // MARK: - Private Properties
+    private var categoryHeader = ""
+    private let coreDataManager = TrackerCoreManager.shared
     
+    var updateCategoryNameClosure: ( () -> Void )?
+    
+    // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -23,6 +28,21 @@ final class EditingCategoryViewController: UIViewController {
         addTapGestureToHideKeyboard()
     }
     
+    // MARK: - IB Actions
+    @objc private func clearTextButtonTapped(_ sender: UIButton) {
+        categoryNameTextField.text = ""
+    }
+    
+    @objc private func doneButtonTapped(_ sender: UIButton) {
+        guard let newCategoryHeader = categoryNameTextField.text else { return }
+        coreDataManager.renameCategory(header: self.categoryHeader, newHeader: newCategoryHeader)
+        let renameCategoryNotification = Notification.Name("renameCategory")
+        NotificationCenter.default.post(name: renameCategoryNotification, object: nil)
+        updateCategoryNameClosure?()
+        dismiss(animated: true)
+    }
+    
+    // MARK: - Private Methods
     private func setupTextField() {
         
         let rightPaddingView = UIView()
@@ -58,13 +78,7 @@ final class EditingCategoryViewController: UIViewController {
         categoryNameTextField.layer.cornerRadius = 10
         categoryNameTextField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         categoryNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
-//        categoryNameTextField.addTarget(self, action: #selector(textFildEditing), for: .editingChanged)
-        
         categoryNameTextField.delegate = self
-    }
-    
-    @objc private func clearTextButtonTapped(_ sender: UIButton) {
-        categoryNameTextField.text = ""
     }
     
     private func setupUI() {
@@ -88,25 +102,6 @@ final class EditingCategoryViewController: UIViewController {
         ])
     }
     
-//    @objc private func textFildEditing(_ sender: UITextField) {
-//        print(sender.text as Any)
-//        if let text = sender.text,
-//           !text.isEmpty {
-//            doneButton.isEnabled = true
-//            doneButton.backgroundColor = .black
-//        } else {
-//            doneButton.isEnabled = false
-//            doneButton.backgroundColor = .systemGray4
-//        }
-//    }
-    
-    @objc private func doneButtonTapped(_ sender: UIButton) {
-        print("doneButtonTapped")
-        guard let newCategoryName = categoryNameTextField.text else { return }
-        updateCategoryNameClosure?(newCategoryName)
-        dismiss(animated: true)
-    }
-    
     private func setupButtons(title: String) -> UIButton {
         let button = UIButton()
         button.setTitle(title, for: .normal)
@@ -122,40 +117,17 @@ final class EditingCategoryViewController: UIViewController {
     }
 }
 
+// MARK: - UITextFieldDelegate
 extension EditingCategoryViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         categoryNameTextField.resignFirstResponder()
     }
 }
 
+// MARK: - Delegate
 extension EditingCategoryViewController: PassCategoryNamesToEditingVC {
-    func getCategoryNameFromPreviuosVC(categoryName: String) {
+    func getCategoryNameFromPreviousVC(categoryName: String) {
+        self.categoryHeader = categoryName
         categoryNameTextField.text = categoryName
-    }
-}
-
-//MARK: - SwiftUI
-import SwiftUI
-struct ProviderEditing : PreviewProvider {
-    static var previews: some View {
-        ContainterView().edgesIgnoringSafeArea(.all)
-    }
-    
-    struct ContainterView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> UIViewController {
-            return EditingCategoryViewController()
-        }
-        
-        typealias UIViewControllerType = UIViewController
-        
-        
-        let viewController = EditingCategoryViewController()
-        func makeUIViewController(context: UIViewControllerRepresentableContext<ProviderEditing.ContainterView>) -> EditingCategoryViewController {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: ProviderEditing.ContainterView.UIViewControllerType, context: UIViewControllerRepresentableContext<ProviderEditing.ContainterView>) {
-            
-        }
     }
 }

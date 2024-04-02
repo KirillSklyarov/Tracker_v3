@@ -9,6 +9,7 @@ import UIKit
 
 final class ChoosingCategoryViewController: UIViewController {
     
+    // MARK: - UI Properties
     private let creatingCategoryButton = UIButton()
     private let categoryTableView = UITableView()
     private lazy var swooshImage: UIImageView = {
@@ -19,7 +20,6 @@ final class ChoosingCategoryViewController: UIViewController {
         image.contentMode = .center
         return image
     } ()
-    
     private lazy var textLabel: UILabel = {
         let label = UILabel()
         label.text = "Привычки и события можно \nобъединить по смыслу"
@@ -30,25 +30,44 @@ final class ChoosingCategoryViewController: UIViewController {
         return label
     } ()
     
+    // MARK: - Private Properties
+    private let coreDataManager = TrackerCoreManager.shared
+    private var delegateToPassCategoryNameToEdit: PassCategoryNamesToEditingVC?
+    private var categories = [String]()
+    
     var updateCategory: ( (String) -> Void)?
     
-    var categories: [String] = []
-    
-    var delegateToPassCategoryNameToEdit: PassCategoryNamesToEditingVC?
-
+    // MARK: - Live Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        recieveCategoryNamesFromSingleton()
-        
-        print(categories)
+        getDataFromCoreData()
         
         setupUI()
-        
         setupTableView()
-      
     }
     
+    // MARK: - IB Actions
+    @objc private func addCategoryButtonTapped(_ sender: UIButton) {
+        let creatingNewCategoryVC = CreatingNewCategoryViewController()
+        let creatingCategoryNavVC = UINavigationController(rootViewController: creatingNewCategoryVC)
+        creatingNewCategoryVC.updateTableClosure = { [weak self] newCategory in
+            guard let self = self else { return }
+            coreDataManager.createNewCategory(newCategoryName: newCategory)
+            getDataFromCoreData()
+            designFirstAndLastCell()
+            
+            if categories.isEmpty {
+                showPlaceholderForEmptyScreen()
+            } else {
+                swooshImage.isHidden = true
+                textLabel.isHidden = true
+            }
+        }
+        present(creatingCategoryNavVC, animated: true)
+    }
+    
+    // MARK: - Private Methods
     private func setupTableView() {
         
         showPlaceholderForEmptyScreen()
@@ -113,25 +132,6 @@ final class ChoosingCategoryViewController: UIViewController {
         ])
     }
     
-    @objc private func creatingCategoryButtonTapped(_ sender: UIButton) {
-        let creatingNewCategoryVC = CreatingNewCategoryViewController()
-        let creatingCategoryNavVC = UINavigationController(rootViewController: creatingNewCategoryVC)
-        creatingNewCategoryVC.updateTableClosure = { [weak self] newCategory in
-            guard let self = self else { return }
-            self.categories.append(newCategory)
-            self.categoryTableView.reloadData()
-            self.categoryTableView.layoutIfNeeded()
-            
-            if categories.isEmpty {
-                showPlaceholderForEmptyScreen()
-            } else {
-                swooshImage.isHidden = true
-                textLabel.isHidden = true
-            }
-        }
-        present(creatingCategoryNavVC, animated: true)
-    }
-    
     private func setupButton() {
         creatingCategoryButton.setTitle("Добавить категорию", for: .normal)
         creatingCategoryButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
@@ -140,7 +140,7 @@ final class ChoosingCategoryViewController: UIViewController {
         creatingCategoryButton.layer.masksToBounds = true
         creatingCategoryButton.layer.cornerRadius = 15
         
-        creatingCategoryButton.addTarget(self, action: #selector(creatingCategoryButtonTapped), for: .touchUpInside)
+        creatingCategoryButton.addTarget(self, action: #selector(addCategoryButtonTapped), for: .touchUpInside)
     }
 }
 
@@ -156,12 +156,12 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-                
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.textLabel?.text = categories[indexPath.row]
-          
+        
         if indexPath.row == categories.count - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
             cell.layer.cornerRadius = 16
@@ -194,19 +194,19 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         return nil
-        }
-        
+    }
+    
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         return UIContextMenuConfiguration(actionProvider:
-                    { _ in return self.showContextMenu(indexPath: indexPath) }
+                                            { _ in return self.showContextMenu(indexPath: indexPath) }
         )
     }
-                                          
+    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-            let interaction = UIContextMenuInteraction(delegate: self)
-            cell.addInteraction(interaction)
-        }
-                                          
+        let interaction = UIContextMenuInteraction(delegate: self)
+        cell.addInteraction(interaction)
+    }
+    
     func showContextMenu(indexPath: IndexPath) -> UIMenu {
         let editAction = UIAction(title: "Редактировать") { [weak self] _ in
             guard let self = self,
@@ -215,81 +215,63 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
             let editingVC = EditingCategoryViewController()
             let navVC = UINavigationController(rootViewController: editingVC)
             self.delegateToPassCategoryNameToEdit = editingVC
-            delegateToPassCategoryNameToEdit?.getCategoryNameFromPreviuosVC(categoryName: categoryNameToPass)
+            delegateToPassCategoryNameToEdit?.getCategoryNameFromPreviousVC(categoryName: categoryNameToPass)
             
-            editingVC.updateCategoryNameClosure = { newName in
-                cell.textLabel?.text = newName
-                self.categories[indexPath.row] = newName
-                self.sendCategoryNamesToSingleton()
+            editingVC.updateCategoryNameClosure = {
+                self.getDataFromCoreData()
             }
             present(navVC, animated: true)
         }
         
         let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in
-            
-            let alert = UIAlertController(title: "Эта категория точно не нужна", message: nil, preferredStyle: .actionSheet)
-            
-            let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
-                guard let self = self else { return }
-                self.categories.remove(at: indexPath.row)
-                self.categoryTableView.deleteRows(at: [indexPath], with: .automatic)
-                self.sendCategoryNamesToSingleton()
-                
-                designLastCell(indexPath: indexPath)
-            }
-            
-            let cancelAction = UIAlertAction(title: "Отменить", style: .cancel)
-            alert.addAction(deleteAction)
-            alert.addAction(cancelAction)
-            self.present(alert, animated: true)
-            print("Press on deleteButton")
+            self.showAlert(indexPath: indexPath)
         }
         return UIMenu(children: [editAction, deleteAction])
     }
     
-    private func designLastCell(indexPath: IndexPath) {
-        let indexPathOfLastCell = IndexPath(row: self.categories.count - 1, section: indexPath.section)
-        guard let cell = self.categoryTableView.cellForRow(at: indexPathOfLastCell) else { return }
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-            cell.layer.cornerRadius = 16
-            cell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+    private func showAlert(indexPath: IndexPath) {
+        let alert = UIAlertController(title: "Эта категория точно не нужна", message: nil, preferredStyle: .actionSheet)
+        
+        let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+            guard let self = self,
+                  let cell = self.categoryTableView.cellForRow(at: indexPath),
+                  let categoryNameToDelete = cell.textLabel?.text else { return }
+            self.coreDataManager.deleteCategory(header: categoryNameToDelete)
+            self.getDataFromCoreData()
+            self.designFirstAndLastCell()
+            self.showPlaceholderForEmptyScreen()
+        }
+        
+        let cancelAction = UIAlertAction(title: "Отменить", style: .cancel)
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        self.present(alert, animated: true)
+    }
+    
+    private func designFirstAndLastCell() {
+        let indexPathOfFirstCell = IndexPath(row: 0, section: 0)
+        let indexPathOfLastCell = IndexPath(row: self.categories.count - 1, section: 0)
+        
+        guard let firstCell = self.categoryTableView.cellForRow(at: indexPathOfFirstCell),
+              let lastCell = self.categoryTableView.cellForRow(at: indexPathOfLastCell) else { return }
+        
+        categoryTableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        
+        firstCell.layer.cornerRadius = 16
+        firstCell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        firstCell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        
+        lastCell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        lastCell.layer.cornerRadius = 16
+        lastCell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
     }
 }
 
-// MARK: - Load&Save category names in Storage
+// MARK: - Update data from Core Data
 private extension ChoosingCategoryViewController {
     
-    func recieveCategoryNamesFromSingleton() {
-        self.categories = CategoryStorage.shared.getCategoryNamesFromStorage()
-    }
-    
-    func sendCategoryNamesToSingleton() {
-        CategoryStorage.shared.updateCategoryNamesInStorage(categoryNames: categories)
-    }
-}
-                                          
-//MARK: - SwiftUI
-import SwiftUI
-struct ProviderChoosingCategory : PreviewProvider {
-    static var previews: some View {
-        ContainterView().edgesIgnoringSafeArea(.all)
-    }
-    
-    struct ContainterView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> UIViewController {
-            return ChoosingCategoryViewController()
-        }
-        
-        typealias UIViewControllerType = UIViewController
-        
-        
-        let viewController = ChoosingCategoryViewController()
-        func makeUIViewController(context: UIViewControllerRepresentableContext<ProviderChoosingCategory.ContainterView>) -> ChoosingCategoryViewController {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: ProviderChoosingCategory.ContainterView.UIViewControllerType, context: UIViewControllerRepresentableContext<ProviderChoosingCategory.ContainterView>) {
-            
-        }
+    func getDataFromCoreData() {
+        self.categories = coreDataManager.getCategoryNamesFromStorage()
+        self.categoryTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
     }
 }

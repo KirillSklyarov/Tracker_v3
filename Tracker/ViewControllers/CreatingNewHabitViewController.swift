@@ -9,6 +9,7 @@ import UIKit
 
 final class CreatingNewHabitViewController: UIViewController {
     
+    // MARK: - UI Properties
     private let trackerNameTextField = UITextField()
     private let tableView = UITableView()
     private let emojiCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -22,24 +23,25 @@ final class CreatingNewHabitViewController: UIViewController {
     private let contentView = UIView()
     private let contentStackView = UIStackView()
     
+    // MARK: - Private Properties
     private let tableViewRows = ["Категория", "Расписание"]
     
     private let arrayOfEmoji = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪",]
     
     private let arrayOfColors = ["#FD4C49", "#FF881E", "#007BFA", "#6E44FE", "#33CF69", "#E66DD4", "#F9D4D4", "#34A7FE", "#46E69D", "#35347C", "#FF674D", "#FF99CC", "#F6C48B", "#7994F5", "#832CF1", "#AD56DA", "#8D72E6", "#2FD058"]
     
+    private let coreDataManager = TrackerCoreManager.shared
+    
     private var newTaskName: String?
     private var selectedEmoji: String?
     private var selectedColor: String?
     private var selectedCategory: String?
     private var selectedSchedule: String?
-    
-    var newTaskToPassToMainScreen: ( (TrackerCategory) -> Void )?
-    
-    var delegate: NewTaskDelegate?
-    
-    let singleton = CategoryStorage.shared
-    
+        
+    var informAnotherVCofCreatingTracker: ( () -> Void )?
+        
+        
+    // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -56,6 +58,31 @@ final class CreatingNewHabitViewController: UIViewController {
         addTapGestureToHideKeyboard()
     }
     
+    // MARK: - IB Actions
+    @objc private func clearTextButtonTapped(_ sender: UIButton) {
+        trackerNameTextField.text = ""
+        isCreateButtonEnable()
+    }
+    
+    @objc private func cancelButtonTapped(_ sender: UIButton) {
+        dismiss(animated: true)
+    }
+    
+    @objc private func createButtonTapped(_ sender: UIButton) {
+        guard let selectedCategory = selectedCategory,
+              let name = trackerNameTextField.text,
+              let selectedColor = selectedColor,
+              let selectedEmoji = selectedEmoji,
+              let selectedSchedule = selectedSchedule else { print("Что-то пошло не так"); return }
+        let color = UIColor(hex: selectedColor)
+        
+        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: selectedSchedule)])
+        coreDataManager.createNewTracker(newTracker: newTask)
+        informAnotherVCofCreatingTracker?()
+    }
+
+    // MARK: - Private Methods
+
     private func setupTextField() {
         
         let rightPaddingView = UIView()
@@ -93,11 +120,6 @@ final class CreatingNewHabitViewController: UIViewController {
         trackerNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
         
         trackerNameTextField.delegate = self
-    }
-    
-    @objc private func clearTextButtonTapped(_ sender: UIButton) {
-        trackerNameTextField.text = ""
-        isCreateButtonEnable()
     }
     
     private func setupTableView() {
@@ -158,28 +180,6 @@ final class CreatingNewHabitViewController: UIViewController {
         setupScrollView()
     }
     
-    @objc private func cancelButtonTapped(_ sender: UIButton) {
-        dismiss(animated: true)
-    }
-    
-    @objc private func createButtonTapped(_ sender: UIButton) {
-        print("We'are here too")
-        guard let selectedCategory = selectedCategory,
-              let name = trackerNameTextField.text,
-              let selectedColor = selectedColor,
-              let selectedEmoji = selectedEmoji,
-              let selectedSchedule = selectedSchedule else { print("Что-то пошло не так"); return }
-        let color = UIColor(hex: selectedColor)
-        
-        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: selectedSchedule)])
-        newTaskToPassToMainScreen?(newTask)
-        // Попробую сделать это через синглтон
-        singleton.addToDataBase(dataBase: newTask)
-        let mainVC = TabBarController()
-        mainVC.modalPresentationStyle = .fullScreen
-        present(mainVC, animated: true)
-    }
-    
     private func setupButtons(title: String) -> UIButton {
         let button = UIButton()
         button.setTitle(title, for: .normal)
@@ -212,6 +212,7 @@ final class CreatingNewHabitViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource, UITableViewDelegate
 extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
         1
@@ -221,7 +222,7 @@ extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDele
         tableViewRows.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {        
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         cell.textLabel?.text = tableViewRows[indexPath.row]
         cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
@@ -277,6 +278,7 @@ extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDele
     }
 }
 
+// MARK: - UITextFieldDelegate
 extension CreatingNewHabitViewController: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -295,6 +297,7 @@ extension CreatingNewHabitViewController: UITextFieldDelegate {
     }
 }
 
+// MARK: - UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
 extension CreatingNewHabitViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -401,6 +404,7 @@ extension CreatingNewHabitViewController: UICollectionViewDataSource, UICollecti
     }
 }
 
+// MARK: - setupScrollView
 private extension CreatingNewHabitViewController {
     
     func setupScrollView() {

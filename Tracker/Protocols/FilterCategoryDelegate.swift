@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol PassCategoryNamesToEditingVC: AnyObject {
-    func getCategoryNameFromPreviuosVC(categoryName: String)
+protocol FilterCategoryDelegate: AnyObject {
+    func getFilterFromPreviousVC(filter: String)
 }

@@ -9,6 +9,7 @@ import UIKit
 
 final class CreatingOneOffVC: UIViewController {
     
+    // MARK: - UI Properties
     private let trackerNameTextField = UITextField()
     private let tableView = UITableView()
     private let emojiCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -22,6 +23,7 @@ final class CreatingOneOffVC: UIViewController {
     private let contentView = UIView()
     private let contentStackView = UIStackView()
     
+    // MARK: - Private Properties
     private let tableViewRows = ["Категория"]
     
     private let arrayOfEmoji = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪",]
@@ -34,12 +36,10 @@ final class CreatingOneOffVC: UIViewController {
     private var selectedCategory: String?
     private var selectedSchedule: String?
     
-    var newTaskToPassToMainScreen: ( (TrackerCategory) -> Void )?
-    
-    let categoryStorage = CategoryStorage.shared
-    
-    var delegate: NewTaskDelegate?
-    
+    private let coreDataManager = TrackerCoreManager.shared
+    var informAnotherVCofCreatingTracker: ( () -> Void )?
+        
+    // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -56,6 +56,29 @@ final class CreatingOneOffVC: UIViewController {
         addTapGestureToHideKeyboard()
     }
     
+    // MARK: - IB Actions
+    @objc private func clearTextButtonTapped(_ sender: UIButton) {
+        trackerNameTextField.text = ""
+        isCreateButtonEnable()
+    }
+    
+    @objc private func cancelButtonTapped(_ sender: UIButton) {
+        dismiss(animated: true)
+    }
+    
+    @objc private func createButtonTapped(_ sender: UIButton) {
+        guard let selectedCategory = selectedCategory,
+              let name = trackerNameTextField.text,
+              let selectedColor = selectedColor,
+              let selectedEmoji = selectedEmoji else { print("Что-то пошло не так"); return }
+        let color = UIColor(hex: selectedColor)
+        
+        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
+        coreDataManager.createNewTracker(newTracker: newTask)
+        informAnotherVCofCreatingTracker?()
+    }
+        
+    // MARK: - Private Methods
     private func setupTextField() {
         
         let rightPaddingView = UIView()
@@ -95,11 +118,6 @@ final class CreatingOneOffVC: UIViewController {
         trackerNameTextField.delegate = self
     }
     
-    @objc private func clearTextButtonTapped(_ sender: UIButton) {
-        trackerNameTextField.text = ""
-        isCreateButtonEnable()
-    }
-    
     private func setupTableView() {
         tableView.dataSource = self
         tableView.delegate = self
@@ -134,11 +152,6 @@ final class CreatingOneOffVC: UIViewController {
             createButton.isEnabled = true
             createButton.backgroundColor = .black
         } else {
-            print("New task name \(String(describing: trackerNameTextField.text))")
-            print("Selected category \(String(describing: selectedCategory))")
-            print("Selected schedule \(String(describing: selectedSchedule))")
-            print("Selected Emoji \(String(describing: selectedEmoji))")
-            print("Selected Color \(String(describing: selectedColor))")
             createButton.isEnabled = false
             createButton.backgroundColor = UIColor(named: "createButtonGrayColor")
         }
@@ -153,27 +166,6 @@ final class CreatingOneOffVC: UIViewController {
         view.backgroundColor = UIColor(named: "projectBackground")
         
         setupScrollView()
-    }
-    
-    @objc private func cancelButtonTapped(_ sender: UIButton) {
-        dismiss(animated: true)
-    }
-    
-    @objc private func createButtonTapped(_ sender: UIButton) {
-        print("We'are here too")
-        guard let selectedCategory = selectedCategory,
-              let name = trackerNameTextField.text,
-              let selectedColor = selectedColor,
-              let selectedEmoji = selectedEmoji else { print("Что-то пошло не так"); return }
-        let color = UIColor(hex: selectedColor)
-        
-        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
-        print(newTask)
-        newTaskToPassToMainScreen?(newTask)
-        let tabBarVC = TabBarController()
-        tabBarVC.modalPresentationStyle = .fullScreen
-        categoryStorage.addToDataBase(dataBase: newTask)
-        present(tabBarVC, animated: true)
     }
     
     private func setupButtons(title: String) -> UIButton {
@@ -208,6 +200,7 @@ final class CreatingOneOffVC: UIViewController {
     }
 }
 
+// MARK: -  UITableViewDataSource, UITableViewDelegate
 extension CreatingOneOffVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -256,11 +249,12 @@ extension CreatingOneOffVC: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
+// MARK: - TextFieldDelegate - control of TextField length
 extension CreatingOneOffVC: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let currentCharacterCount = textField.text?.count ?? 0
-        if currentCharacterCount <= 25 {
+        if currentCharacterCount <= 38 {
             hideLabelExceedTextFieldLimit()
             isCreateButtonEnable()
             textField.textColor = .black
@@ -278,6 +272,7 @@ extension CreatingOneOffVC: UITextFieldDelegate {
     }
 }
 
+// MARK: - UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
 extension CreatingOneOffVC: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -370,7 +365,11 @@ extension CreatingOneOffVC: UICollectionViewDataSource, UICollectionViewDelegate
         default:
             id = ""
         }
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! SuplementaryView
+       
+        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SuplementaryView else {
+            print("We have some problems with header"); return UICollectionReusableView()
+        }
+        
         if collectionView == emojiCollection {
             view.label.text = "Emoji"
         } else {
@@ -384,6 +383,7 @@ extension CreatingOneOffVC: UICollectionViewDataSource, UICollectionViewDelegate
     }
 }
 
+// MARK: - setupScrollView
 private extension CreatingOneOffVC {
     
     func setupScrollView() {
@@ -501,7 +501,6 @@ private extension CreatingOneOffVC {
     }
     
 }
-
 
 //MARK: - SwiftUI
 import SwiftUI

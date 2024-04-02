@@ -9,16 +9,19 @@ import UIKit
 
 final class ScheduleViewController: UIViewController {
     
+    // MARK: - UI Properties
     private let tableView = UITableView()
     private lazy var doneButton = setupButtons(title: "Готово")
     
     private let weekdays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
     
+    // MARK: - Private Properties
     private let rowHeight = CGFloat(75)
     private var arrayOfIndexes = [Int]()
     
     var scheduleToPass: ( (String) -> Void )?
     
+    // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,6 +31,26 @@ final class ScheduleViewController: UIViewController {
         
     }
     
+    // MARK: - IB Actions
+    @objc private func weekDaySwitchValueChanged(_ sender: UISwitch) {
+        guard let cell = sender.superview as? UITableViewCell,
+              let indexPath = tableView.indexPath(for: cell) else { return }
+        if sender.isOn {
+            arrayOfIndexes.append(indexPath.row)
+            print(arrayOfIndexes)
+        } else {
+            arrayOfIndexes.removeAll(where: { $0 == indexPath.row })
+            print(arrayOfIndexes)
+        }
+    }
+    
+    @objc private func scheduleDoneButtonTapped(_ sender: UIButton) {
+        let scheduleString = getStringFromArray(array: arrayOfIndexes)
+        scheduleToPass?(scheduleString)
+        dismiss(animated: true)
+    }
+    
+    // MARK: - Private Methods
     private func setupUI() {
         
         let tableViewHeight = CGFloat(weekdays.count) * rowHeight
@@ -73,19 +96,7 @@ final class ScheduleViewController: UIViewController {
         return button
     }
     
-    @objc private func weekDayswitchValueChanded(_ sender: UISwitch) {
-        guard let cell = sender.superview as? UITableViewCell,
-              let indexPath = tableView.indexPath(for: cell) else { return }
-        if sender.isOn {
-            arrayOfIndexes.append(indexPath.row)
-            print(arrayOfIndexes)
-        } else {
-            arrayOfIndexes.removeAll(where: { $0 == indexPath.row })
-            print(arrayOfIndexes)
-        }
-    }
-    
-    func getStringFromArray(array: [Int]) -> String {
+    private func getStringFromArray(array: [Int]) -> String {
         if array.count == 7 { return "Каждый день"} else {
             let daysOfWeek = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
             let arrayOfStrings = array.map { daysOfWeek[$0] }
@@ -94,13 +105,9 @@ final class ScheduleViewController: UIViewController {
         }
     }
     
-    @objc private func scheduleDoneButtonTapped(_ sender: UIButton) {
-        let scheduleString = getStringFromArray(array: arrayOfIndexes)
-        scheduleToPass?(scheduleString)
-        dismiss(animated: true)
-    }
 }
 
+// MARK: - UITableViewDataSource, UITableViewDelegate
 extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -112,7 +119,7 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
         cell.selectionStyle = .none
         let weekDayswitch = UISwitch()
         weekDayswitch.onTintColor = UIColor(named: "switchOnColor")
-        weekDayswitch.addTarget(self, action: #selector(weekDayswitchValueChanded), for: .valueChanged)
+        weekDayswitch.addTarget(self, action: #selector(weekDaySwitchValueChanged), for: .valueChanged)
         cell.accessoryView = weekDayswitch
         cell.textLabel?.text = weekdays[indexPath.row]
         cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
@@ -126,31 +133,5 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         rowHeight
-    }
-}
-
-//MARK: - SwiftUI
-import SwiftUI
-struct ProviderSchedule : PreviewProvider {
-    static var previews: some View {
-        ContainterView().edgesIgnoringSafeArea(.all)
-    }
-    
-    struct ContainterView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> UIViewController {
-            return ScheduleViewController()
-        }
-        
-        typealias UIViewControllerType = UIViewController
-        
-        
-        let viewController = ScheduleViewController()
-        func makeUIViewController(context: UIViewControllerRepresentableContext<ProviderSchedule.ContainterView>) -> ScheduleViewController {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: ProviderSchedule.ContainterView.UIViewControllerType, context: UIViewControllerRepresentableContext<ProviderSchedule.ContainterView>) {
-            
-        }
     }
 }

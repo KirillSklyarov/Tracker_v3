@@ -9,19 +9,43 @@ import UIKit
 
 final class ChoosingTypeOfHabitViewController: UIViewController {
     
+    // MARK: - UI Properties
     private lazy var creatingHabitButton = setupButtons(title: "Привычка")
     private lazy var creatingEventButton = setupButtons(title: "Нерегулярные события")
     
-    private var getNewTaskFromNextScreen: TrackerCategory?
-    var sendNewTaskToMainScreen: ( (TrackerCategory) -> Void )?
+    // MARK: - Other Properties
+    weak var closeScreenDelegate: CloseScreenDelegate?
     
+    // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
-        
+
     }
     
+    // MARK: - IB Actions
+    @objc private func creatingHabitButtonTapped(_ sender: UIButton) {
+        let creatingNewHabit = CreatingNewHabitViewController()
+        let creatingNavVC = UINavigationController(rootViewController: creatingNewHabit)
+        present(creatingNavVC, animated: true)
+        
+        creatingNewHabit.informAnotherVCofCreatingTracker = {
+            self.closeScreenDelegate?.closeFewVCAfterCreatingTracker()
+        }
+    }
+    
+    @objc private func creatingEventButtonTapped(_ sender: UIButton) {
+        let creatingOneOffEvent = CreatingOneOffVC()
+        let creatingNavVC = UINavigationController(rootViewController: creatingOneOffEvent)
+        present(creatingNavVC, animated: true)
+        
+        creatingOneOffEvent.informAnotherVCofCreatingTracker = {
+            self.closeScreenDelegate?.closeFewVCAfterCreatingTracker()
+        }
+    }
+    
+    // MARK: - Private Methods
     private func setupUI() {
         
         self.title = "Создание трекера"
@@ -45,23 +69,6 @@ final class ChoosingTypeOfHabitViewController: UIViewController {
         ])
     }
     
-    @objc private func creatingHabitButtonTapped(_ sender: UIButton) {
-        let creatingNewHabit = CreatingNewHabitViewController()
-        let creatingNavVC = UINavigationController(rootViewController: creatingNewHabit)
-        creatingNewHabit.newTaskToPassToMainScreen = { [weak self] newTask in
-            guard let self = self else { return }
-            self.getNewTaskFromNextScreen = newTask
-            print("We getNewTaskFromNextScreen \(self.getNewTaskFromNextScreen!)")
-        }
-        present(creatingNavVC, animated: true)
-    }
-    
-    @objc private func creatingEventButtonTapped(_ sender: UIButton) {
-        let creatingOneOffEvent = CreatingOneOffVC()
-        let creatingNavVC = UINavigationController(rootViewController: creatingOneOffEvent)
-        present(creatingNavVC, animated: true)
-    }
-    
     private func setupButtons(title: String) -> UIButton {
         let button = UIButton()
         button.setTitle(title, for: .normal)
@@ -73,31 +80,4 @@ final class ChoosingTypeOfHabitViewController: UIViewController {
         return button
     }
     
-}
-
-
-//MARK: - SwiftUI
-import SwiftUI
-struct Provider1 : PreviewProvider {
-    static var previews: some View {
-        ContainterView().edgesIgnoringSafeArea(.all)
-    }
-    
-    struct ContainterView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> UIViewController {
-            return ChoosingTypeOfHabitViewController()
-        }
-        
-        typealias UIViewControllerType = UIViewController
-        
-        
-        let viewController = ChoosingTypeOfHabitViewController()
-        func makeUIViewController(context: UIViewControllerRepresentableContext<Provider1.ContainterView>) -> ChoosingTypeOfHabitViewController {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: Provider1.ContainterView.UIViewControllerType, context: UIViewControllerRepresentableContext<Provider1.ContainterView>) {
-            
-        }
-    }
 }
