@@ -35,7 +35,10 @@ final class ChoosingCategoryViewController: UIViewController {
     private var delegateToPassCategoryNameToEdit: PassCategoryNamesToEditingVC?
     private var categories = [String]()
     
+//    private var lastChosenCategory: String?
+    
     var updateCategory: ( (String) -> Void)?
+    
     
     // MARK: - Live Cycles
     override func viewDidLoad() {
@@ -45,6 +48,9 @@ final class ChoosingCategoryViewController: UIViewController {
         
         setupUI()
         setupTableView()
+        
+//        print("lastChosenCategory \(lastChosenCategory)")
+        
     }
     
     // MARK: - IB Actions
@@ -162,6 +168,14 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.textLabel?.text = categories[indexPath.row]
         
+        let lastChosenCategory = coreDataManager.getLastChosenCategoryFromStore()
+        
+        if lastChosenCategory == cell.textLabel?.text {
+            let selectionImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 14, height: 14))
+            selectionImage.image = UIImage(named: "bluecheckmark")
+            cell.accessoryView = selectionImage
+        }
+                
         if indexPath.row == categories.count - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
             cell.layer.cornerRadius = 16
@@ -179,6 +193,9 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
         cell?.accessoryView = selectionImage
         
         guard let categoryNameToPass = cell?.textLabel?.text else { return }
+        
+        coreDataManager.sendLastChosenCategoryToStore(categoryName: categoryNameToPass)
+
         updateCategory?(categoryNameToPass)
         dismiss(animated: true)
     }

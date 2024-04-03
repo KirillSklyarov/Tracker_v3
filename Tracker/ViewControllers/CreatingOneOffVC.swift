@@ -63,7 +63,7 @@ final class CreatingOneOffVC: UIViewController {
     }
     
     @objc private func cancelButtonTapped(_ sender: UIButton) {
-        dismiss(animated: true)
+        informAnotherVCofCreatingTracker?()
     }
     
     @objc private func createButtonTapped(_ sender: UIButton) {

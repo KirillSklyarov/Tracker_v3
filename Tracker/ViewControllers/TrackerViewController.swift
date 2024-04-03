@@ -64,6 +64,8 @@ final class TrackerViewController: UIViewController {
         }
     }
     
+    weak var passTrackerToEditDelegate: PassTrackerToEditDelegate?
+    
     // MARK: - Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -111,12 +113,12 @@ final class TrackerViewController: UIViewController {
         guard let indexPath = collectionView.indexPathForItem(at: buttonIndexPath),
               let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell else { return }
         
-        print("categories \(categories[indexPath.section])")
-        print("newData \(newData[indexPath.section])")
+//        print("categories \(categories[indexPath.section])")
+//        print("newData \(newData[indexPath.section])")
 
         let category = newData[indexPath.section]
         let tracker = category.trackers[indexPath.row]
-        let currentDateString = dateToString(date: datePicker.date)
+        let currentDateString = dateToString(date: currentDate)
         
         guard let cellColor = cell.frameView.backgroundColor else { print("Color problem"); return }
         
@@ -218,7 +220,6 @@ final class TrackerViewController: UIViewController {
     
     private func setupDatePicker() {
         datePicker.isHidden = false
-        
         datePicker.datePickerMode = .date
         datePicker.layer.backgroundColor = UIColor.white.cgColor
         datePicker.layer.cornerRadius = 13
@@ -358,7 +359,7 @@ final class TrackerViewController: UIViewController {
     
     private func makeTaskUndone(trackToRemove: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
         
-        coreDataManager.removeTrackerRecord(trackerToRemove: trackToRemove)
+        coreDataManager.removeTrackerRecordForThisDay(trackerToRemove: trackToRemove)
         
         let trackerCount = coreDataManager.countOfTrackerInRecords(trackerIDToCount: trackToRemove.id.uuidString)
         let correctDaysInRussian = daysLetters(count: trackerCount)
@@ -407,6 +408,10 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         let trackerColor = UIColor(hex: tracker.colorHex ?? "#000000")
         let frameColor = trackerColor
         let today = Date()
+//        let currentDate = datePicker.date
+        
+//        print("currentDate \(currentDate)")
+//        print("today \(today)")
         
         cell.titleLabel.text = tracker.name
         cell.emojiLabel.text = tracker.emoji
@@ -414,6 +419,8 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         cell.plusButton.backgroundColor = frameColor
         cell.plusButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
         cell.plusButton.isEnabled = currentDate > today ? false : true
+        
+//        print("cell.plusButton.isEnabled \(cell.plusButton.isEnabled)")
         
         let trackerCount = coreDataManager.countOfTrackerInRecords(trackerIDToCount: trackerID.uuidString)
         let correctDaysInRussian = daysLetters(count: trackerCount)
@@ -522,7 +529,26 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
         return UIContextMenuConfiguration(actionProvider: { (_) -> UIMenu? in
             
             let lockAction = UIAction(title: "Закрепить") { _ in }
-            let editAction = UIAction(title: "Редактировать") { _ in }
+            let editAction = UIAction(title: "Редактировать") { _ in
+                
+                let convertedLocation = self.collectionView.convert(location, from: interaction.view)
+                
+                guard let indexPath = self.collectionView.indexPathForItem(at: convertedLocation) else {
+                    print("We have a problem with editing a tracker"); return
+                }
+                
+                guard let cell = self.collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell,
+                      let daysCountText = cell.daysLabel.text else {
+                    print("Unable to get cell for indexPath: \(indexPath)")
+                    return
+                }
+                
+                let editingVC = EditingTrackerViewController()
+                self.passTrackerToEditDelegate = editingVC
+                let navVC = UINavigationController(rootViewController: editingVC)
+                self.present(navVC, animated: true)
+                self.passTrackerToEditDelegate?.getTrackerToEditFromCoreData(indexPath: indexPath, labelText: daysCountText)
+            }
             
             let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in
                 self.showAlert(location: location, interaction: interaction)
@@ -534,6 +560,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
         }
         )
     }
+    
     
     private func showAlert(location: CGPoint, interaction: UIContextMenuInteraction) {
         let alert = UIAlertController(title: "Уверены, что хотите удалить трекер", message: nil, preferredStyle: .actionSheet)
@@ -547,7 +574,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
                 print("We have a problem with deleting a tracker"); return
             }
             
-            self.coreDataManager.deleteTrackerRecordsForTracker(at: indexPath)
+            self.coreDataManager.deleteAllTrackerRecordsForTracker(at: indexPath)
             self.coreDataManager.deleteTracker(at: indexPath)
         }
         

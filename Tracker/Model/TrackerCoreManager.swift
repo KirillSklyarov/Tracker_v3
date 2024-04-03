@@ -22,6 +22,8 @@ final class TrackerCoreManager: NSObject {
     static let shared = TrackerCoreManager()
     
     weak var delegate: DataProviderDelegate?
+
+    var lastChosenCategory: String?
     
     private override init() { }
     
@@ -32,7 +34,7 @@ final class TrackerCoreManager: NSObject {
             if let error = error as NSError? {
                 fatalError(error.localizedDescription)
             } else {
-                print("DB loaded successfully ✅ url: ", description.url ?? "Oooops")
+                print("DB loaded successfully ✅")
             }
         }
         return container
@@ -46,7 +48,6 @@ final class TrackerCoreManager: NSObject {
     var deletedIndexes: IndexSet?
     
     // MARK: - FetchResultsController
-    
     var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
     
     func setupFetchedResultsController(weekDay: String) {
@@ -68,10 +69,10 @@ final class TrackerCoreManager: NSObject {
         do {
             try fetchedResultsController?.performFetch()
             if let results = fetchedResultsController?.fetchedObjects {
-                for element in results {
-                    print(element.name as Any)
-                    print(element.schedule as Any)
-                }
+//                for element in results {
+//                    print(element.name as Any)
+//                    print(element.schedule as Any)
+//                }
             }
         } catch  {
             print(error.localizedDescription)
@@ -79,7 +80,6 @@ final class TrackerCoreManager: NSObject {
     }
     
     // MARK: - CRUD
-    
     func printCoreData() {
         let request = TrackerCoreData.fetchRequest()
         let sort = NSSortDescriptor(key: "category.header", ascending: true)
@@ -87,12 +87,12 @@ final class TrackerCoreManager: NSObject {
         
         do {
             let result = try context.fetch(request)
-            for element in result {
-                print(element)
-                print(element.name as Any)
-                print(element.schedule as Any)
-                print(element.category?.header as Any)
-            }
+//            for element in result {
+//                print(element)
+//                print(element.name as Any)
+//                print(element.schedule as Any)
+//                print(element.category?.header as Any)
+//            }
         } catch  {
             print(error.localizedDescription)
         }
@@ -304,6 +304,18 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
         print("TrackerCategoryHeader deleted successfully ✅")
         save()
     }
+    
+    func sendLastChosenCategoryToStore(categoryName: String) {
+        self.lastChosenCategory = categoryName
+    }
+    
+    func getLastChosenCategoryFromStore() -> String {
+        if let lastChosenCategory =  self.lastChosenCategory{
+            return lastChosenCategory
+        } else {
+            return "Smth is going wrong"
+        }
+    }
 }
 
 extension TrackerCoreManager {
@@ -348,7 +360,7 @@ extension TrackerCoreManager {
         
         do {
             let result = try context.fetch(request)
-            print(result)
+//            print(result)
         } catch  {
             print(error.localizedDescription)
         }
@@ -362,7 +374,7 @@ extension TrackerCoreManager {
         print("New TrackerRecord created ✅")
     }
     
-    func removeTrackerRecord(trackerToRemove: TrackerRecord) {
+    func removeTrackerRecordForThisDay(trackerToRemove: TrackerRecord) {
         let request = TrackerRecordCoreData.fetchRequest()
         let predicate1 = NSPredicate(format: "%K == %@",
                                      #keyPath(TrackerRecordCoreData.id), trackerToRemove.id.uuidString )
@@ -375,7 +387,7 @@ extension TrackerCoreManager {
             let result = try context.fetch(request)
             if let trackerToDelete = result.first {
                 context.delete(trackerToDelete)
-                print("Tracker deleted ✅")
+                print("Tracker Record deleted ✅")
                 save()
             } else {
                 print("We can't find the tracker")
@@ -420,7 +432,7 @@ extension TrackerCoreManager {
         }
     }
     
-    func deleteTrackerRecordsForTracker(at indexPath: IndexPath) {
+    func deleteAllTrackerRecordsForTracker(at indexPath: IndexPath) {
         guard let tracker = fetchedResultsController?.object(at: indexPath),
               let trackerID = tracker.id?.uuidString else { print("Smth is going wrong"); return }
         let request = TrackerRecordCoreData.fetchRequest()

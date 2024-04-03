@@ -1,22 +1,24 @@
 //
-//  CreatingNewHabitViewController.swift
+//  EditingTrackerVC.swift
 //  Tracker
 //
-//  Created by Kirill Sklyarov on 13.03.2024.
+//  Created by Kirill Sklyarov on 03.04.2024.
 //
 
 import UIKit
 
-final class CreatingNewHabitViewController: UIViewController {
+final class EditingTrackerViewController: UIViewController {
     
     // MARK: - UI Properties
+    private let counterLabel = UILabel()
+    
     private let trackerNameTextField = UITextField()
     private let tableView = UITableView()
     private let emojiCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     private let colorsCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
     private lazy var cancelButton = setupButtons(title: "Отмена")
-    private lazy var createButton = setupButtons(title: "Создать")
+    private lazy var saveButton = setupButtons(title: "Сохранить")
     private lazy var exceedLabel = setupExceedLabel()
     
     private let screenScrollView = UIScrollView()
@@ -39,7 +41,11 @@ final class CreatingNewHabitViewController: UIViewController {
     private var selectedSchedule: String?
         
     var informAnotherVCofCreatingTracker: ( () -> Void )?
-        
+    
+    var emojiIndexPath: IndexPath?
+    var colorIndexPath: IndexPath?
+    var categoryName: String?
+    var schedule: String?
         
     // MARK: - Life Cycles
     override func viewDidLoad() {
@@ -65,7 +71,7 @@ final class CreatingNewHabitViewController: UIViewController {
     }
     
     @objc private func cancelButtonTapped(_ sender: UIButton) {
-        informAnotherVCofCreatingTracker?()
+        dismiss(animated: true)
     }
     
     @objc private func createButtonTapped(_ sender: UIButton) {
@@ -82,7 +88,11 @@ final class CreatingNewHabitViewController: UIViewController {
     }
 
     // MARK: - Private Methods
-
+    private func setupCounterLabel() {
+        counterLabel.font = .systemFont(ofSize: 32, weight: .bold)
+        counterLabel.textAlignment = .center
+    }
+    
     private func setupTextField() {
         
         let rightPaddingView = UIView()
@@ -156,25 +166,26 @@ final class CreatingNewHabitViewController: UIViewController {
            selectedSchedule != nil,
            selectedEmoji != nil,
            selectedColor != nil {
-            createButton.isEnabled = true
-            createButton.backgroundColor = .black
+            saveButton.isEnabled = true
+            saveButton.backgroundColor = .black
         } else {
 //            print("New task name \(String(describing: trackerNameTextField.text))")
 //            print("Selected category \(String(describing: selectedCategory))")
 //            print("Selected schedule \(String(describing: selectedSchedule))")
 //            print("Selected Emoji \(String(describing: selectedEmoji))")
 //            print("Selected Color \(String(describing: selectedColor))")
-            createButton.isEnabled = false
-            createButton.backgroundColor = UIColor(named: "createButtonGrayColor")
+            saveButton.isEnabled = false
+            saveButton.backgroundColor = UIColor(named: "createButtonGrayColor")
         }
     }
     
     private func setupUI() {
         
+        setupCounterLabel()
         setupTextField()
         setupContentStack()
         
-        self.title = "Новая привычка"
+        self.title = "Редактирование привычки"
         view.backgroundColor = UIColor(named: "projectBackground")
         
         setupScrollView()
@@ -213,7 +224,7 @@ final class CreatingNewHabitViewController: UIViewController {
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
-extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDelegate {
+extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
@@ -230,6 +241,16 @@ extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDele
         cell.detailTextLabel?.textColor = UIColor(named: "createButtonGrayColor")
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.selectionStyle = .none
+        
+        if indexPath.row == 0 {
+            if categoryName != nil {
+                cell.detailTextLabel?.text = categoryName
+            }
+        } else {
+            if schedule != nil {
+                cell.detailTextLabel?.text = schedule
+            }
+        }
         
         let disclosureImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 7, height: 12))
         disclosureImage.image = UIImage(named: "chevron")
@@ -279,7 +300,7 @@ extension CreatingNewHabitViewController: UITableViewDataSource, UITableViewDele
 }
 
 // MARK: - UITextFieldDelegate
-extension CreatingNewHabitViewController: UITextFieldDelegate {
+extension EditingTrackerViewController: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let currentCharacterCount = textField.text?.count ?? 0
@@ -298,7 +319,7 @@ extension CreatingNewHabitViewController: UITextFieldDelegate {
 }
 
 // MARK: - UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
-extension CreatingNewHabitViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+extension EditingTrackerViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == emojiCollection {
@@ -317,7 +338,16 @@ extension CreatingNewHabitViewController: UICollectionViewDataSource, UICollecti
             view.font = .systemFont(ofSize: 32)
             view.textAlignment = .center
             cell.addSubview(view)
+            
+            if indexPath == emojiIndexPath {
+                cell.isSelected = true
+                cell.layer.cornerRadius = 8
+                cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+//                print("we're here")
+            }
+            
             return cell
+            
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "colorsCell", for: indexPath)
             let view = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
@@ -327,17 +357,32 @@ extension CreatingNewHabitViewController: UICollectionViewDataSource, UICollecti
             cell.contentView.addSubview(view)
             view.center = CGPoint(x: cell.contentView.bounds.midX,
                                   y: cell.contentView.bounds.midY)
+            
+            if indexPath == colorIndexPath {
+                cell.isSelected = true
+                cell.layer.borderWidth = 3
+                let cellColor = colors[indexPath.row].withAlphaComponent(0.3)
+                cell.layer.borderColor = cellColor.cgColor
+                cell.layer.cornerRadius = 8
+            }
+            
             return cell
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == emojiCollection {
+            let originalEmojiCell = collectionView.cellForItem(at: emojiIndexPath!)
+            originalEmojiCell!.backgroundColor = .clear
+         
             let cell = collectionView.cellForItem(at: indexPath)
             cell?.layer.cornerRadius = 8
             cell?.backgroundColor = UIColor(named: "textFieldBackgroundColor")
             selectedEmoji = arrayOfEmoji[indexPath.row]
         } else {
+            let originalColorCell = collectionView.cellForItem(at: colorIndexPath!)
+            originalColorCell!.layer.borderWidth = 0
+            
             let cell = collectionView.cellForItem(at: indexPath)
             cell?.layer.borderWidth = 3
             let colors = colorFromHexToRGB(hexColors: arrayOfColors)
@@ -351,6 +396,7 @@ extension CreatingNewHabitViewController: UICollectionViewDataSource, UICollecti
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         if collectionView == emojiCollection {
+            collectionView.cellForItem(at: emojiIndexPath!)?.backgroundColor = .clear
             let cell = collectionView.cellForItem(at: indexPath)
             cell?.backgroundColor = .clear
         } else {
@@ -405,7 +451,7 @@ extension CreatingNewHabitViewController: UICollectionViewDataSource, UICollecti
 }
 
 // MARK: - setupScrollView
-private extension CreatingNewHabitViewController {
+private extension EditingTrackerViewController {
     
     func setupScrollView() {
         view.addSubViews([screenScrollView])
@@ -462,8 +508,8 @@ private extension CreatingNewHabitViewController {
         cancelButton.setTitleColor(UIColor(named: "cancelButtonRedColor"), for: .normal)
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         
-        createButton.setTitleColor(.white, for: .normal)
-        createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
+        saveButton.setTitleColor(.white, for: .normal)
+        saveButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         
         let buttonsStack: UIStackView = {
             let stack = UIStackView()
@@ -471,7 +517,7 @@ private extension CreatingNewHabitViewController {
             stack.distribution = .fillEqually
             stack.spacing = 8
             stack.addArrangedSubview(cancelButton)
-            stack.addArrangedSubview(createButton)
+            stack.addArrangedSubview(saveButton)
             stack.translatesAutoresizingMaskIntoConstraints = false
             stack.heightAnchor.constraint(equalToConstant: 60).isActive = true
             return stack
@@ -482,11 +528,13 @@ private extension CreatingNewHabitViewController {
         contentStackView.distribution = .equalCentering
         contentStackView.translatesAutoresizingMaskIntoConstraints = false
         
+        counterLabel.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         emojiCollection.translatesAutoresizingMaskIntoConstraints = false
         colorsCollection.translatesAutoresizingMaskIntoConstraints = false
         buttonsStack.translatesAutoresizingMaskIntoConstraints = false
         
+        contentStackView.addArrangedSubview(counterLabel)
         contentStackView.addArrangedSubview(textFieldViewStack)
         contentStackView.addArrangedSubview(tableView)
         contentStackView.addArrangedSubview(emojiCollection)
@@ -494,7 +542,12 @@ private extension CreatingNewHabitViewController {
         contentStackView.addArrangedSubview(buttonsStack)
         
         NSLayoutConstraint.activate([
-            textFieldViewStack.topAnchor.constraint(equalTo: contentStackView.topAnchor),
+            counterLabel.topAnchor.constraint(equalTo: contentStackView.topAnchor),
+            counterLabel.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
+            counterLabel.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
+            counterLabel.heightAnchor.constraint(equalToConstant: 75),
+            
+            textFieldViewStack.topAnchor.constraint(equalTo: counterLabel.bottomAnchor, constant: 40),
             textFieldViewStack.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
             textFieldViewStack.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
             textFieldViewStack.heightAnchor.constraint(equalToConstant: 75),
@@ -520,32 +573,27 @@ private extension CreatingNewHabitViewController {
             buttonsStack.bottomAnchor.constraint(equalTo: contentStackView.bottomAnchor)
         ])
     }
-    
 }
 
-
-//MARK: - SwiftUI
-import SwiftUI
-struct Provider2 : PreviewProvider {
-    static var previews: some View {
-        ContainterView().edgesIgnoringSafeArea(.all)
-    }
-    
-    struct ContainterView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> UIViewController {
-            return CreatingNewHabitViewController()
+extension EditingTrackerViewController: PassTrackerToEditDelegate {
+    func getTrackerToEditFromCoreData(indexPath: IndexPath, labelText: String) {
+        let tracker = coreDataManager.fetchedResultsController?.object(at: indexPath)
+        
+        self.counterLabel.text = labelText
+        self.trackerNameTextField.text = tracker?.name
+        
+        if let trackerEmoji = tracker?.emoji,
+           let emojiIndex = arrayOfEmoji.firstIndex(of: trackerEmoji) {
+            self.emojiIndexPath = IndexPath(row: emojiIndex, section: 0)
         }
         
-        typealias UIViewControllerType = UIViewController
-        
-        
-        let viewController = CreatingNewHabitViewController()
-        func makeUIViewController(context: UIViewControllerRepresentableContext<Provider2.ContainterView>) -> CreatingNewHabitViewController {
-            return viewController
+        if let trackerColor = tracker?.colorHex,
+           let colorIndex = arrayOfColors.firstIndex(of: trackerColor) {
+            self.colorIndexPath = IndexPath(row: colorIndex, section: 0)
         }
         
-        func updateUIViewController(_ uiViewController: Provider2.ContainterView.UIViewControllerType, context: UIViewControllerRepresentableContext<Provider2.ContainterView>) {
-            
-        }
+        self.categoryName = tracker?.category?.header
+        self.schedule = tracker?.schedule
+        
     }
 }
