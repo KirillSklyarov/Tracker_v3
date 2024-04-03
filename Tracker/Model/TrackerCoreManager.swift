@@ -406,7 +406,6 @@ extension TrackerCoreManager {
     }
     
     func countOfTrackerInRecords(trackerIDToCount: String) -> Int {
-//        guard let trackerToCountId = trackerToCount.id else { return 0}
         let request = TrackerRecordCoreData.fetchRequest()
         let predicate = NSPredicate(format: "%K == %@",
                                     #keyPath(TrackerRecordCoreData.id),
@@ -418,6 +417,26 @@ extension TrackerCoreManager {
         } catch  {
             print(error.localizedDescription)
             return 0
+        }
+    }
+    
+    func deleteTrackerRecordsForTracker(at indexPath: IndexPath) {
+        guard let tracker = fetchedResultsController?.object(at: indexPath),
+              let trackerID = tracker.id?.uuidString else { print("Smth is going wrong"); return }
+        let request = TrackerRecordCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerRecordCoreData.id), trackerID)
+        request.predicate = predicate
+        
+        do {
+            let result = try context.fetch(request)
+            for records in result {
+                context.delete(records)
+                save()
+            }
+            print("TrackerRecords for this tracker deleted ✅")
+        } catch  {
+            print(error.localizedDescription)
         }
     }
 }

@@ -547,6 +547,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
                 print("We have a problem with deleting a tracker"); return
             }
             
+            self.coreDataManager.deleteTrackerRecordsForTracker(at: indexPath)
             self.coreDataManager.deleteTracker(at: indexPath)
         }
         
