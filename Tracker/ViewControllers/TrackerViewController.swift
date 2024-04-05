@@ -91,6 +91,8 @@ final class TrackerViewController: UIViewController {
         addTapGestureToHideDatePicker()
         
         coreDataManager.printTrackerRecord()
+        
+        
                         
     }
     
