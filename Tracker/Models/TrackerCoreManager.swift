@@ -68,12 +68,12 @@ final class TrackerCoreManager: NSObject {
         
         do {
             try fetchedResultsController?.performFetch()
-            if let results = fetchedResultsController?.fetchedObjects {
+//            if let results = fetchedResultsController?.fetchedObjects {
 //                for element in results {
 //                    print(element.name as Any)
 //                    print(element.schedule as Any)
 //                }
-            }
+//            }
         } catch  {
             print(error.localizedDescription)
         }
