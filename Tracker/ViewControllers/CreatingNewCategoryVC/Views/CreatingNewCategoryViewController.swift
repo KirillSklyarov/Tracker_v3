@@ -10,12 +10,12 @@ import UIKit
 final class CreatingNewCategoryViewController: UIViewController {
     
     // MARK: - UI Properties
-    private let categoryNameTextField = UITextField()
-    private lazy var doneButton = setupButtons(title: "Готово")
+    let categoryNameTextField = UITextField()
+    let doneButton = UIButton()
     
     // MARK: - Public Properties
-    var updateTableClosure: ( (String) -> Void )?
-    
+    let viewModel = CreatingNewCategoryViewModel()
+        
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,24 +28,18 @@ final class CreatingNewCategoryViewController: UIViewController {
     
     // MARK: - IB Actions
     @objc private func textFieldEditing(_ sender: UITextField) {
-        if let text = sender.text,
-           !text.isEmpty {
-            doneButton.isEnabled = true
-            doneButton.backgroundColor = .black
-        } else {
-            doneButton.isEnabled = false
-            doneButton.backgroundColor = .systemGray4
+        if let text = sender.text {
+            !text.isEmpty ? doneButtonIsActive() : doneButtonIsNotActive()
         }
     }
     
     @objc private func doneButtonTapped(_ sender: UIButton) {
         guard let newCategoryName = categoryNameTextField.text else { return }
-        updateTableClosure?(newCategoryName)
+        viewModel.updateTableClosure?(newCategoryName)
         dismiss(animated: true)
     }
     
     // MARK: - Private Methods
-
     private func setupTextField() {
         
         categoryNameTextField.placeholder = "Введите название категории"
@@ -66,6 +60,8 @@ final class CreatingNewCategoryViewController: UIViewController {
         
         setupTextField()
         
+        setupDoneButton()
+        
         self.title = "Новая категория"
         
         view.backgroundColor = UIColor(named: "projectBackground")
@@ -83,25 +79,26 @@ final class CreatingNewCategoryViewController: UIViewController {
         ])
     }
     
-    private func setupButtons(title: String) -> UIButton {
-        let button = UIButton()
-        button.setTitle(title, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(named: "createButtonGrayColor")
-        button.layer.masksToBounds = true
-        button.layer.cornerRadius = 15
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        button.isEnabled = false
-        return button
+    private func setupDoneButton() {
+        doneButton.setTitle("Готово", for: .normal)
+        doneButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        doneButton.setTitleColor(.white, for: .normal)
+        doneButton.backgroundColor = UIColor(named: "createButtonGrayColor")
+        doneButton.layer.masksToBounds = true
+        doneButton.layer.cornerRadius = 15
+        doneButton.translatesAutoresizingMaskIntoConstraints = false
+        doneButton.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        doneButton.isEnabled = false
     }
-}
-
-// MARK: - UITextFieldDelegate
-extension CreatingNewCategoryViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        categoryNameTextField.resignFirstResponder()
+    
+    private func doneButtonIsActive() {
+        doneButton.isEnabled = true
+        doneButton.backgroundColor = .black
+    }
+    
+    private func doneButtonIsNotActive() {
+        doneButton.isEnabled = false
+        doneButton.backgroundColor = .systemGray4
     }
 }

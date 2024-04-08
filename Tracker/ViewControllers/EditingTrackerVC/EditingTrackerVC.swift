@@ -278,7 +278,7 @@ extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelega
         } else {
             let scheduleVC = ScheduleViewController()
             let navVC = UINavigationController(rootViewController: scheduleVC)
-            scheduleVC.scheduleToPass = { [weak self] schedule in
+            scheduleVC.viewModel.scheduleToPass = { [weak self] schedule in
                 guard let self = self,
                       let cell = tableView.cellForRow(at: indexPath) else { return }
                 cell.detailTextLabel?.text = schedule

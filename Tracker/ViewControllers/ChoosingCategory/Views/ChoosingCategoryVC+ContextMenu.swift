@@ -46,7 +46,7 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
         self.viewModel.delegateToPassCategoryNameToEdit = editingVC
         viewModel.delegateToPassCategoryNameToEdit?.getCategoryNameFromPreviousVC(categoryName: categoryNameToPass)
         
-        editingVC.updateCategoryNameClosure = {
+        editingVC.viewModel.updateCategoryNameClosure = {
             self.viewModel.dataUpdated = {
                 self.categoryTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
             }

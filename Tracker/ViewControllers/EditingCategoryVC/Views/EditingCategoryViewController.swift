@@ -1,5 +1,5 @@
 //
-//  CreatingNewHabitViewController.swift
+//  EditingCategoryViewController.swift
 //  Tracker
 //
 //  Created by Kirill Sklyarov on 13.03.2024.
@@ -10,15 +10,12 @@ import UIKit
 final class EditingCategoryViewController: UIViewController {
     
     // MARK: - UI Properties
-    private let categoryNameTextField = UITextField()
-    private lazy var doneButton = setupButtons(title: "Готово")
+    let categoryNameTextField = UITextField()
+    let doneButton = UIButton()
     
     // MARK: - Private Properties
-    private var categoryHeader = ""
-    private let coreDataManager = TrackerCoreManager.shared
-    
-    var updateCategoryNameClosure: ( () -> Void )?
-    
+    let viewModel = EditingCategoryViewModel()
+            
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,10 +32,7 @@ final class EditingCategoryViewController: UIViewController {
     
     @objc private func doneButtonTapped(_ sender: UIButton) {
         guard let newCategoryHeader = categoryNameTextField.text else { return }
-        coreDataManager.renameCategory(header: self.categoryHeader, newHeader: newCategoryHeader)
-        let renameCategoryNotification = Notification.Name("renameCategory")
-        NotificationCenter.default.post(name: renameCategoryNotification, object: nil)
-        updateCategoryNameClosure?()
+        viewModel.doneButtonTapped(newCategoryHeader: newCategoryHeader)
         dismiss(animated: true)
     }
     
@@ -83,6 +77,8 @@ final class EditingCategoryViewController: UIViewController {
     
     private func setupUI() {
         
+        setupDoneButton()
+        
         setupTextField()
         
         self.title = "Редактирование категории"
@@ -102,32 +98,15 @@ final class EditingCategoryViewController: UIViewController {
         ])
     }
     
-    private func setupButtons(title: String) -> UIButton {
-        let button = UIButton()
-        button.setTitle(title, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
-        button.layer.masksToBounds = true
-        button.layer.cornerRadius = 15
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        button.backgroundColor = .black
-        return button
-    }
-}
-
-// MARK: - UITextFieldDelegate
-extension EditingCategoryViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        categoryNameTextField.resignFirstResponder()
-    }
-}
-
-// MARK: - Delegate
-extension EditingCategoryViewController: PassCategoryNamesToEditingVC {
-    func getCategoryNameFromPreviousVC(categoryName: String) {
-        self.categoryHeader = categoryName
-        categoryNameTextField.text = categoryName
+    private func setupDoneButton() {
+        doneButton.setTitle("Готово", for: .normal)
+        doneButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        doneButton.setTitleColor(.white, for: .normal)
+        doneButton.layer.masksToBounds = true
+        doneButton.layer.cornerRadius = 15
+        doneButton.translatesAutoresizingMaskIntoConstraints = false
+        doneButton.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        doneButton.backgroundColor = .black
     }
 }

@@ -7,10 +7,10 @@
 
 import UIKit
 
-final class ChoosingTypeOfHabitViewController: UIViewController {
+final class ChoosingTypeOfTrackerViewController: UIViewController {
     
     // MARK: - UI Properties
-    private lazy var creatingHabitButton = setupButtons(title: "Привычка")
+    private lazy var creatingTrackerButton = setupButtons(title: "Привычка")
     private lazy var creatingEventButton = setupButtons(title: "Нерегулярные события")
     
     // MARK: - Other Properties
@@ -21,16 +21,16 @@ final class ChoosingTypeOfHabitViewController: UIViewController {
         super.viewDidLoad()
         
         setupUI()
-
+        
     }
     
     // MARK: - IB Actions
-    @objc private func creatingHabitButtonTapped(_ sender: UIButton) {
-        let creatingNewHabit = CreatingNewTrackerViewController()
-        let creatingNavVC = UINavigationController(rootViewController: creatingNewHabit)
+    @objc private func creatingTrackerButtonTapped(_ sender: UIButton) {
+        let creatingNewTracker = CreatingNewTrackerViewController()
+        let creatingNavVC = UINavigationController(rootViewController: creatingNewTracker)
         present(creatingNavVC, animated: true)
         
-        creatingNewHabit.informAnotherVCofCreatingTracker = {
+        creatingNewTracker.informAnotherVCofCreatingTracker = {
             self.closeScreenDelegate?.closeFewVCAfterCreatingTracker()
         }
     }
@@ -49,23 +49,21 @@ final class ChoosingTypeOfHabitViewController: UIViewController {
     private func setupUI() {
         
         self.title = "Создание трекера"
+        view.backgroundColor = .systemBackground
         
-        creatingHabitButton.addTarget(self, action: #selector(creatingHabitButtonTapped), for: .touchUpInside)
+        creatingTrackerButton.addTarget(self, action: #selector(creatingTrackerButtonTapped), for: .touchUpInside)
         creatingEventButton.addTarget(self, action: #selector(creatingEventButtonTapped), for: .touchUpInside)
         
-        view.backgroundColor = .systemBackground
-        view.addSubViews([creatingHabitButton, creatingEventButton])
+        let buttonStack = UIStackView(arrangedSubviews: [creatingTrackerButton, creatingEventButton])
+        buttonStack.axis = .vertical
+        buttonStack.spacing = 16
+        
+        view.addSubViews([buttonStack])
         
         NSLayoutConstraint.activate([
-            creatingHabitButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 281),
-            creatingHabitButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            creatingHabitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            creatingHabitButton.heightAnchor.constraint(equalToConstant: 60),
-            
-            creatingEventButton.topAnchor.constraint(equalTo: creatingHabitButton.bottomAnchor, constant: 16),
-            creatingEventButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            creatingEventButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            creatingEventButton.heightAnchor.constraint(equalToConstant: 60)
+            buttonStack.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            buttonStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            buttonStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         ])
     }
     
@@ -77,6 +75,7 @@ final class ChoosingTypeOfHabitViewController: UIViewController {
         button.backgroundColor = .black
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 15
+        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         return button
     }
     

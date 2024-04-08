@@ -94,7 +94,7 @@ final class TrackerViewController: UIViewController {
     
     // MARK: - UI Actions
     @objc private func addNewHabitButtonTapped(_ sender: UIButton) {
-        let creatingNewHabitVC = ChoosingTypeOfHabitViewController()
+        let creatingNewHabitVC = ChoosingTypeOfTrackerViewController()
         let creatingNavi = UINavigationController(rootViewController: creatingNewHabitVC)
         present(creatingNavi, animated: true)
         creatingNewHabitVC.closeScreenDelegate = self

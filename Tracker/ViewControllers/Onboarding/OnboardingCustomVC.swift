@@ -15,7 +15,6 @@ final class OnboardingCustomVC: UIViewController {
     
     let userDefaults = UserDefaults.standard
     
-    
     init(image: String, labelText: String) {
         self.image.image = UIImage(named: image)
         self.label.text = labelText

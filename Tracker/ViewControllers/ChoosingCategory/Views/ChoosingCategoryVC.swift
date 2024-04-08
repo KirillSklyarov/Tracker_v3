@@ -34,7 +34,7 @@ final class ChoosingCategoryViewController: UIViewController {
     @objc private func addCategoryButtonTapped(_ sender: UIButton) {
         let creatingNewCategoryVC = CreatingNewCategoryViewController()
         let creatingCategoryNavVC = UINavigationController(rootViewController: creatingNewCategoryVC)
-        creatingNewCategoryVC.updateTableClosure = { [weak self] newCategory in
+        creatingNewCategoryVC.viewModel.updateTableClosure = { [weak self] newCategory in
             guard let self = self else { return }
             viewModel.createNewCategory(newCategoryName: newCategory)
             
