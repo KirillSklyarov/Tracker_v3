@@ -18,8 +18,6 @@ final class ChoosingCategoryViewController: UIViewController {
     // MARK: - Public Properties
     let viewModel = ChoosingCategoryViewModel()
     
-    var updateCategory: ( (String) -> Void)?
-    
     // MARK: - Live Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,12 +40,9 @@ final class ChoosingCategoryViewController: UIViewController {
             
             viewModel.dataUpdated = {
                 self.categoryTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-                self.designFirstAndLastCell()
-
             }
             
             viewModel.getDataFromCoreData()
-            
             
             showOrHidePlaceholder()
             
@@ -78,45 +73,6 @@ final class ChoosingCategoryViewController: UIViewController {
         ])
     }
     
-    private func showOrHidePlaceholder() {
-        viewModel.categories.isEmpty ? showPlaceholderForEmptyScreen() : hidePlaceholder()
-    }
-    
-    func showPlaceholderForEmptyScreen() {
-        
-        swooshImage.image = UIImage(named: "swoosh")
-        swooshImage.translatesAutoresizingMaskIntoConstraints = false
-        swooshImage.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        swooshImage.contentMode = .center
-        
-        textLabel.text = "Привычки и события можно \nобъединить по смыслу"
-        textLabel.numberOfLines = 0
-        textLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        textLabel.textAlignment = .center
-        textLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        let emptyScreenStack = UIStackView()
-        emptyScreenStack.axis = .vertical
-        emptyScreenStack.spacing = 8
-        emptyScreenStack.alignment = .center
-        
-        emptyScreenStack.addArrangedSubview(swooshImage)
-        emptyScreenStack.addArrangedSubview(textLabel)
-        
-        view.addSubViews([emptyScreenStack])
-        
-        NSLayoutConstraint.activate([
-            emptyScreenStack.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            textLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            textLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
-        ])
-    }
-    
-    private func hidePlaceholder() {
-        swooshImage.isHidden = true
-        textLabel.isHidden = true
-    }
-    
     private func setupButton() {
         creatingCategoryButton.setTitle("Добавить категорию", for: .normal)
         creatingCategoryButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
@@ -126,5 +82,45 @@ final class ChoosingCategoryViewController: UIViewController {
         creatingCategoryButton.layer.cornerRadius = 15
         
         creatingCategoryButton.addTarget(self, action: #selector(addCategoryButtonTapped), for: .touchUpInside)
+    }
+    
+    // MARK: - Setup Placeholder
+    func showOrHidePlaceholder() {
+        viewModel.categories.isEmpty ? showPlaceholder() : hidePlaceholder()
+    }
+    
+    private func showPlaceholder() {
+        
+        swooshImage.isHidden = false
+        textLabel.isHidden = false
+        
+        swooshImage.image = UIImage(named: "swoosh")
+        swooshImage.contentMode = .center
+        
+        textLabel.text = "Привычки и события можно \nобъединить по смыслу"
+        textLabel.numberOfLines = 0
+        textLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        textLabel.textAlignment = .center
+        
+        let emptyScreenStack = UIStackView()
+        emptyScreenStack.axis = .vertical
+        emptyScreenStack.spacing = 8
+        emptyScreenStack.alignment = .center
+        
+        [swooshImage, textLabel].forEach { emptyScreenStack.addArrangedSubview($0) }
+        
+        view.addSubViews([emptyScreenStack])
+        
+        NSLayoutConstraint.activate([
+            emptyScreenStack.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            textLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            textLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            swooshImage.heightAnchor.constraint(equalToConstant: 80)
+        ])
+    }
+    
+    private func hidePlaceholder() {
+        swooshImage.isHidden = true
+        textLabel.isHidden = true
     }
 }

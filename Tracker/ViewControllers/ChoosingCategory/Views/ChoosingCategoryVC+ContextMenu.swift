@@ -26,30 +26,11 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
         cell.addInteraction(interaction)
     }
     
-    func showContextMenu(indexPath: IndexPath) -> UIMenu {
+   private func showContextMenu(indexPath: IndexPath) -> UIMenu {
         let editAction = UIAction(title: "Редактировать") { [weak self] _ in
             guard let self = self,
-                  let cell = self.categoryTableView.cellForRow(at: indexPath),
-                  let categoryNameToPass = cell.textLabel?.text else { return }
-            let editingVC = EditingCategoryViewController()
-            let navVC = UINavigationController(rootViewController: editingVC)
-            self.viewModel.delegateToPassCategoryNameToEdit = editingVC
-            viewModel.delegateToPassCategoryNameToEdit?.getCategoryNameFromPreviousVC(categoryName: categoryNameToPass)
-            
-            editingVC.updateCategoryNameClosure = {
-               
-                self.viewModel.dataUpdated = {
-                    self.categoryTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-//                    self.designFirstAndLastCell()
-                }
-                
-               
-                
-                self.viewModel.getDataFromCoreData()
-                print(self.viewModel.categories)
-            }
-            
-            present(navVC, animated: true)
+                  let cell = self.categoryTableView.cellForRow(at: indexPath) as? CustomCategoryCell else { return }
+            openEditingCategoryVC(cell: cell)
         }
         
         let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in
@@ -58,49 +39,68 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
         return UIMenu(children: [editAction, deleteAction])
     }
     
+    private func openEditingCategoryVC(cell: CustomCategoryCell) {
+        guard let categoryNameToPass = cell.titleLabel.text else { print("We have some problems here"); return }
+        let editingVC = EditingCategoryViewController()
+        let navVC = UINavigationController(rootViewController: editingVC)
+        self.viewModel.delegateToPassCategoryNameToEdit = editingVC
+        viewModel.delegateToPassCategoryNameToEdit?.getCategoryNameFromPreviousVC(categoryName: categoryNameToPass)
+        
+        editingVC.updateCategoryNameClosure = {
+            self.viewModel.dataUpdated = {
+                self.categoryTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+            }
+            self.viewModel.getDataFromCoreData()
+        }
+        
+        present(navVC, animated: true)
+    }
+    
+    
     private func showAlert(indexPath: IndexPath) {
         let alert = UIAlertController(title: "Эта категория точно не нужна", message: nil, preferredStyle: .actionSheet)
         
         let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
             guard let self = self,
-                  let cell = self.categoryTableView.cellForRow(at: indexPath),
-                  let categoryNameToDelete = cell.textLabel?.text else { return }
-            
-            self.viewModel.dataUpdated = {
-                self.categoryTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-                self.designFirstAndLastCell()
-            }
-            
-            self.viewModel.deleteCategory(categoryNameToDelete: categoryNameToDelete)
-            
-            self.viewModel.getDataFromCoreData()
-            self.showPlaceholderForEmptyScreen()
+                  let cell = self.categoryTableView.cellForRow(at: indexPath) as? CustomCategoryCell else { return }
+            deleteCategory(cell: cell, indexPath: indexPath)
         }
         
         let cancelAction = UIAlertAction(title: "Отменить", style: .cancel)
-        alert.addAction(deleteAction)
-        alert.addAction(cancelAction)
+        
+        [deleteAction, cancelAction].forEach({ alert.addAction($0)})
+    
         self.present(alert, animated: true)
     }
     
-    func designFirstAndLastCell() {
-        let indexPathOfFirstCell = IndexPath(row: 0, section: 0)
-        let indexPathOfLastCell = IndexPath(row: viewModel.categories.count - 1, section: 0)
+    private func deleteCategory(cell: CustomCategoryCell, indexPath: IndexPath) {
+        guard let categoryNameToDelete = cell.titleLabel.text else { return }
         
-        guard let firstCell = self.categoryTableView.cellForRow(at: indexPathOfFirstCell),
-              let lastCell = self.categoryTableView.cellForRow(at: indexPathOfLastCell) else { return }
+        self.viewModel.dataUpdated = {
+            DispatchQueue.main.async {
+                self.categoryTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+                self.designFirstAndLastCell(indexPath: indexPath, cell: cell)
+                self.showOrHidePlaceholder()
+            }
+        }
+        
+        self.viewModel.deleteCategory(categoryNameToDelete: categoryNameToDelete)
+        self.viewModel.getDataFromCoreData()
+        
+    }
+    
+    func designFirstAndLastCell(indexPath: IndexPath, cell: UITableViewCell) {
                 
-        firstCell.layer.cornerRadius = 16
-//        firstCell.backgroundColor = .darkGray.withAlphaComponent(0.1)
-
-        firstCell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        firstCell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        if indexPath.row == 0 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        }
         
-        lastCell.layer.cornerRadius = 16
-        
-//        lastCell.backgroundColor = .darkGray.withAlphaComponent(0.1)
-
-        lastCell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
-        lastCell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        if indexPath.row == viewModel.categories.count - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
+        }
     }
 }

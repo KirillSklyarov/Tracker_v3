@@ -23,6 +23,8 @@ final class ChoosingCategoryViewModel {
     
     var delegateToPassCategoryNameToEdit: PassCategoryNamesToEditingVC?
     
+    var updateCategory: ( (String) -> Void)?
+    
     // MARK: - Update data from Core Data
     
     func getDataFromCoreData() {
@@ -32,7 +34,6 @@ final class ChoosingCategoryViewModel {
     func createNewCategory(newCategoryName: String) {
         coreDataManager.createNewCategory(newCategoryName: newCategoryName)
     }
-
     
     func deleteCategory(categoryNameToDelete: String) {
         coreDataManager.deleteCategory(header: categoryNameToDelete)
@@ -45,16 +46,30 @@ final class ChoosingCategoryViewModel {
     func sendLastChosenCategoryToStore(categoryName: String) {
         coreDataManager.sendLastChosenCategoryToStore(categoryName: categoryName)
     }
+    
+    func deSelectCell(cell: CustomCategoryCell) {
+        cell.checkmarkImage.isHidden = true
+    }
+    
+    func showLastChosenCategory(cell: CustomCategoryCell) {
+        let lastChosenCategory = self.getLastChosenCategoryFromStore()
+        if lastChosenCategory == cell.titleLabel.text {
+            self.selectCell(cell: cell)
+        }
+    }
+    
+    func selectCell(cell: CustomCategoryCell) {
+        cell.selectionStyle = .none
+        cell.checkmarkImage.isHidden = false
+    }
+    
+    func choosingCategory(cell: CustomCategoryCell) {
+        
+        self.selectCell(cell: cell)
+        
+        guard let categoryNameToPass = cell.titleLabel.text else {
+            print("Oooops"); return }
+        self.sendLastChosenCategoryToStore(categoryName: categoryNameToPass)
+        self.updateCategory?(categoryNameToPass)
+    }
 }
-
-
-
-
-// MARK: - Update data from Core Data
-//extension ChoosingCategoryViewController {
-//
-//    func getDataFromCoreData() {
-//        self.categories = coreDataManager.getCategoryNamesFromStorage()
-//        self.categoryTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-//    }
-//}

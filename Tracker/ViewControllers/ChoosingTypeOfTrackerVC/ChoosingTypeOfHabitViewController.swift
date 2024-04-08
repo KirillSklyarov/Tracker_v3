@@ -26,7 +26,7 @@ final class ChoosingTypeOfHabitViewController: UIViewController {
     
     // MARK: - IB Actions
     @objc private func creatingHabitButtonTapped(_ sender: UIButton) {
-        let creatingNewHabit = CreatingNewHabitViewController()
+        let creatingNewHabit = CreatingNewTrackerViewController()
         let creatingNavVC = UINavigationController(rootViewController: creatingNewHabit)
         present(creatingNavVC, animated: true)
         
@@ -36,7 +36,7 @@ final class ChoosingTypeOfHabitViewController: UIViewController {
     }
     
     @objc private func creatingEventButtonTapped(_ sender: UIButton) {
-        let creatingOneOffEvent = CreatingOneOffVC()
+        let creatingOneOffEvent = CreatingOneOffTrackerVC()
         let creatingNavVC = UINavigationController(rootViewController: creatingOneOffEvent)
         present(creatingNavVC, animated: true)
         

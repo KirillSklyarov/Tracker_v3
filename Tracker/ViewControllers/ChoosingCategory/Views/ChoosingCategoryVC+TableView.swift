@@ -11,19 +11,14 @@ import UIKit
 extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDelegate {
     
     func setupTableView() {
-        
-        showPlaceholderForEmptyScreen()
-        
+                                
         categoryTableView.dataSource = self
         categoryTableView.delegate = self
-        categoryTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        
-        categoryTableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        categoryTableView.register(CustomCategoryCell.self, forCellReuseIdentifier: CustomCategoryCell.identifier)
         
         categoryTableView.layer.cornerRadius = 16
-//        categoryTableView.tableHeaderView = UIView()
+        categoryTableView.tableHeaderView = UIView()
     }
-    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         viewModel.rowHeight
@@ -35,49 +30,27 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
-        cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        cell.textLabel?.text = viewModel.categories[indexPath.row]
-        
-        let lastChosenCategory = viewModel.getLastChosenCategoryFromStore()
-        
-        if lastChosenCategory == cell.textLabel?.text {
-            let selectionImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 14, height: 14))
-            selectionImage.image = UIImage(named: "bluecheckmark")
-            cell.accessoryView = selectionImage
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CustomCategoryCell.identifier, for: indexPath) as? CustomCategoryCell else { print("We have problems with cell")
+            return UITableViewCell()
         }
-                
-        if indexPath.row == 0 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        }
+        let cellViewModel = viewModel.categories[indexPath.row]
+        cell.configureCell(viewModelCategories: cellViewModel)
         
-        if indexPath.row == viewModel.categories.count - 1 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-            cell.layer.cornerRadius = 16
-            cell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
-        }
+        viewModel.showLastChosenCategory(cell: cell)
+        
+        designFirstAndLastCell(indexPath: indexPath, cell: cell)
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath)
-        cell?.selectionStyle = .none
-        let selectionImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 14, height: 14))
-        selectionImage.image = UIImage(named: "bluecheckmark")
-        cell?.accessoryView = selectionImage
-        
-        guard let categoryNameToPass = cell?.textLabel?.text else { return }
-        
-        viewModel.sendLastChosenCategoryToStore(categoryName: categoryNameToPass)
-        
-        updateCategory?(categoryNameToPass)
+        guard let cell = tableView.cellForRow(at: indexPath) as? CustomCategoryCell else { return }
+        viewModel.choosingCategory(cell: cell)
         dismiss(animated: true)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath)
-        cell?.accessoryView = UIView()
+        guard let cell = tableView.cellForRow(at: indexPath) as? CustomCategoryCell else { return }
+        viewModel.deSelectCell(cell: cell)
     }
 }

@@ -5,7 +5,6 @@
 //  Created by Kirill Sklyarov on 26.03.2024.
 //
 
-import UIKit
 import CoreData
 
 struct TrackersStoreUpdate {
@@ -68,36 +67,12 @@ final class TrackerCoreManager: NSObject {
         
         do {
             try fetchedResultsController?.performFetch()
-//            if let results = fetchedResultsController?.fetchedObjects {
-//                for element in results {
-//                    print(element.name as Any)
-//                    print(element.schedule as Any)
-//                }
-//            }
         } catch  {
             print(error.localizedDescription)
         }
     }
     
     // MARK: - CRUD
-    func printCoreData() {
-        let request = TrackerCoreData.fetchRequest()
-        let sort = NSSortDescriptor(key: "category.header", ascending: true)
-        request.sortDescriptors = [sort]
-        
-        do {
-            let result = try context.fetch(request)
-//            for element in result {
-//                print(element)
-//                print(element.name as Any)
-//                print(element.schedule as Any)
-//                print(element.category?.header as Any)
-//            }
-        } catch  {
-            print(error.localizedDescription)
-        }
-        
-    }
     
     func fetchData() -> [TrackerCategory] {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
@@ -359,8 +334,7 @@ extension TrackerCoreManager {
         let request = TrackerRecordCoreData.fetchRequest()
         
         do {
-            let result = try context.fetch(request)
-//            print(result)
+            _ = try context.fetch(request)
         } catch  {
             print(error.localizedDescription)
         }

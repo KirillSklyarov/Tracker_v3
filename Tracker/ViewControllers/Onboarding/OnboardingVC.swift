@@ -91,30 +91,3 @@ extension OnboardingVC: UIPageViewControllerDataSource, UIPageViewControllerDele
         }
     }
 }
-
-
-//MARK: - SwiftUI
-import SwiftUI
-struct Provider : PreviewProvider {
-    static var previews: some View {
-        ContainterView().edgesIgnoringSafeArea(.all)
-    }
-    
-    struct ContainterView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> UIViewController {
-            return OnboardingVC()
-        }
-        
-        typealias UIViewControllerType = UIViewController
-        
-        
-        let viewController = OnboardingVC()
-        func makeUIViewController(context: UIViewControllerRepresentableContext<Provider.ContainterView>) -> OnboardingVC {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: Provider.ContainterView.UIViewControllerType, context: UIViewControllerRepresentableContext<Provider.ContainterView>) {
-            
-        }
-    }
-}

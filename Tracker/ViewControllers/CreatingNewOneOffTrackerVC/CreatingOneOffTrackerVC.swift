@@ -1,5 +1,5 @@
 //
-//  CreatingNewHabitViewController.swift
+//  CreatingOneOffTrackerVC.swift
 //  Tracker
 //
 //  Created by Kirill Sklyarov on 13.03.2024.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class CreatingOneOffVC: UIViewController {
+final class CreatingOneOffTrackerVC: UIViewController {
     
     // MARK: - UI Properties
     private let trackerNameTextField = UITextField()
@@ -201,7 +201,7 @@ final class CreatingOneOffVC: UIViewController {
 }
 
 // MARK: -  UITableViewDataSource, UITableViewDelegate
-extension CreatingOneOffVC: UITableViewDataSource, UITableViewDelegate {
+extension CreatingOneOffTrackerVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         tableViewRows.count
@@ -234,7 +234,7 @@ extension CreatingOneOffVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let categoryVC = ChoosingCategoryViewController()
         let navVC = UINavigationController(rootViewController: categoryVC)
-        categoryVC.updateCategory = { [weak self] categoryName in
+        categoryVC.viewModel.updateCategory = { [weak self] categoryName in
             guard let self = self,
                   let cell = tableView.cellForRow(at: indexPath) else { return }
             cell.detailTextLabel?.text = categoryName
@@ -250,7 +250,7 @@ extension CreatingOneOffVC: UITableViewDataSource, UITableViewDelegate {
 }
 
 // MARK: - TextFieldDelegate - control of TextField length
-extension CreatingOneOffVC: UITextFieldDelegate {
+extension CreatingOneOffTrackerVC: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let currentCharacterCount = textField.text?.count ?? 0
@@ -273,7 +273,7 @@ extension CreatingOneOffVC: UITextFieldDelegate {
 }
 
 // MARK: - UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
-extension CreatingOneOffVC: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+extension CreatingOneOffTrackerVC: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == emojiCollection {
@@ -384,7 +384,7 @@ extension CreatingOneOffVC: UICollectionViewDataSource, UICollectionViewDelegate
 }
 
 // MARK: - setupScrollView
-private extension CreatingOneOffVC {
+private extension CreatingOneOffTrackerVC {
     
     func setupScrollView() {
         view.addSubViews([screenScrollView])
@@ -502,7 +502,7 @@ private extension CreatingOneOffVC {
     
 }
 
-//MARK: - SwiftUI
+// MARK: - SwiftUI
 import SwiftUI
 struct Provider4 : PreviewProvider {
     static var previews: some View {
@@ -511,14 +511,14 @@ struct Provider4 : PreviewProvider {
     
     struct ContainterView: UIViewControllerRepresentable {
         func makeUIViewController(context: Context) -> UIViewController {
-            return CreatingOneOffVC()
+            return CreatingOneOffTrackerVC()
         }
         
         typealias UIViewControllerType = UIViewController
         
         
-        let viewController = CreatingOneOffVC()
-        func makeUIViewController(context: UIViewControllerRepresentableContext<Provider4.ContainterView>) -> CreatingOneOffVC {
+        let viewController = CreatingOneOffTrackerVC()
+        func makeUIViewController(context: UIViewControllerRepresentableContext<Provider4.ContainterView>) -> CreatingOneOffTrackerVC {
             return viewController
         }
         
