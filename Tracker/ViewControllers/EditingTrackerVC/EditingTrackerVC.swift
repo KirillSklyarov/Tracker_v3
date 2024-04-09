@@ -146,7 +146,7 @@ final class EditingTrackerViewController: UIViewController {
         emojiCollection.dataSource = self
         emojiCollection.delegate = self
         emojiCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
-        emojiCollection.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        emojiCollection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
         emojiCollection.backgroundColor = .white
         emojiCollection.isScrollEnabled = false
     }
@@ -155,7 +155,7 @@ final class EditingTrackerViewController: UIViewController {
         colorsCollection.dataSource = self
         colorsCollection.delegate = self
         colorsCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "colorsCell")
-        colorsCollection.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        colorsCollection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
         colorsCollection.backgroundColor = .white
         colorsCollection.isScrollEnabled = false
     }
@@ -430,7 +430,7 @@ extension EditingTrackerViewController: UICollectionViewDataSource, UICollection
         default:
             id = ""
         }
-       guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SuplementaryView else { return UICollectionReusableView() }
+       guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SupplementaryView else { return UICollectionReusableView() }
         if collectionView == emojiCollection {
             view.label.text = "Emoji"
         } else {

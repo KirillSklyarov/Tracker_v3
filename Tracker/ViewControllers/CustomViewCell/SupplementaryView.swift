@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class SuplementaryView: UICollectionReusableView {
+final class SupplementaryView: UICollectionReusableView {
     
     let label = UILabel()
     

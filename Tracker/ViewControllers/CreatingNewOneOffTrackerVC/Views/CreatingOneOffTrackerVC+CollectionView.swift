@@ -14,7 +14,7 @@ extension CreatingOneOffTrackerVC: UICollectionViewDataSource, UICollectionViewD
         emojiCollection.dataSource = self
         emojiCollection.delegate = self
         emojiCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
-        emojiCollection.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        emojiCollection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
         emojiCollection.backgroundColor = .white
         emojiCollection.isScrollEnabled = false
     }
@@ -23,7 +23,7 @@ extension CreatingOneOffTrackerVC: UICollectionViewDataSource, UICollectionViewD
         colorsCollection.dataSource = self
         colorsCollection.delegate = self
         colorsCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "colorsCell")
-        colorsCollection.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        colorsCollection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
         colorsCollection.backgroundColor = .white
         colorsCollection.isScrollEnabled = false
     }
@@ -119,7 +119,7 @@ extension CreatingOneOffTrackerVC: UICollectionViewDataSource, UICollectionViewD
             id = ""
         }
         
-        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SuplementaryView else {
+        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SupplementaryView else {
             print("We have some problems with header"); return UICollectionReusableView()
         }
         
