@@ -10,11 +10,29 @@ import UIKit
 // MARK: - UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
 extension CreatingOneOffTrackerVC: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
+    func setupEmojiCollectionView() {
+        emojiCollection.dataSource = self
+        emojiCollection.delegate = self
+        emojiCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
+        emojiCollection.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        emojiCollection.backgroundColor = .white
+        emojiCollection.isScrollEnabled = false
+    }
+    
+    func setupColorsCollectionView() {
+        colorsCollection.dataSource = self
+        colorsCollection.delegate = self
+        colorsCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "colorsCell")
+        colorsCollection.register(SuplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        colorsCollection.backgroundColor = .white
+        colorsCollection.isScrollEnabled = false
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == emojiCollection {
-            arrayOfEmoji.count
+            viewModel.arrayOfEmoji.count
         } else {
-            arrayOfColors.count
+            viewModel.arrayOfColors.count
         }
     }
     
@@ -23,7 +41,7 @@ extension CreatingOneOffTrackerVC: UICollectionViewDataSource, UICollectionViewD
         if collectionView == emojiCollection {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "emojiCell", for: indexPath)
             let view = UILabel(frame: cell.contentView.bounds)
-            view.text = arrayOfEmoji[indexPath.row]
+            view.text = viewModel.arrayOfEmoji[indexPath.row]
             view.font = .systemFont(ofSize: 32)
             view.textAlignment = .center
             cell.addSubview(view)
@@ -32,7 +50,7 @@ extension CreatingOneOffTrackerVC: UICollectionViewDataSource, UICollectionViewD
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "colorsCell", for: indexPath)
             let view = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
             view.layer.cornerRadius = 8
-            let colors = colorFromHexToRGB(hexColors: arrayOfColors)
+            let colors = colorFromHexToRGB(hexColors: viewModel.arrayOfColors)
             view.backgroundColor = colors[indexPath.row]
             cell.contentView.addSubview(view)
             view.center = CGPoint(x: cell.contentView.bounds.midX,
@@ -46,15 +64,15 @@ extension CreatingOneOffTrackerVC: UICollectionViewDataSource, UICollectionViewD
             let cell = collectionView.cellForItem(at: indexPath)
             cell?.layer.cornerRadius = 8
             cell?.backgroundColor = UIColor(named: "textFieldBackgroundColor")
-            selectedEmoji = arrayOfEmoji[indexPath.row]
+            viewModel.selectedEmoji = viewModel.arrayOfEmoji[indexPath.row]
         } else {
             let cell = collectionView.cellForItem(at: indexPath)
             cell?.layer.borderWidth = 3
-            let colors = colorFromHexToRGB(hexColors: arrayOfColors)
+            let colors = colorFromHexToRGB(hexColors: viewModel.arrayOfColors)
             let cellColor = colors[indexPath.row].withAlphaComponent(0.3)
             cell?.layer.borderColor = cellColor.cgColor
             cell?.layer.cornerRadius = 8
-            selectedColor = arrayOfColors[indexPath.row]
+            viewModel.selectedColor = viewModel.arrayOfColors[indexPath.row]
         }
         isCreateButtonEnable()
     }

@@ -127,7 +127,8 @@ final class TrackerCoreManager: NSObject {
             let result = try context.fetch(fetchRequest)
             if let foundCategory = result.first {
                 guard let color = newTracker.trackers.first?.color else { return }
-                let colorInString = color.hexStringFromUIColor()
+                let colorInString = color
+//                    .hexStringFromUIColor()
                 
                 let newTrackerToAdd = TrackerCoreData(context: context)
                 newTrackerToAdd.id = newTracker.trackers.first?.id
@@ -145,7 +146,8 @@ final class TrackerCoreManager: NSObject {
             newTrackerCategory.header = newTracker.header
             
             guard let color = newTracker.trackers.first?.color else { return }
-            let colorInString = color.hexStringFromUIColor()
+            let colorInString = color
+//                .hexStringFromUIColor()
             
             let newTrackerToAdd = TrackerCoreData(context: context)
             newTrackerToAdd.id = newTracker.trackers.first?.id

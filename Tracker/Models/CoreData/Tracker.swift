@@ -10,7 +10,8 @@ import UIKit
 struct Tracker {
     let id: UUID
     let name: String
-    let color: UIColor
+    let color: String
+//    let color: UIColor
     let emoji: String
     let schedule: String
 }
@@ -19,12 +20,14 @@ extension Tracker {
     init(coreDataObject: TrackerCoreData) {
         self.id = coreDataObject.id  ?? UUID()
         self.name = coreDataObject.name ?? ""
-
-        if let colorHex = coreDataObject.colorHex {
-            self.color = UIColor(hex: colorHex)
-        } else {
-            self.color = UIColor.green
-        }
+        
+        self.color = coreDataObject.colorHex ?? "#000000"
+        
+//        if let colorHex = coreDataObject.colorHex {
+//            self.color = UIColor(hex: colorHex)
+//        } else {
+//            self.color = UIColor.green
+//        }
         
         self.emoji = coreDataObject.emoji ?? ""
         self.schedule = coreDataObject.schedule ?? ""

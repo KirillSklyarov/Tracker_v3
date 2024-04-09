@@ -74,7 +74,8 @@ final class CreatingNewTrackerViewController: UIViewController {
               let selectedColor = selectedColor,
               let selectedEmoji = selectedEmoji,
               let selectedSchedule = selectedSchedule else { print("Что-то пошло не так"); return }
-        let color = UIColor(hex: selectedColor)
+        let color = selectedColor
+//        UIColor(hex: selectedColor)
         
         let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: selectedSchedule)])
         coreDataManager.createNewTracker(newTracker: newTask)
