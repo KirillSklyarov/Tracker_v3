@@ -1,14 +1,14 @@
 //
-//  CreatingOneOffTrackerVC+ScrollView.swift
+//  Cre+ScrollView.swift
 //  Tracker
 //
-//  Created by Kirill Sklyarov on 08.04.2024.
+//  Created by Kirill Sklyarov on 09.04.2024.
 //
 
 import UIKit
 
 // MARK: - setupScrollView
-extension CreatingOneOffTrackerVC {
+extension CreatingNewTrackerViewController {
     
     func setupScrollView() {
         
@@ -36,12 +36,10 @@ extension CreatingOneOffTrackerVC {
             contentView.leadingAnchor.constraint(equalTo: screenScrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: screenScrollView.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: screenScrollView.bottomAnchor),
-            
             contentView.widthAnchor.constraint(equalTo: screenScrollView.widthAnchor),
         ])
         
-        setupContentStack()
-        
+        contentStackView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(contentStackView)
         
         NSLayoutConstraint.activate([
@@ -61,9 +59,9 @@ extension CreatingOneOffTrackerVC {
         textFieldViewStack.axis = .vertical
         textFieldViewStack.spacing = 8
         [trackerNameTextField, exceedLabel].forEach { textFieldViewStack.addArrangedSubview($0) }
-         
+        
         let buttonsStack = setupButtonsStack()
-                
+        
         contentStackView.axis = .vertical
         contentStackView.distribution = .equalCentering
         
@@ -75,7 +73,7 @@ extension CreatingOneOffTrackerVC {
             trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
             
             tableView.topAnchor.constraint(equalTo: textFieldViewStack.bottomAnchor, constant: 24),
-            tableView.heightAnchor.constraint(equalToConstant: 75),
+            tableView.heightAnchor.constraint(equalToConstant: viewModel.tableViewHeight),
             
             emojiCollection.topAnchor.constraint(equalTo: tableView.bottomAnchor),
             emojiCollection.heightAnchor.constraint(equalToConstant: 204),
@@ -85,7 +83,7 @@ extension CreatingOneOffTrackerVC {
             
             buttonsStack.topAnchor.constraint(equalTo: colorsCollection.bottomAnchor, constant: 16),
             buttonsStack.heightAnchor.constraint(equalToConstant: 60)
-
+            
         ])
     }
     
@@ -108,7 +106,7 @@ extension CreatingOneOffTrackerVC {
         return stack
     }
     
-    private func setupExceedLabel() {
+    func setupExceedLabel() {
         exceedLabel.text = "Ограничение 38 символов"
         exceedLabel.textColor = .red
         exceedLabel.textAlignment = .center

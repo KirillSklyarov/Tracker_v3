@@ -30,7 +30,7 @@ final class ChoosingTypeOfTrackerViewController: UIViewController {
         let creatingNavVC = UINavigationController(rootViewController: creatingNewTracker)
         present(creatingNavVC, animated: true)
         
-        creatingNewTracker.informAnotherVCofCreatingTracker = {
+        creatingNewTracker.viewModel.informAnotherVCofCreatingTracker = {
             self.closeScreenDelegate?.closeFewVCAfterCreatingTracker()
         }
     }

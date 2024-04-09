@@ -81,7 +81,6 @@ final class EditingTrackerViewController: UIViewController {
               let selectedEmoji = selectedEmoji,
               let selectedSchedule = selectedSchedule else { print("Что-то пошло не так"); return }
         let color = selectedColor
-//        UIColor(hex: selectedColor)
         
         let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: selectedSchedule)])
         coreDataManager.createNewTracker(newTracker: newTask)
@@ -431,7 +430,7 @@ extension EditingTrackerViewController: UICollectionViewDataSource, UICollection
         default:
             id = ""
         }
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as! SuplementaryView
+       guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SuplementaryView else { return UICollectionReusableView() }
         if collectionView == emojiCollection {
             view.label.text = "Emoji"
         } else {
