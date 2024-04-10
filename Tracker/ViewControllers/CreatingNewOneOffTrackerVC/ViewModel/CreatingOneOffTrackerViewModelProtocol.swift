@@ -17,8 +17,9 @@ protocol CreatingOneOffTrackerViewModelProtocol {
     var arrayOfColors: [String] { get set }
     var selectedEmoji: String? { get set }
     var selectedColor: String? { get set }
+    var trackerName: String? { get set }
     
-    func createNewTracker(trackerNameTextField: String)
-    func isAllFieldsFilled(trackerNameTextField: Bool) -> Bool
+    func createNewTracker()
+    func isAllFieldsFilled() -> Bool
 
 }

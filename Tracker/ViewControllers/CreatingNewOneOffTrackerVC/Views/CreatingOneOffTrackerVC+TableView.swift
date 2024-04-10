@@ -55,7 +55,6 @@ extension CreatingOneOffTrackerVC: UITableViewDataSource, UITableViewDelegate {
                   let cell = tableView.cellForRow(at: indexPath) else { return }
             cell.detailTextLabel?.text = categoryName
             self.viewModel.selectedCategory = categoryName
-//            self.isCreateButtonEnable()
         }
         present(navVC, animated: true)
     }

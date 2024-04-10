@@ -33,7 +33,7 @@ final class CreatingOneOffTrackerVC: UIViewController {
         label.isHidden = true
         return label
     } ()
-
+    
     lazy var cancelButton = setupButtons(title: "Отмена")
     lazy var createButton = setupButtons(title: "Создать")
     
@@ -43,10 +43,10 @@ final class CreatingOneOffTrackerVC: UIViewController {
         stack.distribution = .equalCentering
         return stack
     } ()
-
+    
     let emojiCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     let colorsCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        
+    
     let tableView = UITableView()
     let rowHeight = CGFloat(75)
     
@@ -67,22 +67,17 @@ final class CreatingOneOffTrackerVC: UIViewController {
         super.viewDidLoad()
         
         setupUI()
-                
-        addTapGestureToHideKeyboard()
         
-        viewModel.isDoneButtonEnable = {
-            DispatchQueue.main.async {
-                self.isCreateButtonEnable()
-            }
-            
-        }
+        dataBinding()
+        
+        addTapGestureToHideKeyboard()
         
     }
     
     // MARK: - IB Actions
     @objc func clearTextButtonTapped(_ sender: UIButton) {
         trackerNameTextField.text = ""
-//        isCreateButtonEnable()
+        viewModel.trackerName = ""
     }
     
     @objc func cancelButtonTapped(_ sender: UIButton) {
@@ -90,15 +85,13 @@ final class CreatingOneOffTrackerVC: UIViewController {
     }
     
     @objc func createButtonTapped(_ sender: UIButton) {
-        guard let trackerName = trackerNameTextField.text else {
-            print("We have a problem here")
-            return
-        }
-        viewModel.createNewTracker(trackerNameTextField: trackerName)
+        viewModel.createNewTracker()
     }
     
-    // MARK: - Private Methods
+    // MARK: - UI Methods
     private func setupUI() {
+        
+        createButtonIsNotActive()
         
         setupTextField()
         
@@ -127,22 +120,12 @@ final class CreatingOneOffTrackerVC: UIViewController {
         return button
     }
     
-    // MARK: - Public Methods
-    func isCreateButtonEnable() {
-        isAllFieldsFilled() ? createButtonIsActive() : createButtonIsNotActive()
-    }
-    
-    func isAllFieldsFilled() -> Bool {
-        let textFieldTest = trackerNameTextField.hasText
-        return viewModel.isAllFieldsFilled(trackerNameTextField: textFieldTest)
-    }
-    
-    func createButtonIsActive() {
+    private func createButtonIsActive() {
         createButton.isEnabled = true
         createButton.backgroundColor = .black
     }
     
-    func createButtonIsNotActive() {
+    private func createButtonIsNotActive() {
         createButton.isEnabled = false
         createButton.backgroundColor = UIColor(named: "createButtonGrayColor")
     }
@@ -154,5 +137,14 @@ final class CreatingOneOffTrackerVC: UIViewController {
     
     func hideLabelExceedTextFieldLimit() {
         exceedLabel.isHidden = true
+    }
+    
+    // MARK: - Private Methods
+    private func dataBinding() {
+        viewModel.isDoneButtonEnable = {
+            DispatchQueue.main.async {
+                self.viewModel.isAllFieldsFilled() ? self.createButtonIsActive() : self.createButtonIsNotActive()
+            }
+        }
     }
 }

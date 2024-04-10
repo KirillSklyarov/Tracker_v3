@@ -21,7 +21,11 @@ final class CreatingOneOffTrackerViewModel: CreatingOneOffTrackerViewModelProtoc
     
     let coreDataManager = TrackerCoreManager.shared
     
-    var newTaskName: String?
+    var trackerName: String? {
+        didSet {
+            isDoneButtonEnable?()
+        }
+    }
     
     var selectedEmoji: String? {
         didSet {
@@ -52,12 +56,13 @@ final class CreatingOneOffTrackerViewModel: CreatingOneOffTrackerViewModelProtoc
     
     var informAnotherVCofCreatingTracker: ( () -> Void )?
     
-    func createNewTracker(trackerNameTextField: String) {
-        guard let category = selectedCategory,
+    func createNewTracker() {
+        guard let name = trackerName,
+              let category = selectedCategory,
               let color = selectedColor,
-              let emoji = selectedEmoji else { print("Smth going wrong here"); return }
-        
-        let name = trackerNameTextField
+              let emoji = selectedEmoji else {
+            print("Smth going wrong here"); return
+        }
         
         let newTask = TrackerCategory(header: category,
                                       trackers: [Tracker(id: UUID(),
@@ -69,11 +74,13 @@ final class CreatingOneOffTrackerViewModel: CreatingOneOffTrackerViewModelProtoc
         informAnotherVCofCreatingTracker?()
     }
     
-    func isAllFieldsFilled(trackerNameTextField: Bool) -> Bool {
-        let allFieldsFilled = trackerNameTextField &&
-        selectedCategory != nil &&
-        selectedEmoji != nil &&
-        selectedColor != nil
+    func isAllFieldsFilled() -> Bool {
+        let allFieldsFilled =
+            trackerName != nil &&
+            trackerName != "" &&
+            selectedCategory != nil &&
+            selectedEmoji != nil &&
+            selectedColor != nil
         return allFieldsFilled
     }
 }

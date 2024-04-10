@@ -38,12 +38,15 @@ extension CreatingOneOffTrackerVC: UITextFieldDelegate {
         trackerNameTextField.rightView = clearTextStack
     }
     
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        viewModel.trackerName = textField.text
+    }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
         let currentCharacterCount = textField.text?.count ?? 0
         if currentCharacterCount <= 38 {
             hideLabelExceedTextFieldLimit()
-//            isCreateButtonEnable()
             textField.textColor = .black
             return true
         } else {
