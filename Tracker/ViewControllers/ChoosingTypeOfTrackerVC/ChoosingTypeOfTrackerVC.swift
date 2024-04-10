@@ -30,7 +30,8 @@ final class ChoosingTypeOfTrackerViewController: UIViewController {
         let creatingNavVC = UINavigationController(rootViewController: creatingNewTracker)
         present(creatingNavVC, animated: true)
         
-        creatingNewTracker.viewModel.informAnotherVCofCreatingTracker = {
+        creatingNewTracker.viewModel.informAnotherVCofCreatingTracker = { [weak self] in
+            guard let self else { return }
             self.closeScreenDelegate?.closeFewVCAfterCreatingTracker()
         }
     }
@@ -41,7 +42,8 @@ final class ChoosingTypeOfTrackerViewController: UIViewController {
         let creatingNavVC = UINavigationController(rootViewController: creatingOneOffEvent)
         present(creatingNavVC, animated: true)
         
-        creatingOneOffEvent.viewModel.informAnotherVCofCreatingTracker = {
+        creatingOneOffEvent.viewModel.informAnotherVCofCreatingTracker = { [weak self] in
+            guard let self else { return }
             self.closeScreenDelegate?.closeFewVCAfterCreatingTracker()
         }
     }

@@ -366,32 +366,45 @@ extension EditingTrackerViewController: UICollectionViewDataSource, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let emojiIndexPath,
+              let colorIndexPath else {
+            print("Smth's going wrong"); return
+        }
+        
         if collectionView == emojiCollection {
-            let originalEmojiCell = collectionView.cellForItem(at: emojiIndexPath!)
-            originalEmojiCell!.backgroundColor = .clear
+            if let originalEmojiCell = collectionView.cellForItem(at: emojiIndexPath) {
+                originalEmojiCell.backgroundColor = .clear
+            }
          
-            let cell = collectionView.cellForItem(at: indexPath)
-            cell?.layer.cornerRadius = 8
-            cell?.backgroundColor = UIColor(named: "textFieldBackgroundColor")
-            selectedEmoji = arrayOfEmoji[indexPath.row]
+            if let cell = collectionView.cellForItem(at: indexPath) {
+                cell.layer.cornerRadius = 8
+                cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+                selectedEmoji = arrayOfEmoji[indexPath.row]
+            }
         } else {
-            let originalColorCell = collectionView.cellForItem(at: colorIndexPath!)
-            originalColorCell!.layer.borderWidth = 0
+            if let originalColorCell = collectionView.cellForItem(at: colorIndexPath) {
+                originalColorCell.layer.borderWidth = 0
+            }
             
-            let cell = collectionView.cellForItem(at: indexPath)
-            cell?.layer.borderWidth = 3
-            let colors = colorFromHexToRGB(hexColors: arrayOfColors)
-            let cellColor = colors[indexPath.row].withAlphaComponent(0.3)
-            cell?.layer.borderColor = cellColor.cgColor
-            cell?.layer.cornerRadius = 8
-            selectedColor = arrayOfColors[indexPath.row]
+            if let cell = collectionView.cellForItem(at: indexPath) {
+                cell.layer.borderWidth = 3
+                let colors = colorFromHexToRGB(hexColors: arrayOfColors)
+                let cellColor = colors[indexPath.row].withAlphaComponent(0.3)
+                cell.layer.borderColor = cellColor.cgColor
+                cell.layer.cornerRadius = 8
+                selectedColor = arrayOfColors[indexPath.row]
+            }
         }
         isCreateButtonEnable()
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let emojiIndexPath else {
+            print("Smth's going wrong"); return
+        }
+        
         if collectionView == emojiCollection {
-            collectionView.cellForItem(at: emojiIndexPath!)?.backgroundColor = .clear
+            collectionView.cellForItem(at: emojiIndexPath)?.backgroundColor = .clear
             let cell = collectionView.cellForItem(at: indexPath)
             cell?.backgroundColor = .clear
         } else {

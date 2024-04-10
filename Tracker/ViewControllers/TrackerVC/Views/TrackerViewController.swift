@@ -102,14 +102,14 @@ final class TrackerViewController: UIViewController {
         
         sender.removeFromSuperview()
         
-        viewModel.dataUpdated = {
+        viewModel.dataUpdated = { [weak self] in
+            guard let self else { return }
             self.collectionView.reloadData()
             self.showOrHidePlaceholder()
             self.navigationItem.searchController = self.searchController
         }
         
         viewModel.updateDataFromCoreData(weekDay: weekDay)
-        
     }
     
     @objc private func filterButtonTapped(_ sender: UIButton) {

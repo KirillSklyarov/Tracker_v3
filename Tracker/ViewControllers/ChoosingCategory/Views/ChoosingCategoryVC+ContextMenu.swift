@@ -46,7 +46,8 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
         self.viewModel.delegateToPassCategoryNameToEdit = editingVC
         viewModel.delegateToPassCategoryNameToEdit?.getCategoryNameFromPreviousVC(categoryName: categoryNameToPass)
         
-        editingVC.viewModel.updateCategoryNameClosure = {
+        editingVC.viewModel.updateCategoryNameClosure = { [weak self] in
+            guard let self else { return }
             self.viewModel.getDataFromCoreData()
         }
         

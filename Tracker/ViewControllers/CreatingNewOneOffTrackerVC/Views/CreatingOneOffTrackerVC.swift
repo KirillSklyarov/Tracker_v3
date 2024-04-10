@@ -141,7 +141,8 @@ final class CreatingOneOffTrackerVC: UIViewController {
     
     // MARK: - Private Methods
     private func dataBinding() {
-        viewModel.isDoneButtonEnable = {
+        viewModel.isDoneButtonEnable = { [weak self] in
+            guard let self else { return }
             DispatchQueue.main.async {
                 self.viewModel.isAllFieldsFilled() ? self.createButtonIsActive() : self.createButtonIsNotActive()
             }
