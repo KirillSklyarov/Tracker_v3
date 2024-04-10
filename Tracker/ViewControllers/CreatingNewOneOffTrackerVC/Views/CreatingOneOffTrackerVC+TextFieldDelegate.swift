@@ -35,18 +35,7 @@ extension CreatingOneOffTrackerVC: UITextFieldDelegate {
             return stack
         } ()
         
-        trackerNameTextField.placeholder = "Введите название трекера"
-        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
-        trackerNameTextField.leftView = leftPaddingView
-        trackerNameTextField.leftViewMode = .always
         trackerNameTextField.rightView = clearTextStack
-        trackerNameTextField.rightViewMode = .whileEditing
-        trackerNameTextField.textAlignment = .left
-        trackerNameTextField.layer.cornerRadius = 10
-        trackerNameTextField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
-        trackerNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
-        
-        trackerNameTextField.delegate = self
     }
     
     
@@ -54,7 +43,7 @@ extension CreatingOneOffTrackerVC: UITextFieldDelegate {
         let currentCharacterCount = textField.text?.count ?? 0
         if currentCharacterCount <= 38 {
             hideLabelExceedTextFieldLimit()
-            isCreateButtonEnable()
+//            isCreateButtonEnable()
             textField.textColor = .black
             return true
         } else {

@@ -7,27 +7,48 @@
 
 import Foundation
 
-final class CreatingOneOffTrackerViewModel {
+final class CreatingOneOffTrackerViewModel: CreatingOneOffTrackerViewModelProtocol {
     
-    let tableViewRows = ["Категория"]
+    var tableViewRows = ["Категория"]
     
-    let rowHeight = CGFloat(75)
-    
-    let arrayOfEmoji = ["🙂","😻","🌺","🐶","❤️","😱",
+    var arrayOfEmoji = ["🙂","😻","🌺","🐶","❤️","😱",
                         "😇","😡","🥶","🤔","🙌","🍔",
                         "🥦","🏓","🥇","🎸","🏝️","😪",]
     
-    let arrayOfColors = ["#FD4C49", "#FF881E", "#007BFA", "#6E44FE", "#33CF69", "#E66DD4", 
+    var arrayOfColors = ["#FD4C49", "#FF881E", "#007BFA", "#6E44FE", "#33CF69", "#E66DD4",
                          "#F9D4D4", "#34A7FE", "#46E69D", "#35347C", "#FF674D", "#FF99CC",
                          "#F6C48B", "#7994F5", "#832CF1", "#AD56DA", "#8D72E6", "#2FD058"]
     
     let coreDataManager = TrackerCoreManager.shared
     
     var newTaskName: String?
-    var selectedEmoji: String?
-    var selectedColor: String?
+    
+    var selectedEmoji: String? {
+        didSet {
+            isDoneButtonEnable?()
+        }
+    }
+    
+    var selectedColor: String? {
+        didSet {
+            isDoneButtonEnable?()
+        }
+    }
+    
     var selectedCategory: String?
-    var selectedSchedule: String?
+    {
+        didSet {
+            isDoneButtonEnable?()
+        }
+    }
+    
+    var selectedSchedule: String? {
+        didSet {
+            isDoneButtonEnable?()
+        }
+    }
+    
+    var isDoneButtonEnable: ( () -> Void )?
     
     var informAnotherVCofCreatingTracker: ( () -> Void )?
     
@@ -55,5 +76,4 @@ final class CreatingOneOffTrackerViewModel {
         selectedColor != nil
         return allFieldsFilled
     }
-    
 }

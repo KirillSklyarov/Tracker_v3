@@ -74,7 +74,7 @@ extension CreatingOneOffTrackerVC: UICollectionViewDataSource, UICollectionViewD
             cell?.layer.cornerRadius = 8
             viewModel.selectedColor = viewModel.arrayOfColors[indexPath.row]
         }
-        isCreateButtonEnable()
+//        isCreateButtonEnable()
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {

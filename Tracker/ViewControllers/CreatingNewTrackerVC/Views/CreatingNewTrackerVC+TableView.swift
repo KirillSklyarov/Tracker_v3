@@ -51,7 +51,8 @@ extension CreatingNewTrackerViewController: UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let data = viewModel.tableViewRows[indexPath.row]
         if data == "Категория" {
-            let categoryVC = ChoosingCategoryViewController()
+            let viewModel = ChoosingCategoryViewModel()
+            let categoryVC = ChoosingCategoryViewController(viewModel: viewModel)
             let navVC = UINavigationController(rootViewController: categoryVC)
             categoryVC.viewModel.updateCategory = { [weak self] categoryName in
                 guard let self = self,

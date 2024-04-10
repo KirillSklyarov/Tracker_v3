@@ -54,18 +54,13 @@ extension CreatingOneOffTrackerVC {
     }
     
     func setupContentStack() {
-        
-        setupExceedLabel()
-        
+                
         let textFieldViewStack = UIStackView()
         textFieldViewStack.axis = .vertical
         textFieldViewStack.spacing = 8
         [trackerNameTextField, exceedLabel].forEach { textFieldViewStack.addArrangedSubview($0) }
          
         let buttonsStack = setupButtonsStack()
-                
-        contentStackView.axis = .vertical
-        contentStackView.distribution = .equalCentering
         
         [textFieldViewStack, contentStackView, tableView, emojiCollection, colorsCollection, buttonsStack].forEach { $0.translatesAutoresizingMaskIntoConstraints = false}
         
@@ -106,13 +101,5 @@ extension CreatingOneOffTrackerVC {
         stack.addArrangedSubview(cancelButton)
         stack.addArrangedSubview(createButton)
         return stack
-    }
-    
-    private func setupExceedLabel() {
-        exceedLabel.text = "Ограничение 38 символов"
-        exceedLabel.textColor = .red
-        exceedLabel.textAlignment = .center
-        exceedLabel.font = .systemFont(ofSize: 17, weight: .regular)
-        exceedLabel.isHidden = true
     }
 }

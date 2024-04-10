@@ -14,7 +14,6 @@ extension CreatingOneOffTrackerVC: UITableViewDataSource, UITableViewDelegate {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        
         tableView.layer.cornerRadius = 10
     }
     
@@ -44,18 +43,19 @@ extension CreatingOneOffTrackerVC: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        viewModel.rowHeight
+        rowHeight
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let categoryVC = ChoosingCategoryViewController()
+        let viewModel = ChoosingCategoryViewModel()
+        let categoryVC = ChoosingCategoryViewController(viewModel: viewModel)
         let navVC = UINavigationController(rootViewController: categoryVC)
         categoryVC.viewModel.updateCategory = { [weak self] categoryName in
             guard let self = self,
                   let cell = tableView.cellForRow(at: indexPath) else { return }
             cell.detailTextLabel?.text = categoryName
             self.viewModel.selectedCategory = categoryName
-            self.isCreateButtonEnable()
+//            self.isCreateButtonEnable()
         }
         present(navVC, animated: true)
     }

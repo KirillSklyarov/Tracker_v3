@@ -36,7 +36,8 @@ final class ChoosingTypeOfTrackerViewController: UIViewController {
     }
     
     @objc private func creatingEventButtonTapped(_ sender: UIButton) {
-        let creatingOneOffEvent = CreatingOneOffTrackerVC()
+        let viewModel = CreatingOneOffTrackerViewModel()
+        let creatingOneOffEvent = CreatingOneOffTrackerVC(viewModel: viewModel)
         let creatingNavVC = UINavigationController(rootViewController: creatingOneOffEvent)
         present(creatingNavVC, animated: true)
         

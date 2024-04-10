@@ -7,12 +7,10 @@
 
 import Foundation
 
-final class ChoosingCategoryViewModel {
+final class ChoosingCategoryViewModel: ViewModelProtocol {
     
     let coreDataManager = TrackerCoreManager.shared
-    
-    let rowHeight = CGFloat(75)
-    
+        
     var categories = [String]() {
         didSet {
             dataUpdated?()
@@ -28,15 +26,17 @@ final class ChoosingCategoryViewModel {
     // MARK: - Update data from Core Data
     
     func getDataFromCoreData() {
-        self.categories = coreDataManager.getCategoryNamesFromStorage()
+        categories = coreDataManager.getCategoryNamesFromStorage()
     }
     
     func createNewCategory(newCategoryName: String) {
         coreDataManager.createNewCategory(newCategoryName: newCategoryName)
+        getDataFromCoreData()
     }
     
     func deleteCategory(categoryNameToDelete: String) {
         coreDataManager.deleteCategory(header: categoryNameToDelete)
+        getDataFromCoreData()
     }
     
     func getLastChosenCategoryFromStore() -> String {
@@ -47,29 +47,29 @@ final class ChoosingCategoryViewModel {
         coreDataManager.sendLastChosenCategoryToStore(categoryName: categoryName)
     }
     
-    func deSelectCell(cell: CustomCategoryCell) {
-        cell.checkmarkImage.isHidden = true
-    }
+//    func deSelectCell(cell: CustomCategoryCell) {
+//        cell.checkmarkImage.isHidden = true
+//    }
     
-    func showLastChosenCategory(cell: CustomCategoryCell) {
-        let lastChosenCategory = self.getLastChosenCategoryFromStore()
-        if lastChosenCategory == cell.titleLabel.text {
-            self.selectCell(cell: cell)
-        }
-    }
+//    func showLastChosenCategory(cell: CustomCategoryCell) {
+//        let lastChosenCategory = self.getLastChosenCategoryFromStore()
+//        if lastChosenCategory == cell.titleLabel.text {
+//            self.selectCell(cell: cell)
+//        }
+//    }
     
-    func selectCell(cell: CustomCategoryCell) {
-        cell.selectionStyle = .none
-        cell.checkmarkImage.isHidden = false
-    }
+//    func selectCell(cell: CustomCategoryCell) {
+//        cell.selectionStyle = .none
+//        cell.checkmarkImage.isHidden = false
+//    }
     
-    func choosingCategory(cell: CustomCategoryCell) {
-        
-        self.selectCell(cell: cell)
-        
-        guard let categoryNameToPass = cell.titleLabel.text else {
-            print("Oooops"); return }
-        self.sendLastChosenCategoryToStore(categoryName: categoryNameToPass)
-        self.updateCategory?(categoryNameToPass)
-    }
+//    func choosingCategory(cell: CustomCategoryCell) {
+//        
+//        self.selectCell(cell: cell)
+//        
+//        guard let categoryNameToPass = cell.titleLabel.text else {
+//            print("Oooops"); return }
+//        self.sendLastChosenCategoryToStore(categoryName: categoryNameToPass)
+//        self.updateCategory?(categoryNameToPass)
+//    }
 }

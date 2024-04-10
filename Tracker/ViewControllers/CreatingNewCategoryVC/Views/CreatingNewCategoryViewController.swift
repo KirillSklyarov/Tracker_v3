@@ -7,15 +7,39 @@
 
 import UIKit
 
-final class CreatingNewCategoryViewController: UIViewController {
+final class CreatingNewCategoryViewController: BaseViewController {
     
     // MARK: - UI Properties
-    let categoryNameTextField = UITextField()
-    let doneButton = UIButton()
+    lazy var categoryNameTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Введите название категории"
+        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
+        textField.leftView = leftPaddingView
+        textField.leftViewMode = .always
+        textField.rightViewMode = .whileEditing
+        textField.textAlignment = .left
+        textField.layer.cornerRadius = 10
+        textField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        textField.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        textField.addTarget(self, action: #selector(textFieldEditing), for: .editingChanged)
+        textField.delegate = self
+        return textField
+    } ()
+    lazy var doneButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Готово", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor(named: "createButtonGrayColor")
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 15
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        button.isEnabled = false
+        return button
+    } ()
     
-    // MARK: - Public Properties
-    let viewModel = CreatingNewCategoryViewModel()
-        
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,32 +59,13 @@ final class CreatingNewCategoryViewController: UIViewController {
     
     @objc private func doneButtonTapped(_ sender: UIButton) {
         guard let newCategoryName = categoryNameTextField.text else { return }
-        viewModel.updateTableClosure?(newCategoryName)
+        viewModel.updateCategory?(newCategoryName)
         dismiss(animated: true)
     }
     
     // MARK: - Private Methods
-    private func setupTextField() {
-        
-        categoryNameTextField.placeholder = "Введите название категории"
-        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
-        categoryNameTextField.leftView = leftPaddingView
-        categoryNameTextField.leftViewMode = .always
-        categoryNameTextField.rightViewMode = .whileEditing
-        categoryNameTextField.textAlignment = .left
-        categoryNameTextField.layer.cornerRadius = 10
-        categoryNameTextField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
-        categoryNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
-        categoryNameTextField.addTarget(self, action: #selector(textFieldEditing), for: .editingChanged)
-        
-        categoryNameTextField.delegate = self
-    }
     
     private func setupUI() {
-        
-        setupTextField()
-        
-        setupDoneButton()
         
         self.title = "Новая категория"
         
@@ -77,19 +82,6 @@ final class CreatingNewCategoryViewController: UIViewController {
             doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
         ])
-    }
-    
-    private func setupDoneButton() {
-        doneButton.setTitle("Готово", for: .normal)
-        doneButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        doneButton.setTitleColor(.white, for: .normal)
-        doneButton.backgroundColor = UIColor(named: "createButtonGrayColor")
-        doneButton.layer.masksToBounds = true
-        doneButton.layer.cornerRadius = 15
-        doneButton.translatesAutoresizingMaskIntoConstraints = false
-        doneButton.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        doneButton.isEnabled = false
     }
     
     private func doneButtonIsActive() {

@@ -10,35 +10,79 @@ import UIKit
 final class CreatingOneOffTrackerVC: UIViewController {
     
     // MARK: - UI Properties
-    let trackerNameTextField = UITextField()
-    let tableView = UITableView()
-    let exceedLabel = UILabel()
-    let emojiCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-    let colorsCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-    
+    lazy var trackerNameTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Введите название трекера"
+        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
+        textField.leftView = leftPaddingView
+        textField.leftViewMode = .always
+        textField.rightViewMode = .whileEditing
+        textField.textAlignment = .left
+        textField.layer.cornerRadius = 10
+        textField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        textField.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        textField.delegate = self
+        return textField
+    } ()
+    lazy var exceedLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Ограничение 38 символов"
+        label.textColor = .red
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.isHidden = true
+        return label
+    } ()
+
     lazy var cancelButton = setupButtons(title: "Отмена")
     lazy var createButton = setupButtons(title: "Создать")
     
-    let contentStackView = UIStackView()
+    lazy var contentStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.distribution = .equalCentering
+        return stack
+    } ()
+
+    let emojiCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    let colorsCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        
+    let tableView = UITableView()
+    let rowHeight = CGFloat(75)
     
     // MARK: - Private Properties
-    let viewModel = CreatingOneOffTrackerViewModel()
+    var viewModel: CreatingOneOffTrackerViewModelProtocol
+    
+    init(viewModel: CreatingOneOffTrackerViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
-        
-        isCreateButtonEnable()
-        
+                
         addTapGestureToHideKeyboard()
+        
+        viewModel.isDoneButtonEnable = {
+            DispatchQueue.main.async {
+                self.isCreateButtonEnable()
+            }
+            
+        }
+        
     }
     
     // MARK: - IB Actions
     @objc func clearTextButtonTapped(_ sender: UIButton) {
         trackerNameTextField.text = ""
-        isCreateButtonEnable()
+//        isCreateButtonEnable()
     }
     
     @objc func cancelButtonTapped(_ sender: UIButton) {
@@ -66,7 +110,7 @@ final class CreatingOneOffTrackerVC: UIViewController {
         
         setupScrollView()
         
-        self.title = "Новое нерегулярное событие"
+        title = "Новое нерегулярное событие"
         view.backgroundColor = UIColor(named: "projectBackground")
     }
     

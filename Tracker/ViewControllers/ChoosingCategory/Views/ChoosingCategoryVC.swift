@@ -7,22 +7,47 @@
 
 import UIKit
 
-final class ChoosingCategoryViewController: UIViewController {
+final class ChoosingCategoryViewController: BaseViewController {
     
     // MARK: - UI Properties
-    let creatingCategoryButton = UIButton()
+    private lazy var creatingCategoryButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Добавить категорию", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = .black
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 15
+        button.addTarget(self, action: #selector(addCategoryButtonTapped), for: .touchUpInside)
+        return button
+    } ()
+    private lazy var swooshImage: UIImageView = {
+        let swoosh = UIImageView()
+        swoosh.image = UIImage(named: "swoosh")
+        swoosh.contentMode = .center
+        return swoosh
+    } ()
+    private lazy var textLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Привычки и события можно \nобъединить по смыслу"
+        label.numberOfLines = 0
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.textAlignment = .center
+        return label
+    } ()
+    
     let categoryTableView = UITableView()
-    let swooshImage = UIImageView()
-    let textLabel = UILabel()
     
     // MARK: - Public Properties
-    let viewModel = ChoosingCategoryViewModel()
+    let rowHeight = CGFloat(75)
     
     // MARK: - Live Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.getDataFromCoreData()
+        setupBinding()
+        
+        getDataFromViewModel()
         
         setupUI()
         
@@ -30,33 +55,38 @@ final class ChoosingCategoryViewController: UIViewController {
         
     }
     
+    private func getDataFromViewModel() {
+        viewModel.getDataFromCoreData()
+    }
+    
     // MARK: - IB Actions
     @objc private func addCategoryButtonTapped(_ sender: UIButton) {
-        let creatingNewCategoryVC = CreatingNewCategoryViewController()
+        let viewModel = ChoosingCategoryViewModel()
+        let creatingNewCategoryVC = CreatingNewCategoryViewController(viewModel: viewModel)
         let creatingCategoryNavVC = UINavigationController(rootViewController: creatingNewCategoryVC)
-        creatingNewCategoryVC.viewModel.updateTableClosure = { [weak self] newCategory in
+        
+        
+        creatingNewCategoryVC.viewModel.updateCategory = { [weak self] newCategory in
             guard let self = self else { return }
-            viewModel.createNewCategory(newCategoryName: newCategory)
-            
-            viewModel.dataUpdated = {
-                self.categoryTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
-            }
-            
-            viewModel.getDataFromCoreData()
-            
+            self.viewModel.createNewCategory(newCategoryName: newCategory)
             showOrHidePlaceholder()
-            
         }
         present(creatingCategoryNavVC, animated: true)
     }
     
     // MARK: - Private Methods
+    private func setupBinding() {
+        viewModel.dataUpdated = { [weak self] in
+            guard let self else { return }
+            self.categoryTableView.reloadSections(IndexSet(integer: 0), with: .automatic)
+        }
+    }
+    
     private func setupUI() {
         
         setupTableView()
         
         self.title = "Категория"
-        setupButton()
         view.backgroundColor = .systemBackground
         view.addSubViews([categoryTableView, creatingCategoryButton])
         
@@ -73,17 +103,6 @@ final class ChoosingCategoryViewController: UIViewController {
         ])
     }
     
-    private func setupButton() {
-        creatingCategoryButton.setTitle("Добавить категорию", for: .normal)
-        creatingCategoryButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        creatingCategoryButton.setTitleColor(.white, for: .normal)
-        creatingCategoryButton.backgroundColor = .black
-        creatingCategoryButton.layer.masksToBounds = true
-        creatingCategoryButton.layer.cornerRadius = 15
-        
-        creatingCategoryButton.addTarget(self, action: #selector(addCategoryButtonTapped), for: .touchUpInside)
-    }
-    
     // MARK: - Setup Placeholder
     func showOrHidePlaceholder() {
         viewModel.categories.isEmpty ? showPlaceholder() : hidePlaceholder()
@@ -93,14 +112,6 @@ final class ChoosingCategoryViewController: UIViewController {
         
         swooshImage.isHidden = false
         textLabel.isHidden = false
-        
-        swooshImage.image = UIImage(named: "swoosh")
-        swooshImage.contentMode = .center
-        
-        textLabel.text = "Привычки и события можно \nобъединить по смыслу"
-        textLabel.numberOfLines = 0
-        textLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        textLabel.textAlignment = .center
         
         let emptyScreenStack = UIStackView()
         emptyScreenStack.axis = .vertical
