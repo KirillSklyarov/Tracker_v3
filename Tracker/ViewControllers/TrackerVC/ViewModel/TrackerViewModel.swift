@@ -30,7 +30,6 @@ final class TrackerViewModel: TrackerViewModelProtocol  {
     var dataUpdated: ( () -> Void )?
     
     func countOfDaysForTheTrackerInString(trackerId: String) -> String {
-//        guard let trackerID = tracker.id else { return "Error"}
         let trackerCount = coreDataManager.countOfTrackerInRecords(trackerIDToCount: trackerId)
         let correctDaysInRussian = daysLetters(count: trackerCount)
         return correctDaysInRussian

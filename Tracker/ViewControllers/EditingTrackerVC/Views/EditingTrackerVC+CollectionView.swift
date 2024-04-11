@@ -10,6 +10,25 @@ import UIKit
 // MARK: - UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
 extension EditingTrackerViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
+    func setupEmojiCollectionView() {
+        emojiCollection.dataSource = self
+        emojiCollection.delegate = self
+        emojiCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
+        emojiCollection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        emojiCollection.backgroundColor = .white
+        emojiCollection.isScrollEnabled = false
+    }
+    
+    func setupColorsCollectionView() {
+        colorsCollection.dataSource = self
+        colorsCollection.delegate = self
+        colorsCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "colorsCell")
+        colorsCollection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        colorsCollection.backgroundColor = .white
+        colorsCollection.isScrollEnabled = false
+    }
+    
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == emojiCollection {
             viewModel.arrayOfEmoji.count
@@ -68,11 +87,11 @@ extension EditingTrackerViewController: UICollectionViewDataSource, UICollection
             if let originalEmojiCell = collectionView.cellForItem(at: emojiIndexPath) {
                 originalEmojiCell.backgroundColor = .clear
             }
-         
+            
             if let cell = collectionView.cellForItem(at: indexPath) {
                 cell.layer.cornerRadius = 8
                 cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
-                viewModel.selectedEmoji = viewModel.arrayOfEmoji[indexPath.row]
+                viewModel.emoji = viewModel.arrayOfEmoji[indexPath.row]
             }
         } else {
             if let originalColorCell = collectionView.cellForItem(at: colorIndexPath) {
@@ -85,7 +104,7 @@ extension EditingTrackerViewController: UICollectionViewDataSource, UICollection
                 let cellColor = colors[indexPath.row].withAlphaComponent(0.3)
                 cell.layer.borderColor = cellColor.cgColor
                 cell.layer.cornerRadius = 8
-                viewModel.selectedColor = viewModel.arrayOfColors[indexPath.row]
+                viewModel.color = viewModel.arrayOfColors[indexPath.row]
             }
         }
         isCreateButtonEnable()
@@ -137,7 +156,7 @@ extension EditingTrackerViewController: UICollectionViewDataSource, UICollection
         default:
             id = ""
         }
-       guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SupplementaryView else { return UICollectionReusableView() }
+        guard let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: id, for: indexPath) as? SupplementaryView else { return UICollectionReusableView() }
         if collectionView == emojiCollection {
             view.label.text = "Emoji"
         } else {

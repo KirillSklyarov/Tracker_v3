@@ -172,7 +172,7 @@ final class CreatingNewTrackerViewController: UIViewController {
         }
     }
     
-    private func createButtonIsActive() {
+    func createButtonIsActive() {
         createButton.isEnabled = true
         createButton.backgroundColor = .black
     }

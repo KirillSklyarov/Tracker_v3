@@ -14,10 +14,12 @@ final class EditingTrackerViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 32, weight: .bold)
         label.textAlignment = .center
+        label.text = viewModel.countOfCompletedDays
         return label
     } ()
     lazy var trackerNameTextField: UITextField = {
         let textField = UITextField()
+        textField.text = viewModel.trackerName
         textField.placeholder = "Введите название трекера"
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
         textField.leftView = leftPaddingView
@@ -46,15 +48,16 @@ final class EditingTrackerViewController: UIViewController {
         stack.distribution = .equalCentering
         return stack
     } ()
-
+    
     let emojiCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     let colorsCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
     let tableView = UITableView()
-        
+    let rowHeight = CGFloat(75)
+    
     // MARK: - Public Properties
     var viewModel: EditingTrackerViewModelProtocol
-
+    
     // MARK: - Initializers
     
     init(viewModel: EditingTrackerViewModelProtocol) {
@@ -70,20 +73,26 @@ final class EditingTrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        dataBinding()
+        
         setupUI()
         
-        setupTableView()
-        
-        setupEmojiCollectionView()
-        
-        setupColorsCollectionView()
-        
-        isCreateButtonEnable()
+        //        isCreateButtonEnable()
         
         addTapGestureToHideKeyboard()
     }
     
     // MARK: - IB Actions
+    
+    func dataBinding() {
+        viewModel.updateSaveButton = { [weak self] in
+            guard let self else { return }
+            DispatchQueue.main.async { [self] in
+                self.isCreateButtonEnable()
+            }
+        }
+    }
+    
     @objc private func clearTextButtonTapped(_ sender: UIButton) {
         trackerNameTextField.text = ""
         isCreateButtonEnable()
@@ -94,18 +103,10 @@ final class EditingTrackerViewController: UIViewController {
     }
     
     @objc func createButtonTapped(_ sender: UIButton) {
-        guard let selectedCategory = viewModel.selectedCategory,
-              let name = trackerNameTextField.text,
-              let selectedColor = viewModel.selectedColor,
-              let selectedEmoji = viewModel.selectedEmoji,
-              let selectedSchedule = viewModel.selectedSchedule else { print("Что-то пошло не так"); return }
-        let color = selectedColor
-        
-        let newTask = TrackerCategory(header: selectedCategory, trackers: [Tracker(id: UUID(), name: name, color: color, emoji: selectedEmoji, schedule: selectedSchedule)])
-        viewModel.coreDataManager.createNewTracker(newTracker: newTask)
-        viewModel.informAnotherVCofCreatingTracker?()
+        viewModel.updateTracker()
+        dismiss(animated: true)
     }
-
+    
     // MARK: - Private Methods
     
     private func setupTextField() {
@@ -133,63 +134,36 @@ final class EditingTrackerViewController: UIViewController {
             return stack
         } ()
         
-      
         trackerNameTextField.rightView = clearTextStack
         trackerNameTextField.rightViewMode = .whileEditing
-        
-    }
-    
-    private func setupTableView() {
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        
-        tableView.layer.cornerRadius = 10
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-        
-    }
-    
-    private func setupEmojiCollectionView() {
-        emojiCollection.dataSource = self
-        emojiCollection.delegate = self
-        emojiCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
-        emojiCollection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-        emojiCollection.backgroundColor = .white
-        emojiCollection.isScrollEnabled = false
-    }
-    
-    private func setupColorsCollectionView() {
-        colorsCollection.dataSource = self
-        colorsCollection.delegate = self
-        colorsCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "colorsCell")
-        colorsCollection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-        colorsCollection.backgroundColor = .white
-        colorsCollection.isScrollEnabled = false
     }
     
     func isCreateButtonEnable() {
-        if let text = trackerNameTextField.text, !text.isEmpty,
-           viewModel.selectedCategory != nil,
-           viewModel.selectedSchedule != nil,
-           viewModel.selectedEmoji != nil,
-           viewModel.selectedColor != nil {
-            saveButton.isEnabled = true
-            saveButton.backgroundColor = .black
-        } else {
-            saveButton.isEnabled = false
-            saveButton.backgroundColor = UIColor(named: "createButtonGrayColor")
-        }
+        viewModel.isAllFieldsFilled() ? saveButtonIsActive() : saveButtonIsNotActive()
+    }
+    
+    func saveButtonIsActive() {
+        saveButton.isEnabled = true
+        saveButton.backgroundColor = .black
+    }
+    
+    func saveButtonIsNotActive() {
+        saveButton.isEnabled = false
+        saveButton.backgroundColor = UIColor(named: "createButtonGrayColor")
     }
     
     private func setupUI() {
         
-        setupTextField()
-        setupContentStack()
-        
         self.title = "Редактирование привычки"
         view.backgroundColor = UIColor(named: "projectBackground")
         
+        setupTextField()
+        setupContentStack()
         setupScrollView()
+        setupTableView()
+        setupEmojiCollectionView()
+        setupColorsCollectionView()
+        
     }
     
     private func setupButtons(title: String) -> UIButton {

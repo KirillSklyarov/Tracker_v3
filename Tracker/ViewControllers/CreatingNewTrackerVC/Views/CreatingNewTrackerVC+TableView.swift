@@ -48,20 +48,6 @@ extension CreatingNewTrackerViewController: UITableViewDataSource, UITableViewDe
         rowHeight
     }
     
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let viewModel = ChoosingCategoryViewModel()
-//        let categoryVC = ChoosingCategoryViewController(viewModel: viewModel)
-//        let navVC = UINavigationController(rootViewController: categoryVC)
-//        categoryVC.viewModel.updateCategory = { [weak self] categoryName in
-//            guard let self = self,
-//                  let cell = tableView.cellForRow(at: indexPath) else { return }
-//            cell.detailTextLabel?.text = categoryName
-//            self.viewModel.selectedCategory = categoryName
-//        }
-//        present(navVC, animated: true)
-//    }
-    
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let data = viewModel.tableViewRows[indexPath.row]
         if data == "Категория" {
@@ -73,7 +59,6 @@ extension CreatingNewTrackerViewController: UITableViewDataSource, UITableViewDe
                       let cell = tableView.cellForRow(at: indexPath) else { return }
                 cell.detailTextLabel?.text = categoryName
                 self.viewModel.selectedCategory = categoryName
-//                self.isCreateButtonEnable()
             }
             present(navVC, animated: true)
         } else {
@@ -84,7 +69,6 @@ extension CreatingNewTrackerViewController: UITableViewDataSource, UITableViewDe
                       let cell = tableView.cellForRow(at: indexPath) else { return }
                 cell.detailTextLabel?.text = schedule
                 self.viewModel.selectedSchedule = schedule
-//                self.isCreateButtonEnable()
             }
             present(navVC, animated: true)
         }

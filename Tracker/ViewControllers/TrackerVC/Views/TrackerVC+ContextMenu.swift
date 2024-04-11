@@ -24,14 +24,9 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
                     print("We have a problem with editing a tracker"); return
                 }
                 
-                guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell,
-                      let daysCountText = cell.daysLabel.text else {
-                    print("Unable to get cell for indexPath: \(indexPath)"); return
-                }
-                
                 goToEditingVC()
                 
-                self.viewModel.passTrackerToEditDelegate?.getTrackerToEditFromCoreData(indexPath: indexPath, labelText: daysCountText)
+                self.viewModel.passTrackerToEditDelegate?.passTrackerIndexPathToEdit(indexPath: indexPath)
             }
             
             let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in

@@ -9,25 +9,31 @@ import Foundation
 
 protocol EditingTrackerViewModelProtocol {
     
-    var newTaskName: String? { get set }
-    var selectedEmoji: String? { get set }
-    var selectedColor: String? { get set }
-    var selectedCategory: String? { get set }
-    var selectedSchedule: String? { get set }
+    var trackerName: String? { get set }
+    var emoji: String? { get set }
+    var color: String? { get set }
+    var category: String? { get set }
+    var schedule: String? { get set }
+    
+    var indexPath: IndexPath? { get set }
+
     var coreDataManager: TrackerCoreManager { get }
+    
     var arrayOfEmoji: [String] { get set }
     var arrayOfColors: [String] { get set }
+    var countOfCompletedDays: String? { get set }
     
     var tableViewRows: [String] { get set }
     
-    var emojiIndexPath: IndexPath? { get set }
-    var colorIndexPath: IndexPath? { get set }
-    var categoryName: String? { get set }
-    var schedule: String? { get set }
+    var emojiIndexPath: IndexPath? { get }
+    var colorIndexPath: IndexPath? { get }
     
+    var updateSaveButton: ( () -> Void )? { get set }
     
-    var informAnotherVCofCreatingTracker: ( () -> Void )? { get set }
+    func createNewTracker()
+    func isAllFieldsFilled() -> Bool
+    func countOfDaysForTheTrackerInString(trackerId: String) -> String
+    func getTrackerDataForEditing(indexPath: IndexPath)
+    func updateTracker()
 
-    
-    
 }

@@ -85,50 +85,27 @@ extension EditingTrackerViewController {
             return stack
         } ()
         
-        contentStackView.translatesAutoresizingMaskIntoConstraints = false
+        [contentStackView,  counterLabel, tableView, emojiCollection, colorsCollection, buttonsStack].forEach( { $0.translatesAutoresizingMaskIntoConstraints = false  })
         
-        counterLabel.translatesAutoresizingMaskIntoConstraints = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        emojiCollection.translatesAutoresizingMaskIntoConstraints = false
-        colorsCollection.translatesAutoresizingMaskIntoConstraints = false
-        buttonsStack.translatesAutoresizingMaskIntoConstraints = false
-        
-        contentStackView.addArrangedSubview(counterLabel)
-        contentStackView.addArrangedSubview(textFieldViewStack)
-        contentStackView.addArrangedSubview(tableView)
-        contentStackView.addArrangedSubview(emojiCollection)
-        contentStackView.addArrangedSubview(colorsCollection)
-        contentStackView.addArrangedSubview(buttonsStack)
+        [counterLabel, textFieldViewStack, tableView, emojiCollection, colorsCollection, buttonsStack].forEach { contentStackView.addArrangedSubview($0) }
         
         NSLayoutConstraint.activate([
             counterLabel.topAnchor.constraint(equalTo: contentStackView.topAnchor),
-            counterLabel.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
-            counterLabel.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
             counterLabel.heightAnchor.constraint(equalToConstant: 75),
             
             textFieldViewStack.topAnchor.constraint(equalTo: counterLabel.bottomAnchor, constant: 40),
-            textFieldViewStack.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
-            textFieldViewStack.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
             textFieldViewStack.heightAnchor.constraint(equalToConstant: 75),
             
             tableView.topAnchor.constraint(equalTo: textFieldViewStack.bottomAnchor, constant: 24),
-            tableView.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
             tableView.heightAnchor.constraint(equalToConstant: 150),
             
             emojiCollection.topAnchor.constraint(equalTo: tableView.bottomAnchor),
-            emojiCollection.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
-            emojiCollection.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
             emojiCollection.heightAnchor.constraint(equalToConstant: 204),
             
             colorsCollection.topAnchor.constraint(equalTo: emojiCollection.bottomAnchor, constant: 8),
-            colorsCollection.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
-            colorsCollection.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
             colorsCollection.heightAnchor.constraint(equalToConstant: 238),
             
             buttonsStack.topAnchor.constraint(equalTo: colorsCollection.bottomAnchor, constant: 16),
-            buttonsStack.leadingAnchor.constraint(equalTo: contentStackView.leadingAnchor),
-            buttonsStack.trailingAnchor.constraint(equalTo: contentStackView.trailingAnchor),
             buttonsStack.bottomAnchor.constraint(equalTo: contentStackView.bottomAnchor)
         ])
     }

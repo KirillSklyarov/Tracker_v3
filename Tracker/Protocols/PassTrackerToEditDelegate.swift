@@ -8,5 +8,5 @@
 import Foundation
 
 protocol PassTrackerToEditDelegate: AnyObject {
-    func getTrackerToEditFromCoreData(indexPath: IndexPath, labelText: String)
+    func passTrackerIndexPathToEdit(indexPath: IndexPath)
 }

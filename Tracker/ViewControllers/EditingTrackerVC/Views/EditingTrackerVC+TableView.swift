@@ -9,6 +9,16 @@ import UIKit
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
 extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelegate {
+    
+    func setupTableView() {
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        
+        tableView.layer.cornerRadius = 10
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+    }
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
@@ -27,8 +37,8 @@ extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelega
         cell.selectionStyle = .none
         
         if indexPath.row == 0 {
-            if viewModel.categoryName != nil {
-                cell.detailTextLabel?.text = viewModel.categoryName
+            if viewModel.category != nil {
+                cell.detailTextLabel?.text = viewModel.category
             }
         } else {
             if viewModel.schedule != nil {
@@ -48,7 +58,7 @@ extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelega
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        75
+       rowHeight
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -61,7 +71,7 @@ extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelega
                 guard let self = self,
                       let cell = tableView.cellForRow(at: indexPath) else { return }
                 cell.detailTextLabel?.text = categoryName
-                self.viewModel.selectedCategory = categoryName
+                self.viewModel.category = categoryName
                 self.isCreateButtonEnable()
             }
             present(navVC, animated: true)
@@ -72,7 +82,7 @@ extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelega
                 guard let self = self,
                       let cell = tableView.cellForRow(at: indexPath) else { return }
                 cell.detailTextLabel?.text = schedule
-                self.viewModel.selectedSchedule = schedule
+                self.viewModel.schedule = schedule
                 self.isCreateButtonEnable()
             }
             present(navVC, animated: true)
