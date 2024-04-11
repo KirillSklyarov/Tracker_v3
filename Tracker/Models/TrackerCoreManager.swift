@@ -93,10 +93,10 @@ final class TrackerCoreManager: NSObject {
         return trackersCategory
     }
     
-    func deleteOneItem(trackerCategoryCoreData: TrackerCategoryCoreData) {
-        context.delete(trackerCategoryCoreData)
-        save()
-    }
+//    func deleteOneItem(trackerCategoryCoreData: TrackerCategoryCoreData) {
+//        context.delete(trackerCategoryCoreData)
+//        save()
+//    }
     
     func deleteAllItems() {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
@@ -429,6 +429,25 @@ extension TrackerCoreManager {
         }
     }
     
-    
-    
+    func deleteTrackerFromCategory(categoryName: String, trackerIDToDelete: UUID) {
+        let request = TrackerCategoryCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerCategoryCoreData.header),
+                                    categoryName)
+        request.predicate = predicate
+        
+        do {
+            guard let result = try context.fetch(request).first,
+                  let trackers = result.trackers as? Set<TrackerCoreData> else { return }
+            for tracker in trackers {
+                if tracker.id?.uuidString == trackerIDToDelete.uuidString {
+                    context.delete(tracker)
+                    print("Tracker removed from previous category successfully ✅")
+                    save()
+                }
+            }
+        } catch  {
+            print(error.localizedDescription)
+        }
+    }
 }

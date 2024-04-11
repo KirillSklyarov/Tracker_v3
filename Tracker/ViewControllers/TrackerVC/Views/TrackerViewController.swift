@@ -194,6 +194,7 @@ final class TrackerViewController: UIViewController {
         viewModel.dataUpdated = { [weak self] in
             guard let self else { return }
             DispatchQueue.main.async {
+                print(self.viewModel.categories)
                 self.collectionView.reloadData()
                 self.showOrHidePlaceholder()
                 self.navigationItem.searchController = self.searchController

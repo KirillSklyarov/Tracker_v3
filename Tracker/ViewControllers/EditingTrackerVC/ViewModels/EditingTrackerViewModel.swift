@@ -58,8 +58,10 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
         }
     }
     
+    var initialTrackerCategory: String?
+    
     var indexPath: IndexPath?
-
+    
     var updateSaveButton: ( () -> Void )?
     
     var emojiIndexPath: IndexPath? {
@@ -100,12 +102,12 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
     
     func isAllFieldsFilled() -> Bool {
         let allFieldsFilled =
-            trackerName != nil &&
-            trackerName != "" &&
-            category != nil &&
-            schedule != nil &&
-            emoji != nil &&
-            color != nil
+        trackerName != nil &&
+        trackerName != "" &&
+        category != nil &&
+        schedule != nil &&
+        emoji != nil &&
+        color != nil
         return allFieldsFilled
     }
     
@@ -136,12 +138,29 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
         emoji = tracker.emoji
         color = tracker.colorHex
         countOfCompletedDays = countOfDays
+        
+        initialTrackerCategory = tracker.category?.header
     }
     
     func updateTracker() {
         guard let indexPath,
               let tracker = coreDataManager.object(at: indexPath) else { return }
-        print("trackerName \(trackerName)")
+
+        if isCategoryChanged() {
+           changeTrackerCategory(tracker: tracker, indexPath: indexPath)
+        } else {
+            saveCorrectedTracker(tracker: tracker)
+        }
+    }
+    
+    func isCategoryChanged() -> Bool {
+        return category != initialTrackerCategory
+    }
+    
+    func saveCorrectedTracker(tracker: TrackerCoreData) {
+        let allDataBefore = coreDataManager.fetchData()
+        print("allData before: \(allDataBefore)")
+        
         tracker.name = trackerName
         tracker.category?.header = category
         tracker.schedule = schedule
@@ -149,7 +168,40 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
         tracker.colorHex = color
         
         coreDataManager.save()
+        
+        let allDataAfter = coreDataManager.fetchData()
+        print("allData after: \(allDataAfter)")
+        
         print("Tracker updated successfully ✅")
     }
     
+    func changeTrackerCategory(tracker: TrackerCoreData, indexPath: IndexPath) {
+        guard let category,
+              let id = tracker.id,
+              let name = tracker.name,
+              let colorHex = tracker.colorHex,
+              let emoji = tracker.emoji,
+              let schedule = tracker.schedule else {
+            print("Hmmmm, bad thing"); return
+        }
+        
+        let trackerWithAnotherCategory = TrackerCategory(header: category, 
+        trackers: [Tracker(
+                            id: id,
+                            name: name,
+                            color: colorHex,
+                            emoji: emoji,
+                            schedule: schedule)
+        ])
+        
+        print(trackerWithAnotherCategory)
+        
+        coreDataManager.createNewTracker(newTracker: trackerWithAnotherCategory)
+        
+        coreDataManager.deleteTrackerFromCategory(categoryName: initialTrackerCategory!, trackerIDToDelete: id)
+        
+        let allDataAfter = coreDataManager.fetchData()
+        print("allData after: \(allDataAfter)")
+        
+    }
 }

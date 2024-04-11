@@ -28,6 +28,8 @@ protocol EditingTrackerViewModelProtocol {
     var emojiIndexPath: IndexPath? { get }
     var colorIndexPath: IndexPath? { get }
     
+    var initialTrackerCategory: String? { get }
+    
     var updateSaveButton: ( () -> Void )? { get set }
     
     func createNewTracker()
