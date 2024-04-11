@@ -17,8 +17,8 @@ final class TabBarController: UITabBarController {
     }
     
     func setupTabBarController() {
-        
-        let trackerVC = setupNavigationController(controller: TrackerViewController(), title: "Трекеры")
+        let viewModel = TrackerViewModel()
+        let trackerVC = setupNavigationController(controller: TrackerViewController(viewModel: viewModel), title: "Трекеры")
         let statisticVC = setupNavigationController(controller: StatisticViewController(), title: "Статистика")
         
         trackerVC.tabBarItem = UITabBarItem(title: "Трекер", image: UIImage(systemName: "record.circle.fill"), tag: 0)

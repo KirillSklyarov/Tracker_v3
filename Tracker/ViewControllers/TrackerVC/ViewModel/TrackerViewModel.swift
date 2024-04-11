@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class TrackerViewModel {
+final class TrackerViewModel: TrackerViewModelProtocol  {
     
     let coreDataManager = TrackerCoreManager.shared
     
@@ -28,6 +28,13 @@ final class TrackerViewModel {
     }
     
     var dataUpdated: ( () -> Void )?
+    
+    func countOfDaysForTheTrackerInString(trackerId: String) -> String {
+//        guard let trackerID = tracker.id else { return "Error"}
+        let trackerCount = coreDataManager.countOfTrackerInRecords(trackerIDToCount: trackerId)
+        let correctDaysInRussian = daysLetters(count: trackerCount)
+        return correctDaysInRussian
+    }
     
     func updateDataFromCoreData(weekDay: String) {
         coreDataManager.setupFetchedResultsController(weekDay: weekDay)

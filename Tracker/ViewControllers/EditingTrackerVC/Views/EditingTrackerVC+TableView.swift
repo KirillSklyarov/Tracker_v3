@@ -1,22 +1,16 @@
 //
-//  CreatingNewTrackerVC+TableView.swift
+//  EditingTrackerVC+TableView.swift
 //  Tracker
 //
-//  Created by Kirill Sklyarov on 09.04.2024.
+//  Created by Kirill Sklyarov on 11.04.2024.
 //
 
 import UIKit
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
-extension CreatingNewTrackerViewController: UITableViewDataSource, UITableViewDelegate {
-    
-    func setupTableView() {
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        
-        tableView.layer.cornerRadius = 10
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelegate {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -32,11 +26,20 @@ extension CreatingNewTrackerViewController: UITableViewDataSource, UITableViewDe
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.selectionStyle = .none
         
+        if indexPath.row == 0 {
+            if viewModel.categoryName != nil {
+                cell.detailTextLabel?.text = viewModel.categoryName
+            }
+        } else {
+            if viewModel.schedule != nil {
+                cell.detailTextLabel?.text = viewModel.schedule
+            }
+        }
+        
         let disclosureImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 7, height: 12))
         disclosureImage.image = UIImage(named: "chevron")
         cell.accessoryView = disclosureImage
         
-        // Убираем сепаратор у последней ячейки
         if indexPath.row == viewModel.tableViewRows.count - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         }
@@ -45,22 +48,8 @@ extension CreatingNewTrackerViewController: UITableViewDataSource, UITableViewDe
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        rowHeight
+        75
     }
-    
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let viewModel = ChoosingCategoryViewModel()
-//        let categoryVC = ChoosingCategoryViewController(viewModel: viewModel)
-//        let navVC = UINavigationController(rootViewController: categoryVC)
-//        categoryVC.viewModel.updateCategory = { [weak self] categoryName in
-//            guard let self = self,
-//                  let cell = tableView.cellForRow(at: indexPath) else { return }
-//            cell.detailTextLabel?.text = categoryName
-//            self.viewModel.selectedCategory = categoryName
-//        }
-//        present(navVC, animated: true)
-//    }
-    
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let data = viewModel.tableViewRows[indexPath.row]
@@ -73,7 +62,7 @@ extension CreatingNewTrackerViewController: UITableViewDataSource, UITableViewDe
                       let cell = tableView.cellForRow(at: indexPath) else { return }
                 cell.detailTextLabel?.text = categoryName
                 self.viewModel.selectedCategory = categoryName
-//                self.isCreateButtonEnable()
+                self.isCreateButtonEnable()
             }
             present(navVC, animated: true)
         } else {
@@ -84,7 +73,7 @@ extension CreatingNewTrackerViewController: UITableViewDataSource, UITableViewDe
                       let cell = tableView.cellForRow(at: indexPath) else { return }
                 cell.detailTextLabel?.text = schedule
                 self.viewModel.selectedSchedule = schedule
-//                self.isCreateButtonEnable()
+                self.isCreateButtonEnable()
             }
             present(navVC, animated: true)
         }
@@ -94,4 +83,3 @@ extension CreatingNewTrackerViewController: UITableViewDataSource, UITableViewDe
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
-

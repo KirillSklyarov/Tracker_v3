@@ -1,13 +1,13 @@
 //
-//  Protocol.swift
+//  Proto.swift
 //  Tracker
 //
-//  Created by Kirill Sklyarov on 10.04.2024.
+//  Created by Kirill Sklyarov on 11.04.2024.
 //
 
 import Foundation
 
-protocol CreatingOneOffTrackerViewModelProtocol {
+protocol CreatingNewTrackerViewModelProtocol {
     var isDoneButtonEnable: ( () -> Void )? { get set }
 
     var tableViewRows: [String] { get set }
@@ -22,4 +22,5 @@ protocol CreatingOneOffTrackerViewModelProtocol {
     func createNewTracker()
     func isAllFieldsFilled() -> Bool
     func getBackToMainScreen()
+
 }

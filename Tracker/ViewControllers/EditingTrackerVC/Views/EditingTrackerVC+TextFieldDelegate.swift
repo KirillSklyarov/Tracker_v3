@@ -1,24 +1,20 @@
 //
-//  CreatingNewTrackerVC+TextField.swift
+//  EditingTrackerVC+TextFieldDelegate.swift
 //  Tracker
 //
-//  Created by Kirill Sklyarov on 09.04.2024.
+//  Created by Kirill Sklyarov on 11.04.2024.
 //
 
 import UIKit
 
 // MARK: - UITextFieldDelegate
-extension CreatingNewTrackerViewController: UITextFieldDelegate {
-    
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        viewModel.trackerName = textField.text
-    }
+extension EditingTrackerViewController: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let currentCharacterCount = textField.text?.count ?? 0
         if currentCharacterCount <= 25 {
             hideLabelExceedTextFieldLimit()
-//            isCreateButtonEnable()
+            isCreateButtonEnable()
             textField.textColor = .black
             return true
         } else {
@@ -29,4 +25,3 @@ extension CreatingNewTrackerViewController: UITextFieldDelegate {
         }
     }
 }
-

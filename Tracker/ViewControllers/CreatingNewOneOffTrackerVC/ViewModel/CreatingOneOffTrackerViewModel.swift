@@ -53,16 +53,18 @@ final class CreatingOneOffTrackerViewModel: CreatingOneOffTrackerViewModelProtoc
     }
     
     var isDoneButtonEnable: ( () -> Void )?
-    
-    var informAnotherVCofCreatingTracker: ( () -> Void )?
-    
+        
+    func getBackToMainScreen() {
+        let cancelCreatingTrackerNotification = Notification.Name("cancelCreatingTracker")
+        NotificationCenter.default.post(name: cancelCreatingTrackerNotification, object: nil)
+    }
     
     func createNewTracker() {
         guard let name = trackerName,
               let category = selectedCategory,
               let color = selectedColor,
               let emoji = selectedEmoji else {
-            print("Smth going wrong here"); return
+            print("Smth's going wrong here"); return
         }
         
         let newTask = TrackerCategory(header: category,
@@ -72,7 +74,7 @@ final class CreatingOneOffTrackerViewModel: CreatingOneOffTrackerViewModelProtoc
                                                          emoji: emoji,
                                                          schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
         coreDataManager.createNewTracker(newTracker: newTask)
-        informAnotherVCofCreatingTracker?()
+        getBackToMainScreen()
     }
     
     func isAllFieldsFilled() -> Bool {

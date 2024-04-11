@@ -49,7 +49,7 @@ final class CreatingOneOffTrackerVC: UIViewController {
     
     let tableView = UITableView()
     let rowHeight = CGFloat(75)
-    
+
     // MARK: - Private Properties
     var viewModel: CreatingOneOffTrackerViewModelProtocol
     
@@ -81,7 +81,7 @@ final class CreatingOneOffTrackerVC: UIViewController {
     }
     
     @objc func cancelButtonTapped(_ sender: UIButton) {
-        viewModel.informAnotherVCofCreatingTracker?()
+        viewModel.getBackToMainScreen()
     }
     
     @objc func createButtonTapped(_ sender: UIButton) {

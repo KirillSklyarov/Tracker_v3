@@ -16,8 +16,8 @@ extension TrackerViewController: DataProviderDelegate {
 }
 
 
-extension TrackerViewController: CloseScreenDelegate {
-    func closeFewVCAfterCreatingTracker() {
+extension TrackerViewController {
+    @objc func closeFewVCAfterCreatingTracker() {
         viewModel.categories = viewModel.coreDataManager.fetchData()
         self.dismiss(animated: true)
     }

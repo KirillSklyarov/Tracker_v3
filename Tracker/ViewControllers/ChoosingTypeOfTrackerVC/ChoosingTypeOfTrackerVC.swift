@@ -13,9 +13,6 @@ final class ChoosingTypeOfTrackerViewController: UIViewController {
     private lazy var creatingTrackerButton = setupButtons(title: "Привычка")
     private lazy var creatingEventButton = setupButtons(title: "Нерегулярные события")
     
-    // MARK: - Other Properties
-    weak var closeScreenDelegate: CloseScreenDelegate?
-    
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,14 +23,10 @@ final class ChoosingTypeOfTrackerViewController: UIViewController {
     
     // MARK: - IB Actions
     @objc private func creatingTrackerButtonTapped(_ sender: UIButton) {
-        let creatingNewTracker = CreatingNewTrackerViewController()
+        let viewModel = CreatingNewTrackerViewModel()
+        let creatingNewTracker = CreatingNewTrackerViewController(viewModel: viewModel)
         let creatingNavVC = UINavigationController(rootViewController: creatingNewTracker)
         present(creatingNavVC, animated: true)
-        
-        creatingNewTracker.viewModel.informAnotherVCofCreatingTracker = { [weak self] in
-            guard let self else { return }
-            self.closeScreenDelegate?.closeFewVCAfterCreatingTracker()
-        }
     }
     
     @objc private func creatingEventButtonTapped(_ sender: UIButton) {
@@ -41,11 +34,6 @@ final class ChoosingTypeOfTrackerViewController: UIViewController {
         let creatingOneOffEvent = CreatingOneOffTrackerVC(viewModel: viewModel)
         let creatingNavVC = UINavigationController(rootViewController: creatingOneOffEvent)
         present(creatingNavVC, animated: true)
-        
-        creatingOneOffEvent.viewModel.informAnotherVCofCreatingTracker = { [weak self] in
-            guard let self else { return }
-            self.closeScreenDelegate?.closeFewVCAfterCreatingTracker()
-        }
     }
     
     // MARK: - Private Methods

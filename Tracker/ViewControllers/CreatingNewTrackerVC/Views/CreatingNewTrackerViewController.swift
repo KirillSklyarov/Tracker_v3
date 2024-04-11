@@ -10,20 +10,58 @@ import UIKit
 final class CreatingNewTrackerViewController: UIViewController {
     
     // MARK: - UI Properties
-    let trackerNameTextField = UITextField()
-    let tableView = UITableView()
-    let exceedLabel = UILabel()
+    lazy var trackerNameTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Введите название трекера"
+        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
+        textField.leftView = leftPaddingView
+        textField.leftViewMode = .always
+        textField.rightViewMode = .whileEditing
+        textField.textAlignment = .left
+        textField.layer.cornerRadius = 10
+        textField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        textField.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        textField.delegate = self
+        return textField
+    } ()
+    lazy var exceedLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Ограничение 38 символов"
+        label.textColor = .red
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 17, weight: .regular)
+        label.isHidden = true
+        return label
+    } ()
+    lazy var cancelButton = setupButtons(title: "Отмена")
+    lazy var createButton = setupButtons(title: "Создать")
+    
+    lazy var contentStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.distribution = .equalCentering
+        return stack
+    } ()
     
     let emojiCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     let colorsCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
-    lazy var cancelButton = setupButtons(title: "Отмена")
-    lazy var createButton = setupButtons(title: "Создать")
-    
-    let contentStackView = UIStackView()
+    let tableView = UITableView()
+    let rowHeight = CGFloat(75)
     
     // MARK: - Private Properties
-    let viewModel = CreatingNewTrackerViewModel()
+    var viewModel: CreatingNewTrackerViewModelProtocol
+    
+    // MARK: - Initializers
+    
+    init(viewModel: CreatingNewTrackerViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Life Cycles
     override func viewDidLoad() {
@@ -31,7 +69,7 @@ final class CreatingNewTrackerViewController: UIViewController {
         
         setupUI()
         
-        isCreateButtonEnable()
+        dataBinding()
         
         addTapGestureToHideKeyboard()
     }
@@ -39,22 +77,24 @@ final class CreatingNewTrackerViewController: UIViewController {
     // MARK: - IB Actions
     @objc func clearTextButtonTapped(_ sender: UIButton) {
         trackerNameTextField.text = ""
-        isCreateButtonEnable()
+        viewModel.trackerName = ""
     }
     
     @objc func cancelButtonTapped(_ sender: UIButton) {
-        viewModel.informAnotherVCofCreatingTracker?()
+        viewModel.getBackToMainScreen()
     }
     
     @objc func createButtonTapped(_ sender: UIButton) {
-        guard let name = trackerNameTextField.text else { print("Что-то пошло не так"); return }
-        viewModel.createNewTask(trackerNameTextField: name)
+        viewModel.createNewTracker()
     }
     
     // MARK: - Private Methods
     private func setupUI() {
         
+        createButtonIsNotActive()
+        
         setupTextField()
+        
         setupContentStack()
         
         setupTableView()
@@ -122,16 +162,17 @@ final class CreatingNewTrackerViewController: UIViewController {
         trackerNameTextField.delegate = self
     }
     
-    func isCreateButtonEnable() {
-        isAllFieldsFilled() ? createButtonIsActive() : createButtonIsNotActive()
+    // MARK: - Private Methods
+    private func dataBinding() {
+        viewModel.isDoneButtonEnable = { [weak self] in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                self.viewModel.isAllFieldsFilled() ? self.createButtonIsActive() : self.createButtonIsNotActive()
+            }
+        }
     }
     
-    func isAllFieldsFilled() -> Bool {
-        let textFieldTest = trackerNameTextField.hasText
-        return viewModel.isAllFieldsFilled(trackerNameTextField: textFieldTest)
-    }
-    
-    func createButtonIsActive() {
+    private func createButtonIsActive() {
         createButton.isEnabled = true
         createButton.backgroundColor = .black
     }

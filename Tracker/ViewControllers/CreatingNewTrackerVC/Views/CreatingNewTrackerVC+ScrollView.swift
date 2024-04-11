@@ -52,8 +52,10 @@ extension CreatingNewTrackerViewController {
     }
     
     func setupContentStack() {
-        
-        setupExceedLabel()
+                
+        var tableViewHeight: CGFloat {
+            rowHeight * CGFloat(viewModel.tableViewRows.count)
+        }
         
         let textFieldViewStack = UIStackView()
         textFieldViewStack.axis = .vertical
@@ -61,9 +63,6 @@ extension CreatingNewTrackerViewController {
         [trackerNameTextField, exceedLabel].forEach { textFieldViewStack.addArrangedSubview($0) }
         
         let buttonsStack = setupButtonsStack()
-        
-        contentStackView.axis = .vertical
-        contentStackView.distribution = .equalCentering
         
         [textFieldViewStack, contentStackView, tableView, emojiCollection, colorsCollection, buttonsStack].forEach { $0.translatesAutoresizingMaskIntoConstraints = false}
         
@@ -73,7 +72,7 @@ extension CreatingNewTrackerViewController {
             trackerNameTextField.heightAnchor.constraint(equalToConstant: 75),
             
             tableView.topAnchor.constraint(equalTo: textFieldViewStack.bottomAnchor, constant: 24),
-            tableView.heightAnchor.constraint(equalToConstant: viewModel.tableViewHeight),
+            tableView.heightAnchor.constraint(equalToConstant: tableViewHeight),
             
             emojiCollection.topAnchor.constraint(equalTo: tableView.bottomAnchor),
             emojiCollection.heightAnchor.constraint(equalToConstant: 204),
@@ -83,7 +82,6 @@ extension CreatingNewTrackerViewController {
             
             buttonsStack.topAnchor.constraint(equalTo: colorsCollection.bottomAnchor, constant: 16),
             buttonsStack.heightAnchor.constraint(equalToConstant: 60)
-            
         ])
     }
     
@@ -104,13 +102,5 @@ extension CreatingNewTrackerViewController {
         stack.addArrangedSubview(cancelButton)
         stack.addArrangedSubview(createButton)
         return stack
-    }
-    
-    func setupExceedLabel() {
-        exceedLabel.text = "Ограничение 38 символов"
-        exceedLabel.textColor = .red
-        exceedLabel.textAlignment = .center
-        exceedLabel.font = .systemFont(ofSize: 17, weight: .regular)
-        exceedLabel.isHidden = true
     }
 }

@@ -15,29 +15,27 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
         return UIContextMenuConfiguration(actionProvider: { (_) -> UIMenu? in
             
             let lockAction = UIAction(title: "Закрепить") { _ in }
-            let editAction = UIAction(title: "Редактировать") { _ in
+            let editAction = UIAction(title: "Редактировать") { [weak self] _ in
+                guard let self else { return }
                 
-                let convertedLocation = self.collectionView.convert(location, from: interaction.view)
+                let convertedLocation = collectionView.convert(location, from: interaction.view)
                 
-                guard let indexPath = self.collectionView.indexPathForItem(at: convertedLocation) else {
+                guard let indexPath = collectionView.indexPathForItem(at: convertedLocation) else {
                     print("We have a problem with editing a tracker"); return
                 }
                 
-                guard let cell = self.collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell,
+                guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell,
                       let daysCountText = cell.daysLabel.text else {
-                    print("Unable to get cell for indexPath: \(indexPath)")
-                    return
+                    print("Unable to get cell for indexPath: \(indexPath)"); return
                 }
                 
-                let editingVC = EditingTrackerViewController()
-                self.viewModel.passTrackerToEditDelegate = editingVC
-                let navVC = UINavigationController(rootViewController: editingVC)
-                self.present(navVC, animated: true)
+                goToEditingVC()
+                
                 self.viewModel.passTrackerToEditDelegate?.getTrackerToEditFromCoreData(indexPath: indexPath, labelText: daysCountText)
             }
             
-            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { _ in
-                self.showAlert(location: location, interaction: interaction)
+            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                self?.showAlert(location: location, interaction: interaction)
             }
             
             let menu = UIMenu(children: [lockAction, editAction, deleteAction])
@@ -47,6 +45,13 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
         )
     }
     
+    private func goToEditingVC() {
+        let viewModel = EditingTrackerViewModel()
+        let editingVC = EditingTrackerViewController(viewModel: viewModel)
+        self.viewModel.passTrackerToEditDelegate = editingVC
+        let navVC = UINavigationController(rootViewController: editingVC)
+        self.present(navVC, animated: true)
+    }
     
     private func showAlert(location: CGPoint, interaction: UIContextMenuInteraction) {
         let alert = UIAlertController(title: "Уверены, что хотите удалить трекер", message: nil, preferredStyle: .actionSheet)
@@ -54,19 +59,17 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
         let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
             guard let self = self else { return }
             
-            let convertedLocation = self.collectionView.convert(location, from: interaction.view)
-            
-            guard let indexPath = self.collectionView.indexPathForItem(at: convertedLocation) else {
+            // Здесь мы находим indexPath трекера
+            let convertedLocation = collectionView.convert(location, from: interaction.view)
+            guard let indexPath = collectionView.indexPathForItem(at: convertedLocation) else {
                 print("We have a problem with deleting a tracker"); return
             }
-            
-            self.viewModel.coreDataManager.deleteAllTrackerRecordsForTracker(at: indexPath)
-            self.viewModel.coreDataManager.deleteTracker(at: indexPath)
+            // Здесь мы удаляем трекер
+            viewModel.coreDataManager.deleteTracker(at: indexPath)
         }
         
         let cancelAction = UIAlertAction(title: "Отменить", style: .cancel)
-        alert.addAction(deleteAction)
-        alert.addAction(cancelAction)
+        [deleteAction, cancelAction].forEach { alert.addAction($0)}
         self.present(alert, animated: true)
     }
 }

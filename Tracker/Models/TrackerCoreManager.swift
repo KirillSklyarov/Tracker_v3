@@ -201,13 +201,6 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
         fetchedResultsController?.object(at: indexPath)
     }
     
-    func deleteTracker(at indexPath: IndexPath) {
-        guard let tracker = fetchedResultsController?.object(at: indexPath) else { print("Smth is going wrong"); return }
-        context.delete(tracker)
-        print("Tracker deleted ✅")
-        save()
-    }
-    
     func printAllTrackersInCategory(header: String) {
         let request = TrackerCoreData.fetchRequest()
         request.predicate = NSPredicate(format: "category.header == %@", header)
@@ -404,6 +397,16 @@ extension TrackerCoreManager {
             print(error.localizedDescription)
             return 0
         }
+    }
+    
+    func deleteTracker(at indexPath: IndexPath) {
+        
+        deleteAllTrackerRecordsForTracker(at: indexPath)
+        
+        guard let tracker = fetchedResultsController?.object(at: indexPath) else { print("Smth is going wrong"); return }
+        context.delete(tracker)
+        print("Tracker deleted ✅")
+        save()
     }
     
     func deleteAllTrackerRecordsForTracker(at indexPath: IndexPath) {

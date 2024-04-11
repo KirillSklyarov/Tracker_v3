@@ -10,13 +10,37 @@ import UIKit
 final class TrackerViewController: UIViewController {
     
     // MARK: - UI Properties
+    private lazy var filtersButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Фильтры", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor(named: "filterButtonBackground")
+        button.layer.cornerRadius = 16
+        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        return button
+    } ()
     private let swooshImage = UIImageView()
-    private let textLabel = UILabel()
-    let searchController = UISearchController(searchResultsController: nil)
-    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    private lazy var textLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.textAlignment = .center
+        return label
+    } ()
     
-    let datePicker = UIDatePicker()
-    
+    lazy var datePicker: UIDatePicker = {
+        let myDatePicker = UIDatePicker()
+        myDatePicker.datePickerMode = .date
+        myDatePicker.layer.backgroundColor = UIColor.white.cgColor
+        myDatePicker.layer.cornerRadius = 13
+        if #available(iOS 14.0, *) {
+            myDatePicker.preferredDatePickerStyle = .inline
+        } else {
+            myDatePicker.preferredDatePickerStyle = .wheels
+        }
+        myDatePicker.addTarget(self, action: #selector(datePickerTapped), for: .valueChanged)
+        return myDatePicker
+    } ()
     lazy var dateButton: UIButton = {
         let button = UIButton()
         let date = viewModel.dateToString(date: datePicker.date)
@@ -29,19 +53,11 @@ final class TrackerViewController: UIViewController {
         return button
     } ()
     
-    lazy var filtersButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Фильтры", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(named: "filterButtonBackground")
-        button.layer.cornerRadius = 16
-        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
-        return button
-    } ()
+    let searchController = UISearchController(searchResultsController: nil)
+    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
     // MARK: - Private Properties
-    let viewModel = TrackerViewModel()
+    var viewModel: TrackerViewModelProtocol
     
     lazy var currentDate = datePicker.date
     
@@ -49,13 +65,23 @@ final class TrackerViewController: UIViewController {
         viewModel.getWeekdayFromCurrentDate(currentDate: currentDate)
     }
     
+    // MARK: - Initializers
+    init(viewModel: TrackerViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.updateDataFromCoreData(weekDay: weekDay)
-                
-        viewModel.coreDataManager.delegate = self
+        uploadDataFormCoreData()
+        
+        dataBinding()
         
         setupUI()
         
@@ -70,12 +96,10 @@ final class TrackerViewController: UIViewController {
         let creatingNewHabitVC = ChoosingTypeOfTrackerViewController()
         let creatingNavi = UINavigationController(rootViewController: creatingNewHabitVC)
         present(creatingNavi, animated: true)
-        creatingNewHabitVC.closeScreenDelegate = self
     }
     
     @objc private func updateDataWithNewCategoryNames(notification: Notification) {
-        viewModel.coreDataManager.setupFetchedResultsController(weekDay: weekDay)
-        collectionView.reloadData()
+        uploadDataFormCoreData()
     }
     
     @objc func cellButtonTapped(_ sender: UIButton) {
@@ -102,13 +126,6 @@ final class TrackerViewController: UIViewController {
         
         sender.removeFromSuperview()
         
-        viewModel.dataUpdated = { [weak self] in
-            guard let self else { return }
-            self.collectionView.reloadData()
-            self.showOrHidePlaceholder()
-            self.navigationItem.searchController = self.searchController
-        }
-        
         viewModel.updateDataFromCoreData(weekDay: weekDay)
     }
     
@@ -130,7 +147,7 @@ final class TrackerViewController: UIViewController {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: image?.withTintColor(.black), style: .done, target: self, action: #selector(addNewHabitButtonTapped))
     }
-            
+    
     private func setupFiltersButton() {
         view.addSubViews([filtersButton])
         
@@ -159,15 +176,6 @@ final class TrackerViewController: UIViewController {
     
     private func setupDatePicker() {
         datePicker.isHidden = false
-        datePicker.datePickerMode = .date
-        datePicker.layer.backgroundColor = UIColor.white.cgColor
-        datePicker.layer.cornerRadius = 13
-        if #available(iOS 14.0, *) {
-            datePicker.preferredDatePickerStyle = .inline
-        } else {
-            datePicker.preferredDatePickerStyle = .wheels
-        }
-        datePicker.addTarget(self, action: #selector(datePickerTapped), for: .valueChanged)
         
         navigationItem.searchController = nil
         
@@ -181,10 +189,31 @@ final class TrackerViewController: UIViewController {
         ])
     }
     
-    
     // MARK: - Private Methods
+    private func dataBinding() {
+        viewModel.dataUpdated = { [weak self] in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+                self.showOrHidePlaceholder()
+                self.navigationItem.searchController = self.searchController
+            }
+        }
+    }
+    
+    private func uploadDataFormCoreData() {
+        viewModel.updateDataFromCoreData(weekDay: weekDay)
+        viewModel.coreDataManager.delegate = self
+    }
+    
     private func setupNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(updateDataWithNewCategoryNames), name: Notification.Name("renameCategory"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateDataWithNewCategoryNames),
+                                               name: Notification.Name("renameCategory"),
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(closeFewVCAfterCreatingTracker),
+                                               name: Notification.Name("cancelCreatingTracker"),
+                                               object: nil)
     }
     
     private func isSearchMode(_ searchController: UISearchController) {
@@ -211,9 +240,6 @@ final class TrackerViewController: UIViewController {
         swooshImage.isHidden = false
         textLabel.isHidden = false
         filtersButton.isHidden = true
-        
-        textLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        textLabel.textAlignment = .center
         
         view.addSubViews([swooshImage, textLabel])
         
@@ -257,24 +283,19 @@ final class TrackerViewController: UIViewController {
     private func makeTrackerDone(trackToAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
         viewModel.coreDataManager.addTrackerRecord(trackerToAdd: trackToAdd)
         
-        let trackerCount = viewModel.coreDataManager.countOfTrackerInRecords(trackerIDToCount: trackToAdd.id.uuidString)
-        let correctDaysInRussian = viewModel.daysLetters(count: trackerCount)
-        cell.daysLabel.text = correctDaysInRussian
+        let countOfDays = viewModel.countOfDaysForTheTrackerInString(trackerId: trackToAdd.id.uuidString)
+        cell.daysLabel.text = countOfDays
         
         designCompletedTracker(cell: cell, cellColor: cellColor)
-        
     }
     
     private func makeTrackerUndone(trackToRemove: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
-        
         viewModel.coreDataManager.removeTrackerRecordForThisDay(trackerToRemove: trackToRemove)
         
-        let trackerCount = viewModel.coreDataManager.countOfTrackerInRecords(trackerIDToCount: trackToRemove.id.uuidString)
-        let correctDaysInRussian = viewModel.daysLetters(count: trackerCount)
-        cell.daysLabel.text = correctDaysInRussian
+        let countOfDays = viewModel.countOfDaysForTheTrackerInString(trackerId: trackToRemove.id.uuidString)
+        cell.daysLabel.text = countOfDays
         
-       designInCompleteTracker(cell: cell, cellColor: cellColor)
-        
+        designInCompleteTracker(cell: cell, cellColor: cellColor)
     }
     
     func designCompletedTracker(cell: TrackerCollectionViewCell, cellColor: UIColor) {
@@ -289,5 +310,4 @@ final class TrackerViewController: UIViewController {
         cell.plusButton.setImage(plusImage, for: .normal)
         cell.plusButton.layer.cornerRadius = cell.plusButton.frame.width / 2
     }
-    
 }
