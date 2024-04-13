@@ -10,7 +10,7 @@ import Foundation
 final class ChoosingCategoryViewModel: ViewModelProtocol {
     
     let coreDataManager = TrackerCoreManager.shared
-        
+    
     var categories = [String]() {
         didSet {
             dataUpdated?()
@@ -46,30 +46,4 @@ final class ChoosingCategoryViewModel: ViewModelProtocol {
     func sendLastChosenCategoryToStore(categoryName: String) {
         coreDataManager.sendLastChosenCategoryToStore(categoryName: categoryName)
     }
-    
-//    func deSelectCell(cell: CustomCategoryCell) {
-//        cell.checkmarkImage.isHidden = true
-//    }
-    
-//    func showLastChosenCategory(cell: CustomCategoryCell) {
-//        let lastChosenCategory = self.getLastChosenCategoryFromStore()
-//        if lastChosenCategory == cell.titleLabel.text {
-//            self.selectCell(cell: cell)
-//        }
-//    }
-    
-//    func selectCell(cell: CustomCategoryCell) {
-//        cell.selectionStyle = .none
-//        cell.checkmarkImage.isHidden = false
-//    }
-    
-//    func choosingCategory(cell: CustomCategoryCell) {
-//        
-//        self.selectCell(cell: cell)
-//        
-//        guard let categoryNameToPass = cell.titleLabel.text else {
-//            print("Oooops"); return }
-//        self.sendLastChosenCategoryToStore(categoryName: categoryNameToPass)
-//        self.updateCategory?(categoryNameToPass)
-//    }
 }

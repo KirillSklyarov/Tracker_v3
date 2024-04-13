@@ -72,7 +72,6 @@ extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelega
                       let cell = tableView.cellForRow(at: indexPath) else { return }
                 cell.detailTextLabel?.text = categoryName
                 self.viewModel.category = categoryName
-//                self.isCreateButtonEnable()
             }
             present(navVC, animated: true)
         } else {
@@ -83,7 +82,6 @@ extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelega
                       let cell = tableView.cellForRow(at: indexPath) else { return }
                 cell.detailTextLabel?.text = schedule
                 self.viewModel.schedule = schedule
-//                self.isCreateButtonEnable()
             }
             present(navVC, animated: true)
         }

@@ -93,11 +93,6 @@ final class TrackerCoreManager: NSObject {
         return trackersCategory
     }
     
-//    func deleteOneItem(trackerCategoryCoreData: TrackerCategoryCoreData) {
-//        context.delete(trackerCategoryCoreData)
-//        save()
-//    }
-    
     func deleteAllItems() {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         do {
@@ -323,11 +318,25 @@ extension TrackerCoreManager {
 // MARK: - TrackerRecord
 extension TrackerCoreManager {
     
-    func printTrackerRecord() {
+    func deleteAllRecords() {
+        let request: NSFetchRequest<NSFetchRequestResult> = TrackerRecordCoreData.fetchRequest()
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+        
+        do {
+            try context.execute(deleteRequest)
+            print("All TrackerRecords deleted successfully ✅")
+            save()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func printAllTrackerRecords() {
         let request = TrackerRecordCoreData.fetchRequest()
         
         do {
-            _ = try context.fetch(request)
+            let result = try context.fetch(request)
+            print("AllTrackerRecord: \(result)")
         } catch  {
             print(error.localizedDescription)
         }
@@ -450,4 +459,119 @@ extension TrackerCoreManager {
             print(error.localizedDescription)
         }
     }
+}
+
+// MARK: - Statistics
+extension TrackerCoreManager {
+    
+    func countOfAllCompletedTrackers() -> Int {
+        let request = TrackerRecordCoreData.fetchRequest()
+        do {
+           return try context.count(for: request)
+        } catch  {
+            print(error.localizedDescription)
+            return 0
+        }
+    }
+    
+    func getAllTrackerRecordDates() -> [String?] {
+        let request = TrackerRecordCoreData.fetchRequest()
+        
+        var result = [String?]()
+        do {
+            let data = try context.fetch(request)
+            for tracker in data {
+                result.append(tracker.date)
+            }
+            return result
+        } catch  {
+            print(error.localizedDescription)
+            return ["Ooops"]
+        }
+    }
+    
+    func getAllTrackersForTheDay(weekDay: String) -> [String:Int] {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K CONTAINS %@",
+                                    #keyPath(TrackerCoreData.schedule), weekDay)
+        request.predicate = predicate
+        
+        var result = [String:Int]()
+        
+        do {
+            let data = try context.count(for: request)
+            result[weekDay] = data
+            return result
+        } catch  {
+            print(error.localizedDescription)
+            return [:]
+        }
+    }
+    
+    func getAllTrackerRecordsDaysAndCounts() -> [String: Int] {
+        let request = TrackerRecordCoreData.fetchRequest()
+        var countsByDate: [String: Int] = [:]
+
+        do {
+            let data = try context.fetch(request)
+            
+            for tracker in data {
+                countsByDate[tracker.date!] = (countsByDate[tracker.date!] ?? 0) + 1
+            }
+            return countsByDate
+        } catch  {
+            print(error.localizedDescription)
+            return [:]
+        }
+    }
+   
+    
+    
+    
+    
+    
+    
+    
+    func getAllTrackers() {
+        let request = TrackerCoreData.fetchRequest()
+        
+        var trackers = [String:String]()
+        do {
+            let data = try context.fetch(request)
+            
+            for tracker in data {
+                guard let trackerID = tracker.id else { return }
+                trackers[trackerID.uuidString] = tracker.schedule
+            }
+            print("getAllTrackers \(trackers)")
+        } catch  {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func getAllTrackerRecordsIDAndCounts() -> [String: [String]] {
+        let request = TrackerRecordCoreData.fetchRequest()
+        request.propertiesToFetch = ["id", "date"]
+        
+        var countsByID: [String: [String]] = [:]
+        
+        do {
+            let data = try context.fetch(request)
+            
+            for tracker in data {
+                if countsByID[tracker.id!.uuidString] == nil {
+                    countsByID[tracker.id!.uuidString] = [tracker.date!]
+                } else {
+                    countsByID[tracker.id!.uuidString]?.append(tracker.date!)
+                }
+            }
+            return countsByID
+        } catch  {
+            print(error.localizedDescription)
+            return [:]
+        }
+    }
+    
+    
+    
 }

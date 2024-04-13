@@ -18,7 +18,6 @@ extension CreatingNewTrackerViewController: UITextFieldDelegate {
         let currentCharacterCount = textField.text?.count ?? 0
         if currentCharacterCount <= 25 {
             hideLabelExceedTextFieldLimit()
-//            isCreateButtonEnable()
             textField.textColor = .black
             return true
         } else {

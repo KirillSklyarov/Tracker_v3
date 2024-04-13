@@ -76,9 +76,7 @@ final class EditingTrackerViewController: UIViewController {
         dataBinding()
         
         setupUI()
-        
-        //        isCreateButtonEnable()
-        
+                
         addTapGestureToHideKeyboard()
     }
     
