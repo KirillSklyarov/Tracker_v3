@@ -41,27 +41,28 @@ final class StatisticViewModel: StatisticViewModelProtocol {
     
     func isStatisticsEmpty() -> Bool {
         let isAllNumbersAreZero = bestPeriod == nil &&
-                                  idealDays == 0 &&
-                                  completedTrackers == 0 &&
-                                  averageNumber == 0.0
+        idealDays == 0 &&
+        completedTrackers == 0 &&
+        averageNumber == 0.0
         
-//        print("bestPeriod \(bestPeriod)")
-//        print("idealDays \(idealDays)")
-//        print("completedTrackers \(completedTrackers)")
-//        print("averageNumber \(averageNumber)")
-//
-//        print("isAllNumbersAreZero \(isAllNumbersAreZero)")
+        //        print("bestPeriod \(bestPeriod)")
+        //        print("idealDays \(idealDays)")
+        //        print("completedTrackers \(completedTrackers)")
+        //        print("averageNumber \(averageNumber)")
+        //
+        //        print("isAllNumbersAreZero \(isAllNumbersAreZero)")
         return isAllNumbersAreZero
     }
     
     func countOfCompletedTrackers() {
         let result = coreDataManager.countOfAllCompletedTrackers()
         completedTrackers = result
-//        print("completedTrackers \(String(completedTrackers ?? 999))")
+        //        print("completedTrackers \(String(completedTrackers ?? 999))")
     }
     
     func trackerRecordsPerDay() {
         let arrayOfDates = coreDataManager.getAllTrackerRecordDates()
+        print("trackerRecords \(arrayOfDates)")
         let cleanArray = arrayOfDates.compactMap { $0 }
         let recordsCount = arrayOfDates.count
         
@@ -80,12 +81,12 @@ final class StatisticViewModel: StatisticViewModelProtocol {
             averageNumber = result
         }
         
-//        coreDataManager.printAllTrackerRecords()
+        //        coreDataManager.printAllTrackerRecords()
         
-//        print("firstDate \(firstDate)")
-//        print("lastDate \(lastDate)")
-//        print("days \(days)")
-//        print("recordsCount \(recordsCount)")
+        //        print("firstDate \(firstDate)")
+        //        print("lastDate \(lastDate)")
+        //        print("days \(days)")
+        //        print("recordsCount \(recordsCount)")
         
     }
     
@@ -101,7 +102,7 @@ final class StatisticViewModel: StatisticViewModelProtocol {
         let commonElementsOfDicts = trackerRecordsDict.filter { (key, value) in
             trackersToComplete[key] == value
         }.count
-                
+        
         idealDays = commonElementsOfDicts
     }
     
@@ -145,8 +146,33 @@ final class StatisticViewModel: StatisticViewModelProtocol {
         coreDataManager.getAllTrackers()
         let trackerRecords = getAllTrackerRecordsID2()
         print("trackerRecords \(trackerRecords)")
+        let checkTheBestPeriod = isOffOneBestPeriod(trackerRecords: trackerRecords)
+        if checkTheBestPeriod.check {
+            bestPeriod = checkTheBestPeriod.idealPeriod
+        }
+    }
+    
+    func isOffOneBestPeriod(trackerRecords: [String: [Date]]) -> (check: Bool, idealPeriod: Int) {
+        guard let firstRecord = trackerRecords.first,
+              let firstDay = firstRecord.value.first,
+              let lastDay = firstRecord.value.last else { return (false, 0)}
         
+        let timeInSeconds = lastDay.timeIntervalSince(firstDay)
+        let periodBetweenFirstAndLastDay = Int(timeInSeconds / (60 * 60 * 24)) + 1
+        let countOfDays = firstRecord.value.count
         
+        //        print(firstDay)
+        //        print(lastDay)
+        //        print(periodBetweenFirstAndLastDay)
+        //        print(countOfDays)
+        
+        if countOfDays == periodBetweenFirstAndLastDay {
+            print("We found the ideal period")
+            return (true, countOfDays)
+        } else {
+            print("This tracker doesn't have an ideal period")
+            return (false, 0)
+        }
     }
     
     func getAllTrackerRecordsID() -> [String: String] {
@@ -173,10 +199,9 @@ final class StatisticViewModel: StatisticViewModelProtocol {
             let arrayOfDays = value.value.compactMap( { dateFormatter.date(from: $0) }).sorted()
             newDict[value.key] = arrayOfDays
         }
-//
-    // Будет вот такой результат trackerRecords ["1B08F418-C184-46B0-A95D-92D39B8FED0A": [2024-03-31 21:00:00 +0000, 2024-04-02 21:00:00 +0000, 2024-04-03 21:00:00 +0000, 2024-04-05 21:00:00 +0000, 2024-04-06 21:00:00 +0000, 2024-04-07 21:00:00 +0000, 2024-04-09 21:00:00 +0000, 2024-04-10 21:00:00 +0000, 2024-04-11 21:00:00 +0000]]
+        //
+        // Будет вот такой результат trackerRecords ["1B08F418-C184-46B0-A95D-92D39B8FED0A": [2024-03-31 21:00:00 +0000, 2024-04-02 21:00:00 +0000, 2024-04-03 21:00:00 +0000, 2024-04-05 21:00:00 +0000, 2024-04-06 21:00:00 +0000, 2024-04-07 21:00:00 +0000, 2024-04-09 21:00:00 +0000, 2024-04-10 21:00:00 +0000, 2024-04-11 21:00:00 +0000]]
         
         return newDict
     }
-    
 }

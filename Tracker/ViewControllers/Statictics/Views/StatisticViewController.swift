@@ -47,9 +47,7 @@ class StatisticViewController: UIViewController {
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        calculateTheBestPeriod()
-        
+                
         setupUI()
         
         dataBinding()
@@ -62,12 +60,8 @@ class StatisticViewController: UIViewController {
     }
     
     // MARK: - Private Methods
-    func calculateTheBestPeriod() {
-        viewModel.calculateTheBestPeriod()
-    }
-    
-    
     func uploadDataFromCoreData() {
+        viewModel.calculateTheBestPeriod()
         viewModel.calculationOfIdealDays()
         viewModel.countOfCompletedTrackers()
         viewModel.trackerRecordsPerDay()
