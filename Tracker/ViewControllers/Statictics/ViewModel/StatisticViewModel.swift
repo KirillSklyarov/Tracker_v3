@@ -9,6 +9,7 @@ import Foundation
 
 final class StatisticViewModel: StatisticViewModelProtocol {
     
+    // MARK: - Properties
     var titleData = ["Лучший период", "Идеальные дни", "Трекеров завершено", "Среднее значение"]
     
     var bestPeriod: Int? {
@@ -39,6 +40,7 @@ final class StatisticViewModel: StatisticViewModelProtocol {
     
     var coreDataManager = TrackerCoreManager.shared
     
+    // MARK: - Supporting Methods
     func isStatisticsEmpty() -> Bool {
         let isAllNumbersAreZero = bestPeriod == nil &&
         idealDays == 0 &&
@@ -54,47 +56,94 @@ final class StatisticViewModel: StatisticViewModelProtocol {
         return isAllNumbersAreZero
     }
     
-    func countOfCompletedTrackers() {
-        let result = coreDataManager.countOfAllCompletedTrackers()
-        completedTrackers = result
-        //        print("completedTrackers \(String(completedTrackers ?? 999))")
-    }
-    
-    func trackerRecordsPerDay() {
-        let arrayOfDates = coreDataManager.getAllTrackerRecordDates()
-        print("trackerRecords \(arrayOfDates)")
-        let cleanArray = arrayOfDates.compactMap { $0 }
-        let recordsCount = arrayOfDates.count
+    func getAllTrackerRecordsIDOLD() -> [String: String] {
+        let trackerRecords = coreDataManager.getAllTrackerRecordsIDAndCounts()
+        var newDict = [String: String]()
         
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yy"
-        let arrayOfRealDates = cleanArray.compactMap { formatter.date(from: $0) }
-        
-        guard let firstDate = arrayOfRealDates.sorted(by: { $0 < $1 }).first,
-              let lastDate = arrayOfRealDates.sorted(by: { $0 < $1 }).last else { return }
-        
-        let timeInt = lastDate.timeIntervalSince(firstDate)
-        let days = timeInt / (60 * 60 * 24) + 1
-        let recordsPerDay = Double(recordsCount) / days
-        let recordsPerDayFormat = String(format: "%.2f", recordsPerDay)
-        if let result = Double(recordsPerDayFormat) {
-            averageNumber = result
+        for value in trackerRecords {
+            let arrayOfDays = value.value.map( { dateStringToWeekDayString(dateString: $0) })
+            let stringOfDays = arrayOfDays.joined(separator: ", ")
+            newDict[value.key] = stringOfDays
+            
+            // Будет вот такой результат trackerRecords ["1B08F418-C184-46B0-A95D-92D39B8FED0A": "Пт, Чт, Ср, Пн, Ср, Сб, Чт, Пн, Вс"]
         }
-        
-        //        coreDataManager.printAllTrackerRecords()
-        
-        //        print("firstDate \(firstDate)")
-        //        print("lastDate \(lastDate)")
-        //        print("days \(days)")
-        //        print("recordsCount \(recordsCount)")
-        
+        return newDict
     }
     
     func deleleAllRecords() {
         coreDataManager.deleteAllRecords()
         coreDataManager.printAllTrackerRecords()
     }
+}
+
+// MARK: - Point 1 - Best Period
+extension StatisticViewModel {
+    func calculateTheBestPeriod() {
+        let allTracker = coreDataManager.getAllTrackers()
+        
+        for tracker in allTracker {
+            if tracker.value == "Пн, Вт, Ср, Чт, Пт, Сб, Вс" {
+                print("This tracker \(tracker.key) is a OneOff Event - we can calculate")
+                calculateTheBestPeriodForOneOffEvent()
+            } else {
+                print("This tracker is not a OneOff Event")
+            }
+        }
+    }
     
+    func calculateTheBestPeriodForOneOffEvent() {
+        let trackerRecords = getAllTrackerRecordsID()
+        print("trackerRecords \(trackerRecords)")
+        let checkTheBestPeriod = isOffOneBestPeriod(trackerRecords: trackerRecords)
+        if checkTheBestPeriod.check {
+            if checkTheBestPeriod.idealPeriod > (bestPeriod ?? 0) {
+                bestPeriod = checkTheBestPeriod.idealPeriod
+            }
+        }
+    }
+    
+    func isOffOneBestPeriod(trackerRecords: [String: [Date]]) -> (check: Bool, idealPeriod: Int) {
+        guard let firstRecord = trackerRecords.first,
+              let firstDay = firstRecord.value.first,
+              let lastDay = firstRecord.value.last else { return (false, 0)}
+        
+        let timeInSeconds = lastDay.timeIntervalSince(firstDay)
+        let periodBetweenFirstAndLastDay = Int(timeInSeconds / (60 * 60 * 24)) + 1
+        let countOfDays = firstRecord.value.count
+        
+        //        print(firstDay)
+        //        print(lastDay)
+        //        print(periodBetweenFirstAndLastDay)
+        //        print(countOfDays)
+        
+        if countOfDays == periodBetweenFirstAndLastDay {
+            print("We found the ideal period")
+            return (true, countOfDays)
+        } else {
+            print("This tracker doesn't have an ideal period")
+            return (false, 0)
+        }
+    }
+    
+    func getAllTrackerRecordsID() -> [String: [Date]] {
+        let trackerRecords = coreDataManager.getAllTrackerRecordsIDAndCounts()
+        var newDict = [String: [Date]]()
+        
+        for value in trackerRecords {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "dd.MM.yy"
+            let arrayOfDays = value.value.compactMap( { dateFormatter.date(from: $0) }).sorted()
+            newDict[value.key] = arrayOfDays
+        }
+        //
+        // Будет вот такой результат trackerRecords ["1B08F418-C184-46B0-A95D-92D39B8FED0A": [2024-03-31 21:00:00 +0000, 2024-04-02 21:00:00 +0000, 2024-04-03 21:00:00 +0000, 2024-04-05 21:00:00 +0000, 2024-04-06 21:00:00 +0000, 2024-04-07 21:00:00 +0000, 2024-04-09 21:00:00 +0000, 2024-04-10 21:00:00 +0000, 2024-04-11 21:00:00 +0000]]
+        
+        return newDict
+    }
+}
+
+// MARK: - Point 2 - Ideal Days
+extension StatisticViewModel {
     func calculationOfIdealDays() {
         let trackersToComplete = getCountOfTrackersToCompleteForAllDays()
         let trackerRecordsDict = getTrackerRecordsDictFromCoreData()
@@ -141,67 +190,46 @@ final class StatisticViewModel: StatisticViewModelProtocol {
         guard let result = weekDay[dayOfWeek] else { return "888"}
         return result
     }
-    
-    func calculateTheBestPeriod() {
-        coreDataManager.getAllTrackers()
-        let trackerRecords = getAllTrackerRecordsID2()
-        print("trackerRecords \(trackerRecords)")
-        let checkTheBestPeriod = isOffOneBestPeriod(trackerRecords: trackerRecords)
-        if checkTheBestPeriod.check {
-            bestPeriod = checkTheBestPeriod.idealPeriod
-        }
+}
+
+// MARK: - Point 3 - Completed Trackers
+extension StatisticViewModel {
+    func countOfCompletedTrackers() {
+        let result = coreDataManager.countOfAllCompletedTrackers()
+        completedTrackers = result
+        //        print("completedTrackers \(String(completedTrackers ?? 999))")
     }
-    
-    func isOffOneBestPeriod(trackerRecords: [String: [Date]]) -> (check: Bool, idealPeriod: Int) {
-        guard let firstRecord = trackerRecords.first,
-              let firstDay = firstRecord.value.first,
-              let lastDay = firstRecord.value.last else { return (false, 0)}
+}
+   
+// MARK: - Point 4 - Completed Trackers Per Day
+extension StatisticViewModel {
+    func trackerRecordsPerDay() {
+        let arrayOfDates = coreDataManager.getAllTrackerRecordDates()
+        print("trackerRecords \(arrayOfDates)")
+        let cleanArray = arrayOfDates.compactMap { $0 }
+        let recordsCount = arrayOfDates.count
         
-        let timeInSeconds = lastDay.timeIntervalSince(firstDay)
-        let periodBetweenFirstAndLastDay = Int(timeInSeconds / (60 * 60 * 24)) + 1
-        let countOfDays = firstRecord.value.count
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yy"
+        let arrayOfRealDates = cleanArray.compactMap { formatter.date(from: $0) }
         
-        //        print(firstDay)
-        //        print(lastDay)
-        //        print(periodBetweenFirstAndLastDay)
-        //        print(countOfDays)
+        guard let firstDate = arrayOfRealDates.sorted(by: { $0 < $1 }).first,
+              let lastDate = arrayOfRealDates.sorted(by: { $0 < $1 }).last else { return }
         
-        if countOfDays == periodBetweenFirstAndLastDay {
-            print("We found the ideal period")
-            return (true, countOfDays)
-        } else {
-            print("This tracker doesn't have an ideal period")
-            return (false, 0)
+        let timeInt = lastDate.timeIntervalSince(firstDate)
+        let days = timeInt / (60 * 60 * 24) + 1
+        let recordsPerDay = Double(recordsCount) / days
+        let recordsPerDayFormat = String(format: "%.2f", recordsPerDay)
+        if let result = Double(recordsPerDayFormat) {
+            averageNumber = result
         }
-    }
-    
-    func getAllTrackerRecordsID() -> [String: String] {
-        let trackerRecords = coreDataManager.getAllTrackerRecordsIDAndCounts()
-        var newDict = [String: String]()
         
-        for value in trackerRecords {
-            let arrayOfDays = value.value.map( { dateStringToWeekDayString(dateString: $0) })
-            let stringOfDays = arrayOfDays.joined(separator: ", ")
-            newDict[value.key] = stringOfDays
-            
-            // Будет вот такой результат trackerRecords ["1B08F418-C184-46B0-A95D-92D39B8FED0A": "Пт, Чт, Ср, Пн, Ср, Сб, Чт, Пн, Вс"]
-        }
-        return newDict
-    }
-    
-    func getAllTrackerRecordsID2() -> [String: [Date]] {
-        let trackerRecords = coreDataManager.getAllTrackerRecordsIDAndCounts()
-        var newDict = [String: [Date]]()
+        //        coreDataManager.printAllTrackerRecords()
         
-        for value in trackerRecords {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "dd.MM.yy"
-            let arrayOfDays = value.value.compactMap( { dateFormatter.date(from: $0) }).sorted()
-            newDict[value.key] = arrayOfDays
-        }
-        //
-        // Будет вот такой результат trackerRecords ["1B08F418-C184-46B0-A95D-92D39B8FED0A": [2024-03-31 21:00:00 +0000, 2024-04-02 21:00:00 +0000, 2024-04-03 21:00:00 +0000, 2024-04-05 21:00:00 +0000, 2024-04-06 21:00:00 +0000, 2024-04-07 21:00:00 +0000, 2024-04-09 21:00:00 +0000, 2024-04-10 21:00:00 +0000, 2024-04-11 21:00:00 +0000]]
+        //        print("firstDate \(firstDate)")
+        //        print("lastDate \(lastDate)")
+        //        print("days \(days)")
+        //        print("recordsCount \(recordsCount)")
         
-        return newDict
     }
 }

@@ -532,7 +532,7 @@ extension TrackerCoreManager {
     
     
     
-    func getAllTrackers() {
+    func getAllTrackers() -> [String:String] {
         let request = TrackerCoreData.fetchRequest()
         
         var trackers = [String:String]()
@@ -540,12 +540,14 @@ extension TrackerCoreManager {
             let data = try context.fetch(request)
             
             for tracker in data {
-                guard let trackerID = tracker.id else { return }
+                guard let trackerID = tracker.id else { return [:] }
                 trackers[trackerID.uuidString] = tracker.schedule
             }
             print("getAllTrackers \(trackers)")
+            return trackers
         } catch  {
             print(error.localizedDescription)
+            return [:]
         }
     }
     
