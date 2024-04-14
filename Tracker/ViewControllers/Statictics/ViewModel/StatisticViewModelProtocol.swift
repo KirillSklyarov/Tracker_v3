@@ -25,4 +25,6 @@ protocol StatisticViewModelProtocol {
     func calculationOfIdealDays()
     func calculateTheBestPeriod()
     
+    func calculateTheBestPeriodForTracker()
+    
 }

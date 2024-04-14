@@ -490,6 +490,25 @@ extension TrackerCoreManager {
         }
     }
     
+    func getAllTrackersForTheWeekDay(weekDay: String) -> [String:Int] {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K CONTAINS %@",
+                                    #keyPath(TrackerCoreData.schedule), weekDay)
+        request.predicate = predicate
+        
+        var result = [String:Int]()
+        
+        do {
+            let data = try context.count(for: request)
+            result[weekDay] = data
+            return result
+        } catch  {
+            print(error.localizedDescription)
+            return [:]
+        }
+    }
+    
+    
     func getAllTrackersForTheDay(weekDay: String) -> [String:Int] {
         let request = TrackerCoreData.fetchRequest()
         let predicate = NSPredicate(format: "%K CONTAINS %@",
@@ -508,8 +527,10 @@ extension TrackerCoreManager {
         }
     }
     
+    
     func getAllTrackerRecordsDaysAndCounts() -> [String: Int] {
         let request = TrackerRecordCoreData.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
         var countsByDate: [String: Int] = [:]
 
         do {
@@ -518,17 +539,35 @@ extension TrackerCoreManager {
             for tracker in data {
                 countsByDate[tracker.date!] = (countsByDate[tracker.date!] ?? 0) + 1
             }
-            return countsByDate
+            let sortedArray = countsByDate.sorted(by: {$0.key < $1.key})
+            return Dictionary(uniqueKeysWithValues: sortedArray)
         } catch  {
             print(error.localizedDescription)
             return [:]
         }
     }
-   
     
-    
-    
-    
+    func getAllTrackerRecordsForDate(date: String) -> [String: Int] {
+        let request = TrackerRecordCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K CONTAINS %@",
+                                    #keyPath(TrackerRecordCoreData.date), date)
+        request.predicate = predicate
+        
+        var trackerRecordsForDate: [String: Int] = [:]
+
+        do {
+            let data = try context.fetch(request)
+            
+            for tracker in data {
+                trackerRecordsForDate[tracker.date!] = (trackerRecordsForDate[tracker.date!] ?? 0) + 1
+            }
+            let sortedArray = trackerRecordsForDate.sorted(by: {$0.key < $1.key})
+            return Dictionary(uniqueKeysWithValues: sortedArray)
+        } catch  {
+            print(error.localizedDescription)
+            return [:]
+        }
+    }
     
     
     
@@ -543,7 +582,7 @@ extension TrackerCoreManager {
                 guard let trackerID = tracker.id else { return [:] }
                 trackers[trackerID.uuidString] = tracker.schedule
             }
-            print("getAllTrackers \(trackers)")
+            print("AllTrackers \(trackers)")
             return trackers
         } catch  {
             print(error.localizedDescription)
@@ -574,6 +613,33 @@ extension TrackerCoreManager {
         }
     }
     
+    func getTrackerRecordsForTheTracker(trackerID: String) -> [String: [String]]? {
+        let request = TrackerRecordCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerRecordCoreData.id),
+                                    trackerID)
+        request.predicate = predicate
+        request.propertiesToFetch = ["id", "date"]
+        
+        
+        var countsByID: [String: [String]] = [:]
+        
+        do {
+            let data = try context.fetch(request)
+            
+            for tracker in data {
+                if countsByID[tracker.id!.uuidString] == nil {
+                    countsByID[tracker.id!.uuidString] = [tracker.date!]
+                } else {
+                    countsByID[tracker.id!.uuidString]?.append(tracker.date!)
+                }
+            }
+            return countsByID
+        } catch  {
+            print(error.localizedDescription)
+            return [:]
+        }
+    }
     
     
 }

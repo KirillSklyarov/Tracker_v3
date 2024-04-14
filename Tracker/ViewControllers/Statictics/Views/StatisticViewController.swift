@@ -61,10 +61,12 @@ class StatisticViewController: UIViewController {
     
     // MARK: - Private Methods
     func uploadDataFromCoreData() {
+//        viewModel.calculateTheBestPeriodForTracker()
+        
         viewModel.calculateTheBestPeriod()
-        viewModel.calculationOfIdealDays()
-        viewModel.countOfCompletedTrackers()
-        viewModel.trackerRecordsPerDay()
+//        viewModel.calculationOfIdealDays()
+//        viewModel.countOfCompletedTrackers()
+//        viewModel.trackerRecordsPerDay()
         showOrHidePlaceholder()
     }
     

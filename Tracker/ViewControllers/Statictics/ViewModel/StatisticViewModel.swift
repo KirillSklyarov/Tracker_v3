@@ -78,22 +78,173 @@ final class StatisticViewModel: StatisticViewModelProtocol {
 
 // MARK: - Point 1 - Best Period
 extension StatisticViewModel {
-    func calculateTheBestPeriod() {
-        let allTracker = coreDataManager.getAllTrackers()
+    
+    func  calculateTheBestPeriod() {
+        let allTrackerRecords = coreDataManager.getAllTrackerRecordsDaysAndCounts()
+        let trackersToComplete = getCountOfTrackersToCompleteForAllDays()
         
-        for tracker in allTracker {
-            if tracker.value == "Пн, Вт, Ср, Чт, Пт, Сб, Вс" {
-                print("This tracker \(tracker.key) is a OneOff Event - we can calculate")
-                calculateTheBestPeriodForOneOffEvent()
+        var finalArray = [Int]()
+        
+        print("allTrackerRecords \(allTrackerRecords)")
+        print("trackersToComplete \(trackersToComplete)")
+        
+        let currentDate = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yy"
+        var test = [Date: Int]()
+        
+        for record in allTrackerRecords {
+            if let date = dateFormatter.date(from: record.key) {
+                test[date] = record.value
+            }
+        }
+        
+        var startDateDict = test.keys.min()
+        var startDateString = dateFormatter.string(from: startDateDict!)
+        var startDate = dateFormatter.date(from: startDateString)
+        
+        print("startDate \(startDate)")
+        print("currentDate \(currentDate)")
+        
+        
+        while startDate! < currentDate {
+            // TODO - тут нужно сначала найти для этой даты трекеры которые необходимо выполнить, а потом найти рекорды для этой даты
+            var newDateString = dateFormatter.string(from: startDate!)
+            let trackerRecordsForDate = coreDataManager.getAllTrackerRecordsForDate(date: newDateString)
+            let completedTrackers = trackerRecordsForDate.first?.value ?? 0
+            print("This number of trackers is completed IN This Day - trackerRecord \(trackerRecordsForDate)")
+            
+            
+            let dateAsWeekDay = dateStringToWeekDayString(dateString: newDateString)
+            let allTrackersForWeekDay = coreDataManager.getAllTrackersForTheWeekDay(weekDay: dateAsWeekDay)
+            let trackersToDo = (allTrackersForWeekDay.first?.value)!
+            
+            print("This number of trackers must be completed - allTrackersForWeekDay \(allTrackersForWeekDay)")
+            
+            
+            if allTrackersForWeekDay.first?.value == 0 {
+                print("Nothing to do")
             } else {
-                print("This tracker is not a OneOff Event")
+                let resultForTheDay = calculateFinalArray(trackersToDo: trackersToDo, completedTracker: completedTrackers)
+                finalArray.append(resultForTheDay)
+            }
+            startDate = Calendar.current.date(byAdding: .day, value: 1, to: startDate!)
+        }
+        print("finalArray \(finalArray)")
+        let result = findTheBestSeries(arrayOfResults: finalArray)
+        print(result)
+        bestPeriod = result
+    }
+        
+    func calculateFinalArray(trackersToDo: Int, completedTracker: Int) -> Int {
+        if trackersToDo == completedTracker {
+            print("Hooray")
+            return 1
+        } else {
+            print("F-Word")
+            return 0
+        }
+    }
+    
+    func findTheBestSeries(arrayOfResults: [Int]) -> Int {
+        var finalResult = [Int]()
+        var temporaryResult = 0
+        for element in arrayOfResults {
+            if element == 1 {
+                temporaryResult += 1
+            } else {
+                finalResult.append(temporaryResult)
+                temporaryResult = 0
+            }
+        }
+        finalResult.append(temporaryResult)
+        guard let answer = finalResult.max() else { return 0}
+        return answer
+    }
+       
+    
+    
+    func mappingTrackersToWeekDays(allTrackers: [String:String]) -> [String:[Int]] {
+        
+        let weekDays: [Int:String] = [1: "Вс", 2: "Пн", 3: "Вт", 4: "Ср",
+                                      5: "Чт", 6: "Пт", 7: "Сб"]
+        
+        var newTrackers = [String:[Int]]()
+        
+        for tracker in allTrackers {
+            let scheduleString = tracker.value
+            let scheduleArray = scheduleString.components(separatedBy: ", ")
+            
+            var weekDayArray = [Int]()
+            
+            for day in scheduleArray {
+                let key = weekDays.first(where: { $0.value == day })?.key
+                weekDayArray.append(key!)
+            }
+            newTrackers[tracker.key] = weekDayArray
+        }
+        return newTrackers
+    }
+    
+    func calculationForOneDay(tracker: [String:[Int]] ) {
+        let trackerRecords = coreDataManager.getTrackerRecordsForTheTracker(trackerID: tracker.first!.key)
+        print("!!!!!!!trackerRecords \(trackerRecords)")
+        
+//        getAllTrackerRecordsID()
+
+    }
+    
+    
+    func calculateTheBestPeriodForTracker() {
+        print("we're here")
+        
+        let allTrackers = coreDataManager.getAllTrackers()
+        let mappedTrackers = mappingTrackersToWeekDays(allTrackers: allTrackers)
+        
+        print("mappedTrackers \(mappedTrackers)")
+        
+        calculationForOneDay(tracker: mappedTrackers)
+        
+        //        let keyDistance = weekDayArray.reduce(0, +)
+
+        
+        let trackerRecords = getAllTrackerRecordsID()
+        
+        for tracker in trackerRecords {
+            print(tracker.value)
+            var result = 1
+            
+            let calendar = Calendar.current
+            
+            for i in 0..<(tracker.value.count-1) {
+                let firstWeekDay = calendar.component(.weekday, from: tracker.value[i])
+                let nextWeekDay = calendar.component(.weekday, from: tracker.value[i+1])
+//                if (firstWeekDay + nextWeekDay) == keyDistance {
+//                    result += 1
+//                }
+                
+                print("firstWeekDay \(firstWeekDay)")
+                print("nextWeekDay \(nextWeekDay)")
+//                print("scheduleString \(scheduleString)")
+//                
+//                print("scheduleArray \(scheduleArray)")
+//                print("weekDayArray \(weekDayArray)")
+//                print("keyDistance \(keyDistance)")
+                
+            }
+            print("result \(result)")
+            
+            if result > bestPeriod ?? 0 {
+                bestPeriod = result
+                print("Best period updated successfully ✅")
             }
         }
     }
     
+    
     func calculateTheBestPeriodForOneOffEvent() {
         let trackerRecords = getAllTrackerRecordsID()
-        print("trackerRecords \(trackerRecords)")
+        print("AlltrackerRecords \(trackerRecords)")
         let checkTheBestPeriod = isOffOneBestPeriod(trackerRecords: trackerRecords)
         if checkTheBestPeriod.check {
             if checkTheBestPeriod.idealPeriod > (bestPeriod ?? 0) {
@@ -137,7 +288,7 @@ extension StatisticViewModel {
         }
         //
         // Будет вот такой результат trackerRecords ["1B08F418-C184-46B0-A95D-92D39B8FED0A": [2024-03-31 21:00:00 +0000, 2024-04-02 21:00:00 +0000, 2024-04-03 21:00:00 +0000, 2024-04-05 21:00:00 +0000, 2024-04-06 21:00:00 +0000, 2024-04-07 21:00:00 +0000, 2024-04-09 21:00:00 +0000, 2024-04-10 21:00:00 +0000, 2024-04-11 21:00:00 +0000]]
-        
+        print("AllTrackerRecords \(newDict)")
         return newDict
     }
 }
@@ -147,6 +298,10 @@ extension StatisticViewModel {
     func calculationOfIdealDays() {
         let trackersToComplete = getCountOfTrackersToCompleteForAllDays()
         let trackerRecordsDict = getTrackerRecordsDictFromCoreData()
+        
+        print("trackersToComplete \(trackersToComplete)")
+        print("trackerRecordsDict \(trackerRecordsDict)")
+
         
         let commonElementsOfDicts = trackerRecordsDict.filter { (key, value) in
             trackersToComplete[key] == value
@@ -161,7 +316,7 @@ extension StatisticViewModel {
         let weekDay = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
         
         for day in weekDay {
-            let trackerToCompleteThisDay = coreDataManager.getAllTrackersForTheDay(weekDay: day)
+            let trackerToCompleteThisDay = coreDataManager.getAllTrackersForTheWeekDay(weekDay: day)
             guard let trackerToAdd = trackerToCompleteThisDay.first else { return [:]}
             newDict[trackerToAdd.key] = trackerToAdd.value
         }
@@ -200,12 +355,12 @@ extension StatisticViewModel {
         //        print("completedTrackers \(String(completedTrackers ?? 999))")
     }
 }
-   
+
 // MARK: - Point 4 - Completed Trackers Per Day
 extension StatisticViewModel {
     func trackerRecordsPerDay() {
         let arrayOfDates = coreDataManager.getAllTrackerRecordDates()
-        print("trackerRecords \(arrayOfDates)")
+        //        print("trackerRecords \(arrayOfDates)")
         let cleanArray = arrayOfDates.compactMap { $0 }
         let recordsCount = arrayOfDates.count
         
