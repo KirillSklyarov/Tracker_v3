@@ -20,7 +20,7 @@ extension StatisticViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.titleData.count
+        titleData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -31,10 +31,10 @@ extension StatisticViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func configureCell(cell: StatisticsCustomCell, indexPath: IndexPath) {
-        cell.titleLabel.text = viewModel.titleData[indexPath.row]
+        cell.titleLabel.text = titleData[indexPath.row]
         
         switch indexPath.row {
-        case 0: cell.numberLabel.text =  String(viewModel.bestPeriod ?? 0)
+        case 0: cell.numberLabel.text =  String(viewModel.bestPeriod)
         case 1: cell.numberLabel.text = String(viewModel.idealDays)
         case 2: cell.numberLabel.text = String(viewModel.completedTrackers)
         default: cell.numberLabel.text = String(viewModel.averageNumber)

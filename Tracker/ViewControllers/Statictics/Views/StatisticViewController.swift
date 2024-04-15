@@ -26,10 +26,12 @@ class StatisticViewController: UIViewController {
     let tableView = UITableView()
     
     // MARK: - Other Properties
+    let titleData = ["Лучший период", "Идеальные дни", "Трекеров завершено", "Среднее значение"]
+    
     let rowHeight = CGFloat(102)
     
     var tableViewHeight: CGFloat {
-        rowHeight * CGFloat(viewModel.titleData.count)
+        rowHeight * CGFloat(titleData.count)
     }
     
     var viewModel: StatisticViewModelProtocol
@@ -47,7 +49,7 @@ class StatisticViewController: UIViewController {
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
         setupUI()
         
         dataBinding()
@@ -61,12 +63,10 @@ class StatisticViewController: UIViewController {
     
     // MARK: - Private Methods
     func uploadDataFromCoreData() {
-//        viewModel.calculateTheBestPeriodForTracker()
-        
         viewModel.calculateTheBestPeriod()
-//        viewModel.calculationOfIdealDays()
-//        viewModel.countOfCompletedTrackers()
-//        viewModel.trackerRecordsPerDay()
+        viewModel.calculationOfIdealDays()
+        viewModel.countOfCompletedTrackers()
+        viewModel.trackerRecordsPerDay()
         showOrHidePlaceholder()
     }
     
@@ -85,7 +85,7 @@ class StatisticViewController: UIViewController {
         ])
     }
     
-    func dataBinding() {
+    private func dataBinding() {
         viewModel.updateData = {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -94,7 +94,7 @@ class StatisticViewController: UIViewController {
         }
     }
     
-    func showOrHidePlaceholder() {
+    private func showOrHidePlaceholder() {
         viewModel.isStatisticsEmpty() ? showPlaceholderForEmptyScreen() : hidePlaceholderForEmptyScreen()
     }
     

@@ -9,8 +9,7 @@ import Foundation
 
 protocol StatisticViewModelProtocol {
     
-    var titleData: [String] { get set }
-    var bestPeriod: Int? { get set }
+    var bestPeriod: Int { get set }
     var idealDays: Int { get set }
     var completedTrackers: Int { get set }
     var averageNumber: Double { get set }
@@ -24,7 +23,5 @@ protocol StatisticViewModelProtocol {
     func deleleAllRecords()
     func calculationOfIdealDays()
     func calculateTheBestPeriod()
-    
-    func calculateTheBestPeriodForTracker()
-    
+        
 }
