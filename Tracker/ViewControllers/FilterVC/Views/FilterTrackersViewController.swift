@@ -16,12 +16,25 @@ final class FilterTrackersViewController: UIViewController {
     private let filters = ["Все трекеры", "Трекеры на сегодня", "Завершенные", "Незавершенные"]
     
     private let cellHeight = CGFloat(75)
-    
+        
     weak var filterDelegate: FilterCategoryDelegate?
     
+    var viewModel: FilterViewModelProtocol
+    
+    // MARK: - Initializers
+    init(viewModel: FilterViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     // MARK: - Live Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        uploadLastFilterFromCoreData()
         
         setupUI()
         setupTableView()
@@ -32,13 +45,16 @@ final class FilterTrackersViewController: UIViewController {
         
         self.title = "Фильтры"
         view.backgroundColor = .systemBackground
+        
+        let tableViewHeight = cellHeight * CGFloat(filters.count)
+        
         view.addSubViews([filterTrackersTableView])
         
         NSLayoutConstraint.activate([
             filterTrackersTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             filterTrackersTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             filterTrackersTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            filterTrackersTableView.heightAnchor.constraint(equalToConstant: cellHeight * CGFloat(filters.count))
+            filterTrackersTableView.heightAnchor.constraint(equalToConstant: tableViewHeight)
         ])
     }
     
@@ -62,6 +78,10 @@ final class FilterTrackersViewController: UIViewController {
             cell.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
         }
     }
+    
+    func uploadLastFilterFromCoreData() {
+        viewModel.getLastFilterFromCoreData()
+    }
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
@@ -76,15 +96,26 @@ extension FilterTrackersViewController: UITableViewDataSource, UITableViewDelega
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        configureCell(cell: cell, indexPath: indexPath)
+        designOfLastCell(indexPath: indexPath, cell: cell)
+        designLastChosenFilter(cell: cell)
+            
+        return cell
+    }
+    
+    func configureCell(cell: UITableViewCell, indexPath: IndexPath) {
         cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.textLabel?.text = filters[indexPath.row]
-        
-        designOfLastCell(indexPath: indexPath, cell: cell)
-        
-        return cell
+    }
+    
+    func designLastChosenFilter(cell: UITableViewCell) {
+        if cell.textLabel?.text == viewModel.selectedFilter {
+            let selectionImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 14, height: 14))
+            selectionImage.image = UIImage(named: "bluecheckmark")
+            cell.accessoryView = selectionImage
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -95,6 +126,7 @@ extension FilterTrackersViewController: UITableViewDataSource, UITableViewDelega
         cell?.accessoryView = selectionImage
         
         if let filterText = cell?.textLabel?.text {
+            viewModel.sendLastFilterToCoreData(filter: filterText)
             filterDelegate?.getFilterFromPreviousVC(filter: filterText)
         }
         

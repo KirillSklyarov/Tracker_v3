@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		73060C422BBDB10300035DAE /* PassTrackerToEditDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73060C412BBDB10300035DAE /* PassTrackerToEditDelegate.swift */; };
+		730CC7122BCEC65D00A43AB4 /* FilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730CC7112BCEC65D00A43AB4 /* FilterViewModel.swift */; };
+		730CC7142BCEC77100A43AB4 /* FilterViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730CC7132BCEC77100A43AB4 /* FilterViewModelProtocol.swift */; };
 		7311541D2BA23D0A0078C849 /* ChoosingTypeOfTrackerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7311541C2BA23D0A0078C849 /* ChoosingTypeOfTrackerVC.swift */; };
 		7311541F2BA248D60078C849 /* CreatingOneOffTrackerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7311541E2BA248D60078C849 /* CreatingOneOffTrackerVC.swift */; };
 		73171B972BC525C600C102A5 /* CreatingOneOffTrackerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73171B962BC525C600C102A5 /* CreatingOneOffTrackerViewModel.swift */; };
@@ -90,6 +92,8 @@
 
 /* Begin PBXFileReference section */
 		73060C412BBDB10300035DAE /* PassTrackerToEditDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassTrackerToEditDelegate.swift; sourceTree = "<group>"; };
+		730CC7112BCEC65D00A43AB4 /* FilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewModel.swift; sourceTree = "<group>"; };
+		730CC7132BCEC77100A43AB4 /* FilterViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewModelProtocol.swift; sourceTree = "<group>"; };
 		7311541C2BA23D0A0078C849 /* ChoosingTypeOfTrackerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoosingTypeOfTrackerVC.swift; sourceTree = "<group>"; };
 		7311541E2BA248D60078C849 /* CreatingOneOffTrackerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatingOneOffTrackerVC.swift; sourceTree = "<group>"; };
 		73171B962BC525C600C102A5 /* CreatingOneOffTrackerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatingOneOffTrackerViewModel.swift; sourceTree = "<group>"; };
@@ -183,6 +187,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		730CC70F2BCEC63700A43AB4 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				737BEE9F2BBBFD9E00101D51 /* FilterTrackersViewController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		730CC7102BCEC64300A43AB4 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				730CC7112BCEC65D00A43AB4 /* FilterViewModel.swift */,
+				730CC7132BCEC77100A43AB4 /* FilterViewModelProtocol.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		73171B952BC5251100C102A5 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -262,9 +283,9 @@
 		7366C69B2BC879CB00F37FBF /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				7366C6A32BC87F2600F37FBF /* CustomViewCell */,
 				73E562F12BA0ADA3003A61AB /* StatisticViewController.swift */,
 				7366C69D2BC87DB300F37FBF /* StatisticsVC+TableView.swift */,
+				7366C6A32BC87F2600F37FBF /* CustomViewCell */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -315,7 +336,8 @@
 		7377BB0C2BC3F2570088EFA7 /* FilterVC */ = {
 			isa = PBXGroup;
 			children = (
-				737BEE9F2BBBFD9E00101D51 /* FilterTrackersViewController.swift */,
+				730CC7102BCEC64300A43AB4 /* ViewModel */,
+				730CC70F2BCEC63700A43AB4 /* Views */,
 			);
 			path = FilterVC;
 			sourceTree = "<group>";
@@ -684,6 +706,7 @@
 				739DABFF2BC5696800B13471 /* TrackerViewModel.swift in Sources */,
 				73F10E052BC546C30010F5AD /* CreatingNewTrackerVC+ScrollView.swift in Sources */,
 				73B69E942BC7FFB90034A5DA /* EditingTrackerViewModel.swift in Sources */,
+				730CC7122BCEC65D00A43AB4 /* FilterViewModel.swift in Sources */,
 				73A7F59C2BB304B4006BE2C2 /* TrackerCoreManager.swift in Sources */,
 				737D9E1C2BC474D80002391F /* CreatingOneOffTrackerVC+TextFieldDelegate.swift in Sources */,
 				7366C69E2BC87DB300F37FBF /* StatisticsVC+TableView.swift in Sources */,
@@ -723,6 +746,7 @@
 				732F0F642BC15A1000059E76 /* ChoosingCategoryVC+ContextMenu.swift in Sources */,
 				73B69E962BC802250034A5DA /* EditingTrackerVC+ScrollView.swift in Sources */,
 				73B69E922BC7FFA80034A5DA /* EditingTrackerViewModelProtocol.swift in Sources */,
+				730CC7142BCEC77100A43AB4 /* FilterViewModelProtocol.swift in Sources */,
 				739DABFB2BC5680800B13471 /* TrackerVC+Delegates.swift in Sources */,
 				739DABF92BC5673500B13471 /* TrackerVC+SearchResult.swift in Sources */,
 				73F10E092BC547EB0010F5AD /* CreatingNewTrackerVC+TextField.swift in Sources */,

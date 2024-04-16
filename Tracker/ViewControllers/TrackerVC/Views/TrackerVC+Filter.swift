@@ -17,7 +17,6 @@ extension TrackerViewController: FilterCategoryDelegate {
             showAllTrackersForToday()
         case "Завершенные":
             showCompletedTrackersForDay()
-            filtersButton.isHidden = false
         case "Незавершенные":
             showIncompleteTrackersForDay()
         default: dismiss(animated: true)
@@ -62,7 +61,6 @@ extension TrackerViewController: FilterCategoryDelegate {
         let completedTrackersID = getCompletedTrackers()
        
         if completedTrackersID.isEmpty {
-            print("No completedTrackersID")
             viewModel.coreDataManager.getEmptyBaseForEmptyScreen()
         } else {
             let trackerIDString = completedTrackersID.compactMap { $0 }
@@ -85,6 +83,7 @@ extension TrackerViewController: FilterCategoryDelegate {
     // MARK: - Фильтр "Незавершенные"
     func showIncompleteTrackersForDay() {
         let completedTrackersID = getCompletedTrackers()
+        
         if completedTrackersID.isEmpty {
             viewModel.coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
         } else {
@@ -93,8 +92,4 @@ extension TrackerViewController: FilterCategoryDelegate {
         }
         viewModel.dataUpdated?()
     }
-    
-    
-
-    
 }

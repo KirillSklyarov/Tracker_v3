@@ -130,7 +130,8 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc private func filterButtonTapped(_ sender: UIButton) {
-        let filterVC = FilterTrackersViewController()
+        let viewModel = FilterViewModel()
+        let filterVC = FilterTrackersViewController(viewModel: viewModel)
         let navVC = UINavigationController(rootViewController: filterVC)
         filterVC.filterDelegate = self
         present(navVC, animated: true)
@@ -241,7 +242,7 @@ final class TrackerViewController: UIViewController {
         swooshImage.isHidden = false
         textLabel.isHidden = false
         
-        if viewModel.coreDataManager.filterForEmptyScreen {
+        if viewModel.coreDataManager.filterButtonForEmptyScreenIsEnable {
             filtersButton.isHidden = false
         } else {
             filtersButton.isHidden = true

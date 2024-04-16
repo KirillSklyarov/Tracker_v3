@@ -24,7 +24,9 @@ final class TrackerCoreManager: NSObject {
 
     var lastChosenCategory: String?
     
-    var filterForEmptyScreen = false
+    var lastChosenFilter: String?
+    
+    var filterButtonForEmptyScreenIsEnable = false
     
     private override init() { }
     
@@ -286,6 +288,22 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
         }
     }
 }
+
+// MARK: - Filter
+extension TrackerCoreManager {
+    func sendLastChosenFilterToStore(filterName: String) {
+        self.lastChosenFilter = filterName
+    }
+    
+    func getLastChosenFilterFromStore() -> String {
+        if let lastChosenFilter =  self.lastChosenFilter{
+            return lastChosenFilter
+        } else {
+            return "Smth is going wrong"
+        }
+    }
+}
+
 
 extension TrackerCoreManager {
     
@@ -579,6 +597,8 @@ extension TrackerCoreManager {
         let sort = NSSortDescriptor(key: "category.header", ascending: true)
         request.sortDescriptors = [sort]
         
+        filterButtonForEmptyScreenIsEnable = true
+        
         updateFetchedResultsControllerWithRequest(request: request)
     }
     
@@ -590,7 +610,7 @@ extension TrackerCoreManager {
         request.predicate = predicate
         request.sortDescriptors = [sort]
         
-        filterForEmptyScreen = true
+        filterButtonForEmptyScreenIsEnable = true
         
         updateFetchedResultsControllerWithRequest(request: request)
     }

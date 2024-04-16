@@ -57,6 +57,7 @@ extension StatisticViewModel {
     func calculateTheBestPeriod() {
         
         let currentDate = Date()
+        arrayOfDays = []
         
         guard var startDate = findTheFirstDateOfTrackerRecords() else {
             print("We have some problems with finding the first date - maybe we don't have any trackerRecords"); return
@@ -94,8 +95,9 @@ extension StatisticViewModel {
 // MARK: - Point 2 - Ideal Days
 extension StatisticViewModel {
     func calculationOfIdealDays() {
+        var countOfIdealDays = 0
         let noNilArray = arrayOfDays.compactMap { $0 }
-        let countOfIdealDays = noNilArray.reduce(0, +)
+        countOfIdealDays = noNilArray.reduce(0, +)
         idealDays = countOfIdealDays
     }
 }
@@ -112,12 +114,16 @@ extension StatisticViewModel {
 extension StatisticViewModel {
     func trackerRecordsPerDay() {
         
-        // У нас есть кол-во выполненных трекеров и есть кол-во дней, тут просто делим одно на другое и причесываем формат
+        // У нас есть кол-во выполненных трекеров и есть кол-во дней, тут просто делим одно на другое и причесываем формат. И также мы тут проверяем деление на 0
         
-        let recordsPerDay = Double(completedTrackers) / Double(countOfDaysBetweenFirstTrackerRecordAndCurrentDate)
-        let recordsPerDayFormat = String(format: "%.2f", recordsPerDay)
-        if let result = Double(recordsPerDayFormat) {
-            averageNumber = result
+        if countOfDaysBetweenFirstTrackerRecordAndCurrentDate != 0 {
+            let recordsPerDay = Double(completedTrackers) / Double(countOfDaysBetweenFirstTrackerRecordAndCurrentDate)
+            let recordsPerDayFormat = String(format: "%.2f", recordsPerDay)
+            if let result = Double(recordsPerDayFormat) {
+                averageNumber = result
+            }
+        } else {
+            return
         }
     }
 }
