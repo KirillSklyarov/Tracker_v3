@@ -40,8 +40,7 @@ extension EditingTrackerViewController {
             contentView.widthAnchor.constraint(equalTo: screenScrollView.widthAnchor),
         ])
         
-        contentStackView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(contentStackView)
+        contentView.addSubViews([contentStackView])
         
         NSLayoutConstraint.activate([
             contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -85,7 +84,7 @@ extension EditingTrackerViewController {
             return stack
         } ()
         
-        [contentStackView,  counterLabel, tableView, emojiCollection, colorsCollection, buttonsStack].forEach( { $0.translatesAutoresizingMaskIntoConstraints = false  })
+        [contentStackView,  counterLabel, tableView, emojiCollection, colorsCollection, buttonsStack].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         
         [counterLabel, textFieldViewStack, tableView, emojiCollection, colorsCollection, buttonsStack].forEach { contentStackView.addArrangedSubview($0) }
         

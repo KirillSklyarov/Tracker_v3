@@ -10,7 +10,7 @@ import UIKit
 final class TrackerViewController: UIViewController {
     
     // MARK: - UI Properties
-    private lazy var filtersButton: UIButton = {
+    lazy var filtersButton: UIButton = {
         let button = UIButton()
         button.setTitle("Фильтры", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
@@ -229,7 +229,7 @@ final class TrackerViewController: UIViewController {
         isDataEmpty ? showPlaceholderForEmptyScreen() : hidePlaceholderForEmptyScreen()
     }
     
-    private func showPlaceholderForEmptyScreen() {
+    func showPlaceholderForEmptyScreen() {
         if viewModel.isSearchMode {
             swooshImage.image = UIImage(named: "searchPlaceholder")
             textLabel.text = "Ничего не найдено"
@@ -240,7 +240,12 @@ final class TrackerViewController: UIViewController {
         
         swooshImage.isHidden = false
         textLabel.isHidden = false
-        filtersButton.isHidden = true
+        
+        if viewModel.coreDataManager.filterForEmptyScreen {
+            filtersButton.isHidden = false
+        } else {
+            filtersButton.isHidden = true
+        }
         
         view.addSubViews([swooshImage, textLabel])
         
@@ -254,7 +259,7 @@ final class TrackerViewController: UIViewController {
         ])
     }
     
-    private func hidePlaceholderForEmptyScreen() {
+    func hidePlaceholderForEmptyScreen() {
         swooshImage.isHidden = true
         textLabel.isHidden = true
         filtersButton.isHidden = false

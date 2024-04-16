@@ -9,7 +9,6 @@ import Foundation
 
 final class StatisticViewModel: StatisticViewModelProtocol {
     
-    
     // MARK: - Properties
     let coreDataManager = TrackerCoreManager.shared
     
@@ -159,16 +158,13 @@ extension StatisticViewModel {
         let dateAsWeekDay = dateStringToWeekDayString(dateString: newDateString)
         let allTrackersForWeekDay = coreDataManager.getAllTrackersForTheWeekDay(weekDay: dateAsWeekDay)
         let trackersToDo = (allTrackersForWeekDay.first?.value)!
-        
-        print("This number of trackers must be completed - allTrackersForWeekDay \(allTrackersForWeekDay)")
         return trackersToDo
     }
     
     func countOfCompletedTrackersOnThisDate(date: Date) -> Int {
         let newDateString = dateFormatter.string(from: date)
-        let trackerRecordsForDate = coreDataManager.getAllTrackerRecordsForDate(date: newDateString)
+        let trackerRecordsForDate = coreDataManager.getTrackerRecordsCountsForDate(date: newDateString)
         let completedTrackers = trackerRecordsForDate.first?.value ?? 0
-        print("This number of trackers is completed IN This Day - trackerRecord \(trackerRecordsForDate)")
         return completedTrackers
     }
     

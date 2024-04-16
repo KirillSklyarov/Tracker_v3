@@ -27,9 +27,9 @@ extension CreatingNewTrackerViewController {
         
         screenScrollView.addSubViews([contentView])
         
-        let hConst = contentView.heightAnchor.constraint(equalTo: screenScrollView.heightAnchor)
-        hConst.isActive = true
-        hConst.priority = UILayoutPriority(50)
+//        let hConst = contentView.heightAnchor.constraint(equalTo: screenScrollView.heightAnchor)
+//        hConst.isActive = true
+//        hConst.priority = UILayoutPriority(50)
         
         NSLayoutConstraint.activate([
             contentView.topAnchor.constraint(equalTo: screenScrollView.topAnchor),
@@ -39,8 +39,7 @@ extension CreatingNewTrackerViewController {
             contentView.widthAnchor.constraint(equalTo: screenScrollView.widthAnchor),
         ])
         
-        contentStackView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(contentStackView)
+        contentView.addSubViews([contentStackView])
         
         NSLayoutConstraint.activate([
             contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),

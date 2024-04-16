@@ -36,7 +36,7 @@ final class TrackerViewModel: TrackerViewModelProtocol  {
     }
     
     func updateDataFromCoreData(weekDay: String) {
-        coreDataManager.setupFetchedResultsController(weekDay: weekDay)
+        coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
         categories = coreDataManager.fetchData()
     }
     

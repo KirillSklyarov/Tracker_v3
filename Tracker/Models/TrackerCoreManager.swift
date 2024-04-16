@@ -24,6 +24,8 @@ final class TrackerCoreManager: NSObject {
 
     var lastChosenCategory: String?
     
+    var filterForEmptyScreen = false
+    
     private override init() { }
     
     // MARK: - Container, context
@@ -49,19 +51,12 @@ final class TrackerCoreManager: NSObject {
     // MARK: - FetchResultsController
     var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
     
-    func setupFetchedResultsController(weekDay: String) {
-        let request = TrackerCoreData.fetchRequest()
-        let predicate1 = NSPredicate(format: "schedule CONTAINS %@", weekDay)
-        let predicate2 = NSPredicate(format: "schedule CONTAINS %@", "Каждый день")
-        let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2])
-        let sort = NSSortDescriptor(key: "category.header", ascending: true)
-        request.sortDescriptors = [sort]
-        request.predicate = compoundPredicate
-        
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: request,
-                                                              managedObjectContext: context,
-                                                              sectionNameKeyPath: "category.header",
-                                                              cacheName: nil)
+    func updateFetchedResultsControllerWithRequest(request: NSFetchRequest<TrackerCoreData>) {
+        fetchedResultsController = NSFetchedResultsController(
+            fetchRequest: request,
+            managedObjectContext: context,
+            sectionNameKeyPath: "category.header",
+            cacheName: nil)
         
         fetchedResultsController?.delegate = self
         
@@ -70,6 +65,18 @@ final class TrackerCoreManager: NSObject {
         } catch  {
             print(error.localizedDescription)
         }
+    }
+        
+    func getAllTrackersForWeekday(weekDay: String) {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate1 = NSPredicate(format: "schedule CONTAINS %@", weekDay)
+        let predicate2 = NSPredicate(format: "schedule CONTAINS %@", "Каждый день")
+        let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2])
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.sortDescriptors = [sort]
+        request.predicate = compoundPredicate
+        
+        updateFetchedResultsControllerWithRequest(request: request)
     }
     
     // MARK: - CRUD
@@ -154,7 +161,6 @@ final class TrackerCoreManager: NSObject {
             print("New Tracker created and Added TO NEW CAT ✅")
         }
     }
-    
     
     func save() {
         let context = persistentContainer.viewContext
@@ -490,6 +496,28 @@ extension TrackerCoreManager {
         }
     }
     
+    func getAllTrackerRecordForDate(date: String) -> [String?] {
+        let request = TrackerRecordCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerRecordCoreData.date),
+                                    date)
+        request.predicate = predicate
+        request.propertiesToFetch = ["id"]
+        
+        var result = [String?]()
+        do {
+            let data = try context.fetch(request)
+            for tracker in data {
+                result.append(tracker.id?.uuidString)
+            }
+            return result
+        } catch  {
+            print(error.localizedDescription)
+            return ["Ooops"]
+        }
+    }
+    
+   
     func getAllTrackersForTheWeekDay(weekDay: String) -> [String:Int] {
         let request = TrackerCoreData.fetchRequest()
         let predicate = NSPredicate(format: "%K CONTAINS %@",
@@ -527,6 +555,45 @@ extension TrackerCoreManager {
         }
     }
     
+    func getTrackerWithID(trackerId: [String]) {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K IN %@",
+                                    #keyPath(TrackerCoreData.id), trackerId)
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.predicate = predicate
+        request.sortDescriptors = [sort]
+        
+        updateFetchedResultsControllerWithRequest(request: request)
+    }
+    
+    func getTrackersExceptWithID(trackerNotToShow trackerId: [String], weekDay: String) {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate1 = NSPredicate(format: "schedule CONTAINS %@", weekDay)
+        let predicate2 = NSPredicate(format: "schedule CONTAINS %@", "Каждый день")
+        let predicate3 = NSPredicate(format: "NOT (%K IN %@)",
+                                    #keyPath(TrackerCoreData.id), trackerId)
+        let datePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2])
+        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [datePredicate, predicate3])
+        request.predicate = compoundPredicate
+        
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.sortDescriptors = [sort]
+        
+        updateFetchedResultsControllerWithRequest(request: request)
+    }
+    
+    func getEmptyBaseForEmptyScreen() {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerCoreData.id.uuidString), "impossible trackerId")
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.predicate = predicate
+        request.sortDescriptors = [sort]
+        
+        filterForEmptyScreen = true
+        
+        updateFetchedResultsControllerWithRequest(request: request)
+    }
     
     func getAllTrackerRecordsDaysAndCounts() -> [String: Int] {
         let request = TrackerRecordCoreData.fetchRequest()
@@ -547,7 +614,7 @@ extension TrackerCoreManager {
         }
     }
     
-    func getAllTrackerRecordsForDate(date: String) -> [String: Int] {
+    func getTrackerRecordsCountsForDate(date: String) -> [String: Int] {
         let request = TrackerRecordCoreData.fetchRequest()
         let predicate = NSPredicate(format: "%K CONTAINS %@",
                                     #keyPath(TrackerRecordCoreData.date), date)
@@ -568,7 +635,6 @@ extension TrackerCoreManager {
             return [:]
         }
     }
-    
     
     
     func getAllTrackers() -> [String:String] {
@@ -640,6 +706,5 @@ extension TrackerCoreManager {
             return [:]
         }
     }
-    
     
 }
