@@ -59,7 +59,7 @@ final class TrackerViewModel: TrackerViewModelProtocol  {
     func isTrackerExistInTrackerRecord(indexPath: IndexPath, date: Date) -> (TrackerRecord: TrackerRecord, isExist: Bool) {
         let category = newData[indexPath.section]
         let tracker = category.trackers[indexPath.row]
-        let currentDateString = dateToString(date: date)
+        let currentDateString = MainHelper.dateToString(date: date)
         let trackerToCheck = TrackerRecord(id: tracker.id, date: currentDateString)
         let check = coreDataManager.isTrackerExistInTrackerRecord(trackerToCheck: trackerToCheck)
         
@@ -69,18 +69,10 @@ final class TrackerViewModel: TrackerViewModelProtocol  {
     func isTrackerExistInTrackerRecordForDatePickerDate(tracker: TrackerCoreData, dateOnDatePicker: Date) -> Bool? {
         guard let trackerId = tracker.id else { return nil}
 
-        let dateOnDatePickerString = dateToString(date: dateOnDatePicker)
+        let dateOnDatePickerString = MainHelper.dateToString(date: dateOnDatePicker)
         let trackerToCheck = TrackerRecord(id: trackerId, date: dateOnDatePickerString)
         let check = coreDataManager.isTrackerExistInTrackerRecord(trackerToCheck: trackerToCheck)
         return check
-    }
-    
-    
-    func dateToString(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yy"
-        let dateToString = formatter.string(from: date)
-        return dateToString
     }
     
     func daysLetters(count: Int) -> String {

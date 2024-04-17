@@ -12,13 +12,6 @@ final class StatisticViewModel: StatisticViewModelProtocol {
     // MARK: - Properties
     let coreDataManager = TrackerCoreManager.shared
     
-    let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yy"
-        return formatter
-    }()
-    
-    
     var bestPeriod = 0 {
         didSet {
             updateData?()
@@ -139,7 +132,7 @@ extension StatisticViewModel {
     }
     
     func dateStringToWeekDayString(dateString: String) -> String {
-        guard let date = dateFormatter.date(from: dateString) else { return "999"}
+        guard let date = MainHelper.stringToDate(string: dateString) else { return "999"}
         let calendar = Calendar.current
         let dayOfWeek = calendar.component(.weekday, from: date)
         let weekDay: [Int:String] = [1: "Вс", 2: "Пн", 3: "Вт", 4: "Ср",
@@ -160,7 +153,7 @@ extension StatisticViewModel {
     }
     
     func trackersToDoOnTheDate(date: Date) -> Int {
-        let newDateString = dateFormatter.string(from: date)
+        let newDateString = MainHelper.dateToString(date: date)
         let dateAsWeekDay = dateStringToWeekDayString(dateString: newDateString)
         let allTrackersForWeekDay = coreDataManager.getAllTrackersForTheWeekDay(weekDay: dateAsWeekDay)
         let trackersToDo = (allTrackersForWeekDay.first?.value)!
@@ -168,7 +161,7 @@ extension StatisticViewModel {
     }
     
     func countOfCompletedTrackersOnThisDate(date: Date) -> Int {
-        let newDateString = dateFormatter.string(from: date)
+        let newDateString = MainHelper.dateToString(date: date)
         let trackerRecordsForDate = coreDataManager.getTrackerRecordsCountsForDate(date: newDateString)
         let completedTrackers = trackerRecordsForDate.first?.value ?? 0
         return completedTrackers
@@ -180,14 +173,14 @@ extension StatisticViewModel {
         var test = [Date: Int]()
         
         for record in allTrackerRecords {
-            if let date = dateFormatter.date(from: record.key) {
+            if let date = MainHelper.stringToDate(string: record.key) {
                 test[date] = record.value
             }
         }
         
         guard let startDateDict = test.keys.min() else { print("We have some problems with finding the first date - maybe we don't have any trackerRecords"); return nil }
-        let startDateString = dateFormatter.string(from: startDateDict)
-        guard let startDate = dateFormatter.date(from: startDateString) else { print("We have some problems here - we can't transform string to date"); return nil}
+        let startDateString = MainHelper.dateToString(date: startDateDict)
+        guard let startDate = MainHelper.stringToDate(string: startDateString) else { print("We have some problems here - we can't transform string to date"); return nil}
         return startDate
     }
     

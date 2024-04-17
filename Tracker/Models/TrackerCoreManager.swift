@@ -129,45 +129,29 @@ final class TrackerCoreManager: NSObject {
         
         do {
             let result = try context.fetch(fetchRequest)
-            if let foundCategory = result.first {
-                guard let color = newTracker.trackers.first?.color else { return }
-                let colorInString = color
+            guard let category = result.first,
+                  let tracker = newTracker.trackers.first else {
+                print("May be here?"); return }
                 
                 let newTrackerToAdd = TrackerCoreData(context: context)
-                newTrackerToAdd.id = newTracker.trackers.first?.id
-                newTrackerToAdd.name = newTracker.trackers.first?.name
-                newTrackerToAdd.colorHex = colorInString
-                newTrackerToAdd.emoji = newTracker.trackers.first?.emoji
-                newTrackerToAdd.schedule = newTracker.trackers.first?.schedule
-                
-                foundCategory.addToTrackers(newTrackerToAdd)
+                newTrackerToAdd.id = tracker.id
+                newTrackerToAdd.name = tracker.name
+                newTrackerToAdd.colorHex = tracker.color
+                newTrackerToAdd.emoji = tracker.emoji
+                newTrackerToAdd.schedule = tracker.schedule
+            
+                category.addToTrackers(newTrackerToAdd)
                 save()
-                print("New Tracker created and Added TO EXISTING CAT ✅")
-            }
-        } catch  {
-            let newTrackerCategory = TrackerCategoryCoreData(context: context)
-            newTrackerCategory.header = newTracker.header
-            
-            guard let color = newTracker.trackers.first?.color else { return }
-            let colorInString = color
-            
-            let newTrackerToAdd = TrackerCoreData(context: context)
-            newTrackerToAdd.id = newTracker.trackers.first?.id
-            newTrackerToAdd.name = newTracker.trackers.first?.name
-            newTrackerToAdd.colorHex = colorInString
-            newTrackerToAdd.emoji = newTracker.trackers.first?.emoji
-            newTrackerToAdd.schedule = newTracker.trackers.first?.schedule
-            
-            newTrackerCategory.addToTrackers(newTrackerToAdd)
-            save()
-            print("New Tracker created and Added TO NEW CAT ✅")
+                print("New Tracker created and Added to category \(header) ✅")
+        } catch {
+            print(error.localizedDescription)
         }
     }
     
     func save() {
         let context = persistentContainer.viewContext
         if context.hasChanges {
-            do  {
+            do {
                 try context.save()
             } catch {
                 print(error.localizedDescription)
@@ -726,5 +710,9 @@ extension TrackerCoreManager {
             return [:]
         }
     }
+    
+    
+    
+    
     
 }

@@ -9,16 +9,16 @@ import UIKit
 
 extension TrackerViewController: FilterCategoryDelegate {
     
+    var completedTrackersID: [String] {
+        getCompletedTrackers()
+    }
+    
     func getFilterFromPreviousVC(filter: String) {
         switch filter {
-        case "Все трекеры":
-            showAllTrackersForThisDay()
-        case "Трекеры на сегодня":
-            showAllTrackersForToday()
-        case "Завершенные":
-            showCompletedTrackersForDay()
-        case "Незавершенные":
-            showIncompleteTrackersForDay()
+        case "Все трекеры": showAllTrackersForThisDay()
+        case "Трекеры на сегодня": showAllTrackersForToday()
+        case "Завершенные": showCompletedTrackersForDay()
+        case "Незавершенные": showIncompleteTrackersForDay()
         default: dismiss(animated: true)
         }
     }
@@ -28,7 +28,6 @@ extension TrackerViewController: FilterCategoryDelegate {
         viewModel.coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
         viewModel.dataUpdated?()
     }
-    
     
     // MARK: - Фильтр "Трекеры на сегодня"
     func showAllTrackersForToday() {
@@ -48,48 +47,42 @@ extension TrackerViewController: FilterCategoryDelegate {
     }
     
     func setDateForDatePicker() {
-        let formatter = DateFormatter()
         let date = Date()
-        formatter.dateFormat = "dd.MM.yy"
-        let dateToString = formatter.string(from: date)
+        let dateToString = MainHelper.dateToString(date: date)
         dateButton.setTitle(dateToString, for: .normal)
         datePicker.date = date
     }
     
     // MARK: - Фильтр "Завершенные"
     func showCompletedTrackersForDay() {
-        let completedTrackersID = getCompletedTrackers()
-       
+        
         if completedTrackersID.isEmpty {
             viewModel.coreDataManager.getEmptyBaseForEmptyScreen()
         } else {
-            let trackerIDString = completedTrackersID.compactMap { $0 }
-            viewModel.coreDataManager.getTrackerWithID(trackerId: trackerIDString)
+            viewModel.coreDataManager.getTrackerWithID(trackerId: completedTrackersID)
         }
         viewModel.dataUpdated?()
-    }
-    
-    func getCompletedTrackers() -> [String?] {
-        let date = datePicker.date
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yy"
-        let dateString = dateFormatter.string(from: date)
-        let completedTrackersID =
-        viewModel.coreDataManager.getAllTrackerRecordForDate(date: dateString)
-        print("completedTrackersID \(completedTrackersID)")
-        return completedTrackersID
     }
     
     // MARK: - Фильтр "Незавершенные"
     func showIncompleteTrackersForDay() {
-        let completedTrackersID = getCompletedTrackers()
         
         if completedTrackersID.isEmpty {
             viewModel.coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
         } else {
-            let trackerIDString = completedTrackersID.compactMap { $0 }
-            viewModel.coreDataManager.getTrackersExceptWithID(trackerNotToShow: trackerIDString, weekDay: weekDay)
+            viewModel.coreDataManager.getTrackersExceptWithID(trackerNotToShow: completedTrackersID, weekDay: weekDay)
         }
         viewModel.dataUpdated?()
+    }
+    
+    // MARK: - Supporting Methods
+    func getCompletedTrackers() -> [String] {
+        let date = datePicker.date
+        let dateString = MainHelper.dateToString(date: date)
+        let completedTrackers =
+        viewModel.coreDataManager.getAllTrackerRecordForDate(date: dateString)
+        let completedTrackersID = completedTrackers.compactMap { $0 }
+        print("completedTrackersID \(completedTrackersID)")
+        return completedTrackersID
     }
 }

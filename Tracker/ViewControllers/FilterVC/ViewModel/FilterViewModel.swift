@@ -20,5 +20,4 @@ final class FilterViewModel: FilterViewModelProtocol {
     func getLastFilterFromCoreData() {
         selectedFilter = trackerCoreManager.getLastChosenFilterFromStore()
     }
-    
 }

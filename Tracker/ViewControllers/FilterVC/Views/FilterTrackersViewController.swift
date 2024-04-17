@@ -119,13 +119,11 @@ extension FilterTrackersViewController: UITableViewDataSource, UITableViewDelega
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath)
-        cell?.selectionStyle = .none
-        let selectionImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 14, height: 14))
-        selectionImage.image = UIImage(named: "bluecheckmark")
-        cell?.accessoryView = selectionImage
+        guard let cell = tableView.cellForRow(at: indexPath) else { print("We have some problems here"); return }
+        cell.selectionStyle = .none
+        designLastChosenFilter(cell: cell)
         
-        if let filterText = cell?.textLabel?.text {
+        if let filterText = cell.textLabel?.text {
             viewModel.sendLastFilterToCoreData(filter: filterText)
             filterDelegate?.getFilterFromPreviousVC(filter: filterText)
         }

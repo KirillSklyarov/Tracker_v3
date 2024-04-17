@@ -14,7 +14,35 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
         
         return UIContextMenuConfiguration(actionProvider: { (_) -> UIMenu? in
             
-            let lockAction = UIAction(title: "Закрепить") { _ in }
+            let lockAction = UIAction(title: "Закрепить") { [weak self] _ in
+                guard let self else { return }
+                
+                let convertedLocation = collectionView.convert(location, from: interaction.view)
+                
+                guard let indexPath = collectionView.indexPathForItem(at: convertedLocation) else {
+                    print("We have a problem with editing a tracker"); return
+                }
+                
+                // TODO чтобы закрепить трекер мы должны создать такой же трекер с категорией "Закрепленные", а потом удалить трекер из этой категории
+                
+//                guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell else { print("We have problems with finding a cell"); return }
+                
+                
+                guard let trackerCore = viewModel.coreDataManager.object(at: indexPath) else { print("Hmmmm"); return }
+                let tracker = Tracker(coreDataObject: trackerCore)
+                
+                let stickyTracker = TrackerCategory(header: "Закрепленные", trackers: [tracker])
+                
+                viewModel.coreDataManager.createNewTracker(newTracker: stickyTracker)
+                
+                
+            }
+            
+            
+            
+            
+            
+            
             let editAction = UIAction(title: "Редактировать") { [weak self] _ in
                 guard let self else { return }
                 

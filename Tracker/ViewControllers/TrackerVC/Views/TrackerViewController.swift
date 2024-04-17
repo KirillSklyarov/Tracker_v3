@@ -43,7 +43,7 @@ final class TrackerViewController: UIViewController {
     } ()
     lazy var dateButton: UIButton = {
         let button = UIButton()
-        let date = viewModel.dateToString(date: datePicker.date)
+        let date = MainHelper.dateToString(date: datePicker.date)
         button.setTitle(date, for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.frame = CGRect(x: 0, y: 0, width: 77, height: 34)
@@ -121,7 +121,7 @@ final class TrackerViewController: UIViewController {
     @objc private func datePickerTapped(_ sender: UIDatePicker) {
         let selectedDate = sender.date
         currentDate = selectedDate
-        let date = viewModel.dateToString(date: selectedDate)
+        let date = MainHelper.dateToString(date: selectedDate)
         dateButton.setTitle(date, for: .normal)
         
         sender.removeFromSuperview()
