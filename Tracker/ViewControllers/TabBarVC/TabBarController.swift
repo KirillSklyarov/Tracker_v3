@@ -18,7 +18,7 @@ final class TabBarController: UITabBarController {
     
     func setupTabBarController() {
         let trackerViewModel = TrackerViewModel()
-        let title = NSLocalizedString("trackers", comment: "")
+        let title = NSLocalizedString("Trackers", comment: "")
         let trackerVC = setupNavigationController(controller: TrackerViewController(viewModel: trackerViewModel), title: title)
         
         let statisticsViewModel = StatisticViewModel()
