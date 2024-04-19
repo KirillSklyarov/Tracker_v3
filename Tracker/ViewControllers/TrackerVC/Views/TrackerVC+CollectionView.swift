@@ -145,9 +145,7 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         
         let countOfDays = viewModel.countOfDaysForTheTrackerInString(trackerId: trackerID.uuidString)
         cell.daysLabel.text = countOfDays
-                
-//        showPinForStickyTrackers(cell: cell, indexPath: indexPath)
-                
+
         showDoneOrUndoneTaskForDatePickerDate(tracker: tracker, cell: cell)
         
         let interaction = UIContextMenuInteraction(delegate: self)

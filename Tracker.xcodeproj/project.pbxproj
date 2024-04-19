@@ -23,6 +23,7 @@
 		7335BCBD2BA1FEE4002271F3 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7335BCBC2BA1FEE4002271F3 /* Tracker.swift */; };
 		7335BCBF2BA1FF3F002271F3 /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7335BCBE2BA1FF3F002271F3 /* TrackerCategory.swift */; };
 		7335BCC12BA1FF8D002271F3 /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7335BCC02BA1FF8D002271F3 /* TrackerRecord.swift */; };
+		7349B7C62BD2D0F000D6C148 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 7349B7C42BD2D0F000D6C148 /* Localizable.stringsdict */; };
 		7350FA4E2BC2E87C00661975 /* CustomCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7350FA4D2BC2E87C00661975 /* CustomCategoryCell.swift */; };
 		735D83182BA2F7880071D090 /* ScheduleVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735D83172BA2F7880071D090 /* ScheduleVC.swift */; };
 		7366C69E2BC87DB300F37FBF /* StatisticsVC+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7366C69D2BC87DB300F37FBF /* StatisticsVC+TableView.swift */; };
@@ -108,6 +109,7 @@
 		7335BCBC2BA1FEE4002271F3 /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
 		7335BCBE2BA1FF3F002271F3 /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
 		7335BCC02BA1FF8D002271F3 /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
+		7349B7C52BD2D0F000D6C148 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		7350FA4D2BC2E87C00661975 /* CustomCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCategoryCell.swift; sourceTree = "<group>"; };
 		735D83172BA2F7880071D090 /* ScheduleVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleVC.swift; sourceTree = "<group>"; };
 		7366C69D2BC87DB300F37FBF /* StatisticsVC+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StatisticsVC+TableView.swift"; sourceTree = "<group>"; };
@@ -608,6 +610,7 @@
 			isa = PBXGroup;
 			children = (
 				73E899672BD28F1E00EE0DB0 /* Localizable.strings */,
+				7349B7C42BD2D0F000D6C148 /* Localizable.stringsdict */,
 			);
 			path = Recources;
 			sourceTree = "<group>";
@@ -693,6 +696,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				73E562E92BA0A937003A61AB /* LaunchScreen.storyboard in Resources */,
+				7349B7C62BD2D0F000D6C148 /* Localizable.stringsdict in Resources */,
 				73E899692BD28F1E00EE0DB0 /* Localizable.strings in Resources */,
 				73E562E62BA0A937003A61AB /* Assets.xcassets in Resources */,
 			);
@@ -790,6 +794,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		7349B7C42BD2D0F000D6C148 /* Localizable.stringsdict */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7349B7C52BD2D0F000D6C148 /* en */,
+			);
+			name = Localizable.stringsdict;
+			sourceTree = "<group>";
+		};
 		73E562E72BA0A937003A61AB /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

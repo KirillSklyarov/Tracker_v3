@@ -13,7 +13,12 @@ final class FilterTrackersViewController: UIViewController {
     private let filterTrackersTableView = UITableView()
     
     // MARK: - Private Properties
-    private let filters = ["Все трекеры", "Трекеры на сегодня", "Завершенные", "Незавершенные"]
+    private let filters = [
+        "All trackers".localized(),
+        "Today trackers".localized(),
+        "Completed".localized(),
+        "Incomplete".localized()
+    ]
     
     private let cellHeight = CGFloat(75)
         
