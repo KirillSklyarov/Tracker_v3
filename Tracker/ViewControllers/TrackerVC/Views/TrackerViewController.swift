@@ -54,9 +54,10 @@ final class TrackerViewController: UIViewController {
     } ()
     
     let searchController = UISearchController(searchResultsController: nil)
-    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    let trackersCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    let stickyCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
-    // MARK: - Private Properties
+    // MARK: - Other Properties
     var viewModel: TrackerViewModelProtocol
     
     lazy var currentDate = datePicker.date
@@ -78,7 +79,7 @@ final class TrackerViewController: UIViewController {
     // MARK: - Life cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         uploadDataFormCoreData()
         
         dataBinding()
@@ -89,6 +90,8 @@ final class TrackerViewController: UIViewController {
         
         addTapGestureToHideDatePicker()
         
+        viewModel.coreDataManager.printAllCategoryNamesFromCD()
+                
     }
     
     // MARK: - UI Actions
@@ -103,10 +106,10 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc func cellButtonTapped(_ sender: UIButton) {
-        let buttonIndexPath = sender.convert(CGPoint.zero, to: self.collectionView)
+        let buttonIndexPath = sender.convert(CGPoint.zero, to: self.trackersCollectionView)
         
-        guard let indexPath = collectionView.indexPathForItem(at: buttonIndexPath),
-              let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell,
+        guard let indexPath = trackersCollectionView.indexPathForItem(at: buttonIndexPath),
+              let cell = trackersCollectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell,
               let cellColor = cell.frameView.backgroundColor else { return }
         
         let trackerRecord = viewModel.isTrackerExistInTrackerRecord(indexPath: indexPath, date: currentDate)
@@ -166,6 +169,8 @@ final class TrackerViewController: UIViewController {
         
         setupSearchController()
         
+        setupStickyCollectionView()
+        
         setupCollectionView()
         
         setupFiltersButton()
@@ -196,7 +201,7 @@ final class TrackerViewController: UIViewController {
             guard let self else { return }
             DispatchQueue.main.async {
                 print(self.viewModel.categories)
-                self.collectionView.reloadData()
+                self.trackersCollectionView.reloadData()
                 self.showOrHidePlaceholder()
                 self.navigationItem.searchController = self.searchController
             }

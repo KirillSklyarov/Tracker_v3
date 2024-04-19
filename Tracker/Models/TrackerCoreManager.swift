@@ -82,18 +82,40 @@ final class TrackerCoreManager: NSObject {
     }
     
     // MARK: - CRUD
+    var collectionSections: [NSFetchedResultsSectionInfo]?
     
     func fetchData() -> [TrackerCategory] {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         do {
             let allTrackers = try context.fetch(fetchRequest)
             let result = transformCoreDataToModel(TrackerCategoryCoreData: allTrackers)
+            print("fetchData: \n------------------------------")
+
+            for trackerCategory in result {
+                
+                print("trackerCategory.header \(trackerCategory.header)")
+                print("trackerCategory.trackers \(trackerCategory.trackers)")
+                print("------------------------------")
+            }
+//            print("fetchData: \(result)")
             return result
         } catch  {
             print(error.localizedDescription)
             return []
         }
     }
+    
+    func printAllTrackersInCoreData() {
+        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
+        do {
+            let allTrackers = try context.fetch(fetchRequest)
+            let result = transformCoreDataToModel(TrackerCategoryCoreData: allTrackers)
+            print("printAllTrackersInCoreData: \(result)")
+        } catch  {
+            print(error.localizedDescription)
+        }
+    }
+    
     
     func transformCoreDataToModel(TrackerCategoryCoreData: [TrackerCategoryCoreData]) -> [TrackerCategory] {
         let trackersCategory = TrackerCategoryCoreData.compactMap({
@@ -161,12 +183,26 @@ final class TrackerCoreManager: NSObject {
     
     func getCategoryNamesFromStorage() -> [String] {
         let request = TrackerCategoryCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "NOT (%K == %@)",
+                                    #keyPath(TrackerCategoryCoreData.header), "Закрепленные")
+        request.predicate = predicate
+        
         let result = try? context.fetch(request)
         
         guard let result = result else { return ["Ошибка"]}
         let headers = result.map { $0.header ?? "Ooops" }
         
         return headers
+    }
+    
+    func printAllCategoryNamesFromCD() {
+        let request = TrackerCategoryCoreData.fetchRequest()
+        let result = try? context.fetch(request)
+        
+        guard let result else { return }
+        let headers = result.compactMap { $0.header }
+        
+        print("printAllCategoryNamesFromCD: \(headers)")
     }
 }
 
@@ -182,7 +218,40 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
     
     func numberOfRowsInSection(_ section: Int) -> Int {
         fetchedResultsController?.sections?[section].numberOfObjects ?? 0
+        
+//        guard let sections = correctSectionsWithStickySectionFirst() else { print("Some shit"); return 0}
+//        return sections[section].numberOfObjects
     }
+    
+//    func getObjectWithStickyCategory(indexPath: IndexPath) -> Any {
+//        guard let sections = correctSectionsWithStickySectionFirst() else { print("Hmmm"); return 0}
+////        print("sections: \(sections[indexPath.section].name)")
+//        let object = sections[indexPath.section].objects![indexPath.item]
+//        return object
+//    }
+    
+//    func correctSectionsWithStickySectionFirst() ->  [any NSFetchedResultsSectionInfo]? {
+//        guard var sections = fetchedResultsController?.sections else { print("We have some problems here"); return nil}
+//        let firstIndex = sections.firstIndex { $0.name == "Закрепленные" }!
+//        let firstSection = sections.remove(at: firstIndex)
+//        sections.insert(firstSection, at: 0)
+//        return sections
+//    }
+    
+    
+    func numberOfRowsInStickySection() -> Int {
+        guard let sections = fetchedResultsController?.sections else { print("Hmmm"); return 0}
+        
+        for section in sections {
+//            print(section.objects as Any)
+            if section.name == "Закрепленные" {
+                return section.numberOfObjects
+            }
+        }
+        print("We can't find any elements in sticky Cat")
+        return 0
+    }
+    
     
     func object(at indexPath: IndexPath) -> TrackerCoreData? {
         fetchedResultsController?.object(at: indexPath)
@@ -256,7 +325,7 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
         }
         
         context.delete(categoryHeader)
-        print("TrackerCategoryHeader deleted successfully ✅")
+        print("TrackerCategory deleted successfully ✅")
         save()
     }
     
@@ -472,10 +541,74 @@ extension TrackerCoreManager {
 // MARK: - Statistics
 extension TrackerCoreManager {
     
+    func isStickyCategoryExist() -> Bool {
+        let request = TrackerCategoryCoreData.fetchRequest()
+        
+        do {
+            let result = try context.fetch(request)
+            let answer = !result.filter { $0.header == "Закрепленные" }.isEmpty
+            return answer
+        } catch  {
+            print(error.localizedDescription)
+            return false
+        }
+    }
+    
+    func fixingTracker(tracker: TrackerCoreData) {
+        if isStickyCategoryExist() {
+            addTrackerToExistingStickyCategory(tracker: tracker)
+        } else {
+            createStickyCategoryAndAddTracker(tracker: tracker)
+        }
+    }
+    
+    func createStickyCategoryAndAddTracker(tracker: TrackerCoreData) {
+        let stickyCategory = TrackerCategoryCoreData(context: context)
+        stickyCategory.header = "Закрепленные"
+        
+        let newTrackerToAdd = TrackerCoreData(context: context)
+        newTrackerToAdd.id = tracker.id
+        newTrackerToAdd.name = tracker.name
+        newTrackerToAdd.colorHex = tracker.colorHex
+        newTrackerToAdd.emoji = tracker.emoji
+        newTrackerToAdd.schedule = tracker.schedule
+        
+        stickyCategory.addToTrackers(newTrackerToAdd)
+        save()
+        print("Sticky Category created an Tracker is stick successfully ✅")
+    }
+    
+    func addTrackerToExistingStickyCategory(tracker: TrackerCoreData) {
+        let request = TrackerCategoryCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerCategoryCoreData.header),
+                                    "Закрепленные")
+        request.predicate = predicate
+        
+        do {
+            let result = try context.fetch(request)
+            guard let stickyCategory = result.first else { print("Jopa"); return }
+            
+            let newTrackerToAdd = TrackerCoreData(context: context)
+            newTrackerToAdd.id = tracker.id
+            newTrackerToAdd.name = tracker.name
+            newTrackerToAdd.colorHex = tracker.colorHex
+            newTrackerToAdd.emoji = tracker.emoji
+            newTrackerToAdd.schedule = tracker.schedule
+            
+            stickyCategory.addToTrackers(newTrackerToAdd)
+            save()
+            print("Tracker is Fixed successfully ✅")
+        } catch  {
+            print(error.localizedDescription)
+        }
+    }
+    
+    
     func countOfAllCompletedTrackers() -> Int {
         let request = TrackerRecordCoreData.fetchRequest()
         do {
-           return try context.count(for: request)
+            return try context.count(for: request)
         } catch  {
             print(error.localizedDescription)
             return 0
@@ -640,7 +773,7 @@ extension TrackerCoreManager {
         }
     }
     
-    
+    // Результат будет в таком формате: ["51B64460-3E67-498F-A0FA-C8682B39341D": "Пн, Вт, Ср, Чт, Пт, Сб, Вс", "FF035EEE-0F21-4C1A-8A52-58398F32259C": "Пн, Вт, Ср, Чт, Пт, Сб, Вс"]
     func getAllTrackers() -> [String:String] {
         let request = TrackerCoreData.fetchRequest()
         

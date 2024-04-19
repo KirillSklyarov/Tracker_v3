@@ -17,6 +17,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     let emojiLabel = UILabel()
     let plusButton = UIButton()
     let daysLabel = UILabel()
+    let pinImage = UIImageView()
     
     let emojiViewSize = CGFloat(24)
     let plusButtonSize = CGFloat(34)
@@ -51,7 +52,11 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         titleLabel.numberOfLines = 0
         titleLabel.textColor = .white
         
-        frameView.addSubViews([titleLabel, emojiView])
+        let pin = UIImage(named: "pin")
+        pinImage.image = pin
+        pinImage.isHidden = true
+        
+        frameView.addSubViews([titleLabel, emojiView, pinImage])
         
         plusButton.frame.size.width = plusButtonSize
         plusButton.frame.size.height = plusButtonSize
@@ -81,6 +86,9 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             emojiView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
             emojiView.widthAnchor.constraint(equalToConstant: emojiViewSize),
             emojiView.heightAnchor.constraint(equalToConstant: emojiViewSize),
+            
+            pinImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 18),            
+            pinImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             
             daysLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             daysLabel.topAnchor.constraint(equalTo: frameView.bottomAnchor, constant: 16),
