@@ -12,7 +12,7 @@ final class TrackerViewController: UIViewController {
     // MARK: - UI Properties
     lazy var filtersButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Фильтры", for: .normal)
+        button.setTitle("Filters".localized(), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(named: "filterButtonBackground")

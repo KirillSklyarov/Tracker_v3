@@ -14,7 +14,8 @@ extension TrackerViewController: UISearchResultsUpdating {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchBar.placeholder = "Поиск"
+        searchController.searchBar.placeholder = "Search".localized()
+//        NSLocalizedString("Search", comment: "")
         
         navigationItem.searchController = searchController
         definesPresentationContext = false

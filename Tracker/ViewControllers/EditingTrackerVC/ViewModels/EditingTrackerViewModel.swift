@@ -9,8 +9,7 @@ import Foundation
 
 final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
     
-    
-    var tableViewRows = ["Категория", "Расписание"]
+    var tableViewRows = ["Category".localized(), "Schedule".localized()]
     
     var arrayOfEmoji = ["🙂","😻","🌺","🐶","❤️","😱",
                         "😇","😡","🥶","🤔","🙌","🍔",

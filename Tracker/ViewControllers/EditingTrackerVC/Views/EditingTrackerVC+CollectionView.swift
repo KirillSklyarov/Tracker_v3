@@ -160,7 +160,7 @@ extension EditingTrackerViewController: UICollectionViewDataSource, UICollection
         if collectionView == emojiCollection {
             view.label.text = "Emoji"
         } else {
-            view.label.text = "Цвет"
+            view.label.text = "Color".localized()
         }
         return view
     }

@@ -31,8 +31,8 @@ final class EditingTrackerViewController: UIViewController {
         textField.delegate = self
         return textField
     } ()
-    lazy var cancelButton = setupButtons(title: "Отмена")
-    lazy var saveButton = setupButtons(title: "Сохранить")
+    lazy var cancelButton = setupButtons(title: "Cancel".localized())
+    lazy var saveButton = setupButtons(title: "Save".localized())
     lazy var exceedLabel: UILabel = {
         let label = UILabel()
         label.text = "Ограничение 38 символов"
@@ -152,7 +152,7 @@ final class EditingTrackerViewController: UIViewController {
     
     private func setupUI() {
         
-        self.title = "Редактирование привычки"
+        self.title = "Editing a tracker".localized()
         view.backgroundColor = UIColor(named: "projectBackground")
         
         setupTextField()

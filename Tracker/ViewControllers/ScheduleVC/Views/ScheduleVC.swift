@@ -44,7 +44,7 @@ final class ScheduleViewController: UIViewController {
         
         setupTableView()
                 
-        self.title = "Расписание"
+        self.title = "Schedule".localized()
         view.backgroundColor = UIColor(named: "projectBackground")
         
         view.addSubViews([tableView, doneButton])
@@ -62,7 +62,7 @@ final class ScheduleViewController: UIViewController {
     }
     
     private func setupButton() {
-        doneButton.setTitle("Готово", for: .normal)
+        doneButton.setTitle("Done".localized(), for: .normal)
         doneButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         doneButton.setTitleColor(.white, for: .normal)
         doneButton.backgroundColor = .black
@@ -72,5 +72,4 @@ final class ScheduleViewController: UIViewController {
         doneButton.heightAnchor.constraint(equalToConstant: 60).isActive = true
         doneButton.addTarget(self, action: #selector(scheduleDoneButtonTapped), for: .touchUpInside)
     }
-    
 }

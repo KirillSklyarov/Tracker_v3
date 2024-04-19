@@ -9,7 +9,7 @@ import Foundation
 
 final class CreatingOneOffTrackerViewModel: CreatingOneOffTrackerViewModelProtocol {
     
-    var tableViewRows = ["Категория"]
+    var tableViewRows = ["Category".localized()]
     
     var arrayOfEmoji = ["🙂","😻","🌺","🐶","❤️","😱",
                         "😇","😡","🥶","🤔","🙌","🍔",

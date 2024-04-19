@@ -11,13 +11,13 @@ final class ScheduleViewModel {
     
     let rowHeight = CGFloat(75)
     
-    let weekdays = ["Понедельник", 
-                    "Вторник",
-                    "Среда",
-                    "Четверг", 
-                    "Пятница",
-                    "Суббота",
-                    "Воскресенье"
+    let weekdays = ["Monday".localized(),
+                    "Tuesday".localized(),
+                    "Wednesday".localized(),
+                    "Thursday".localized(),
+                    "Friday".localized(),
+                    "Saturday".localized(),
+                    "Sunday".localized(),
     ]
     
     var tableViewHeight: CGFloat {
@@ -40,7 +40,7 @@ final class ScheduleViewModel {
         var resultString = String()
         
         if arrayOfIndexes.count == 7 {
-            resultString = "Каждый день"
+            resultString = "Everyday".localized()
         } else {
             let daysOfWeek = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
             let arrayOfStrings = arrayOfIndexes.map { daysOfWeek[$0] }

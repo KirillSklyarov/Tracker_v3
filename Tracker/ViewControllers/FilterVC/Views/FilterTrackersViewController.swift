@@ -43,7 +43,7 @@ final class FilterTrackersViewController: UIViewController {
     // MARK: - Private Methods
     private func setupUI() {
         
-        self.title = "Фильтры"
+        self.title = "Filters".localized()
         view.backgroundColor = .systemBackground
         
         let tableViewHeight = cellHeight * CGFloat(filters.count)

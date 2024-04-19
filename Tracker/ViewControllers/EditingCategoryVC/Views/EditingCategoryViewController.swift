@@ -81,7 +81,7 @@ final class EditingCategoryViewController: UIViewController {
         
         setupTextField()
         
-        self.title = "Редактирование категории"
+        self.title = "Editing a category".localized()
         
         view.backgroundColor = UIColor(named: "projectBackground")
         

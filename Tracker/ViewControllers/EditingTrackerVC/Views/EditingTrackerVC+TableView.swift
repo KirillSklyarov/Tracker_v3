@@ -63,7 +63,7 @@ extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let data = viewModel.tableViewRows[indexPath.row]
-        if data == "Категория" {
+        if data == "Category".localized() {
             let viewModel = ChoosingCategoryViewModel()
             let categoryVC = ChoosingCategoryViewController(viewModel: viewModel)
             let navVC = UINavigationController(rootViewController: categoryVC)
