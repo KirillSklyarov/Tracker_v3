@@ -16,29 +16,61 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
             
             let lockAction = UIAction(title: "Закрепить") { [weak self] _ in
                 guard let self else { return }
+                                
+//                if stickyCollectionView.frame.contains(location) {
+//                    print("stickyCollectionView")
+//                } else  {
+//                    print("collectionView")
+//                }
                 
-                let convertedLocation = collectionView.convert(location, from: interaction.view)
+                let convertedLocation = trackersCollectionView.convert(location, from: interaction.view)
+//                let convertedLocation2 = stickyCollectionView.convert(location, from: interaction.view)
                 
-                guard let indexPath = collectionView.indexPathForItem(at: convertedLocation) else {
+//                print("convertedLocation \(convertedLocation)")
+//                print("convertedLocation2 \(convertedLocation2)")
+
+//                let indexPath = trackersCollectionView.indexPathForItem(at: convertedLocation)
+//                let indexPath2 = stickyCollectionView.indexPathForItem(at: convertedLocation2)
+//                print("indexPath \(indexPath)")
+//                print("indexPath2 \(indexPath2)")
+                
+                
+                guard let indexPath = trackersCollectionView.indexPathForItem(at: convertedLocation) else {
                     print("We have a problem with editing a tracker"); return
                 }
                 
+                
+//                indexPath.section -= 1
+                
+//                print("indexPath \(indexPath)")
+                
+//                let sections = viewModel.coreDataManager.correctSectionsWithStickySectionFirst()
+//                print("sections \(sections)")
+                
+//                indexPath.section += 1
+                
+//                let newIndexPath = viewModel.coreDataManager.fetchedResultsController?.object(at: indexPath)
+//                print("newIndexPath \(newIndexPath)")
+
+                    
+
+                guard let trackerCore = viewModel.coreDataManager.object(at: indexPath) else { print("Hmmmm"); return }
+                print("trackerCore \(trackerCore)")
+                
+
+            
+//                guard let indexPath2 = stickyCollectionView.indexPathForItem(at: convertedLocation2) else {
+//                    print("We have a problem with editing a tracker"); return
+//                }
+                
                 // TODO чтобы закрепить трекер мы должны создать такой же трекер с категорией "Закрепленные", а потом удалить трекер из этой категории
                 
-//                guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell else { print("We have problems with finding a cell"); return }
+             
                 
-                
-                guard let trackerCore = viewModel.coreDataManager.object(at: indexPath) else { print("Hmmmm"); return }
-                let tracker = Tracker(coreDataObject: trackerCore)
-                
-                let stickyTracker = TrackerCategory(header: "Закрепленные", trackers: [tracker])
-                
-                viewModel.coreDataManager.createNewTracker(newTracker: stickyTracker)
-                
+                // Тут мы создаем категорию Закрепленные и закрепляем трекер
+                viewModel.coreDataManager.fixingTracker(tracker: trackerCore)
                 
             }
-            
-            
             
             
             
@@ -46,9 +78,9 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
             let editAction = UIAction(title: "Редактировать") { [weak self] _ in
                 guard let self else { return }
                 
-                let convertedLocation = collectionView.convert(location, from: interaction.view)
+                let convertedLocation = trackersCollectionView.convert(location, from: interaction.view)
                 
-                guard let indexPath = collectionView.indexPathForItem(at: convertedLocation) else {
+                guard let indexPath = trackersCollectionView.indexPathForItem(at: convertedLocation) else {
                     print("We have a problem with editing a tracker"); return
                 }
                 
@@ -83,8 +115,8 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
             guard let self = self else { return }
             
             // Здесь мы находим indexPath трекера
-            let convertedLocation = collectionView.convert(location, from: interaction.view)
-            guard let indexPath = collectionView.indexPathForItem(at: convertedLocation) else {
+            let convertedLocation = trackersCollectionView.convert(location, from: interaction.view)
+            guard let indexPath = trackersCollectionView.indexPathForItem(at: convertedLocation) else {
                 print("We have a problem with deleting a tracker"); return
             }
             // Здесь мы удаляем трекер

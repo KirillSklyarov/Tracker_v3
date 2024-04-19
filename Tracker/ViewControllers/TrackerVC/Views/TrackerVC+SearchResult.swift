@@ -31,7 +31,7 @@ extension TrackerViewController: UISearchResultsUpdating {
         } else {
             viewModel.filteredData = viewModel.categories
         }
-        collectionView.reloadData()
+        trackersCollectionView.reloadData()
         showOrHidePlaceholder()
     }
 }

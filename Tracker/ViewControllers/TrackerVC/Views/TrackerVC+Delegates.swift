@@ -10,7 +10,7 @@ import UIKit
 extension TrackerViewController: DataProviderDelegate {
     
     func didUpdate(_ update: TrackersStoreUpdate) {
-        collectionView.reloadData()
+        trackersCollectionView.reloadData()
         showOrHidePlaceholder()
     }
 }
