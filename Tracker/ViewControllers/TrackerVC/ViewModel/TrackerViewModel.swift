@@ -75,14 +75,4 @@ final class TrackerViewModel: TrackerViewModelProtocol  {
         let check = coreDataManager.isTrackerExistInTrackerRecord(trackerToCheck: trackerToCheck)
         return check
     }
-    
-    func daysLetters(count: Int) -> String {
-        if count % 10 == 1 && count % 100 != 11 {
-            return "\(count) день"
-        } else if [2, 3, 4].contains(count % 10) && ![12, 13, 14].contains(count % 10) {
-            return "\(count) дня"
-        } else {
-            return "\(count) дней"
-        }
-    }
 }

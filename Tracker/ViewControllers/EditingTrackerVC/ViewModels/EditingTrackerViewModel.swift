@@ -108,20 +108,8 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
     
     func countOfDaysForTheTrackerInString(trackerId: String) -> String {
         let trackerCount = coreDataManager.countOfTrackerInRecords(trackerIDToCount: trackerId)
-        let correctDaysInRussian = String.localizedStringWithFormat("numberOfDays", trackerCount)
-        
-//        daysLetters(count: trackerCount)
+        let correctDaysInRussian = String.localizedStringWithFormat("numberOfDays".localized(), trackerCount)
         return correctDaysInRussian
-    }
-    
-    func daysLetters(count: Int) -> String {
-        if count % 10 == 1 && count % 100 != 11 {
-            return "\(count) день"
-        } else if [2, 3, 4].contains(count % 10) && ![12, 13, 14].contains(count % 10) {
-            return "\(count) дня"
-        } else {
-            return "\(count) дней"
-        }
     }
     
     func getTrackerDataForEditing(indexPath: IndexPath) {
