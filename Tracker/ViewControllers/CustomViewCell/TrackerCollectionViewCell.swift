@@ -23,13 +23,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     let plusButtonSize = CGFloat(34)
     let titleLabelHeight = CGFloat(34)
     
-    var days = 0
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         contentView.backgroundColor = .systemBackground
-        self.layer.cornerRadius = 16
         
         frameView.layer.cornerRadius = 16
         
@@ -62,11 +59,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         plusButton.frame.size.height = plusButtonSize
         plusButton.layer.cornerRadius = plusButton.frame.width / 2
         plusButton.clipsToBounds = true
-
+        
         let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
         plusButton.setImage(plusImage, for: .normal)
         
-        daysLabel.text = "\(days) дней"
         daysLabel.font = .systemFont(ofSize: 12, weight: .medium)
         
         contentView.addSubViews([frameView, daysLabel, plusButton])
@@ -87,7 +83,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
             emojiView.widthAnchor.constraint(equalToConstant: emojiViewSize),
             emojiView.heightAnchor.constraint(equalToConstant: emojiViewSize),
             
-            pinImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 18),            
+            pinImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 18),
             pinImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             
             daysLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),

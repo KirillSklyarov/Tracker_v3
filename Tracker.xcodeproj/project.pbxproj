@@ -112,6 +112,7 @@
 		7349B7C52BD2D0F000D6C148 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		7350FA4D2BC2E87C00661975 /* CustomCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCategoryCell.swift; sourceTree = "<group>"; };
 		735D83172BA2F7880071D090 /* ScheduleVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleVC.swift; sourceTree = "<group>"; };
+		7360658C2BD3CD1300913177 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ru; path = ru.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		7366C69D2BC87DB300F37FBF /* StatisticsVC+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StatisticsVC+TableView.swift"; sourceTree = "<group>"; };
 		7366C69F2BC87DF800F37FBF /* StatisticViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewModel.swift; sourceTree = "<group>"; };
 		7366C6A12BC87E3700F37FBF /* StatisticViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewModelProtocol.swift; sourceTree = "<group>"; };
@@ -798,6 +799,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				7349B7C52BD2D0F000D6C148 /* en */,
+				7360658C2BD3CD1300913177 /* ru */,
 			);
 			name = Localizable.stringsdict;
 			sourceTree = "<group>";
