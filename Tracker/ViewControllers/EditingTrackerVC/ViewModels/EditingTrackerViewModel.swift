@@ -9,7 +9,7 @@ import Foundation
 
 final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
     
-    var tableViewRows = ["Category".localized(), "Schedule".localized()]
+    var tableViewRows = [SGen.category, SGen.schedule]
     
     var arrayOfEmoji = MainHelper.arrayOfEmoji
     
@@ -106,16 +106,10 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
         return allFieldsFilled
     }
     
-    func countOfDaysForTheTrackerInString(trackerId: String) -> String {
-        let trackerCount = coreDataManager.countOfTrackerInRecords(trackerIDToCount: trackerId)
-        let correctDaysInRussian = String.localizedStringWithFormat("numberOfDays".localized(), trackerCount)
-        return correctDaysInRussian
-    }
-    
     func getTrackerDataForEditing(indexPath: IndexPath) {
         guard let tracker = coreDataManager.object(at: indexPath),
               let trackerID = tracker.id else { return }
-        let countOfDays = countOfDaysForTheTrackerInString(trackerId: trackerID.uuidString)
+        let countOfDays = MainHelper.countOfDaysForTheTrackerInString(trackerId: trackerID.uuidString)
         
         trackerName = tracker.name
         category = tracker.category?.header

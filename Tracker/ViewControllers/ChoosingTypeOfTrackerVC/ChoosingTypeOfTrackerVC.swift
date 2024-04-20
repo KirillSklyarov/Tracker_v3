@@ -10,8 +10,8 @@ import UIKit
 final class ChoosingTypeOfTrackerViewController: UIViewController {
     
     // MARK: - UI Properties
-    private lazy var creatingTrackerButton = setupButtons(title: "Tracker".localized())
-    private lazy var creatingEventButton = setupButtons(title: "One-time event".localized())
+    private lazy var creatingTrackerButton = setupButtons(title: SGen.tracker)
+    private lazy var creatingEventButton = setupButtons(title: SGen.oneTimeEvent)
     
     // MARK: - Life Cycles
     override func viewDidLoad() {
@@ -39,7 +39,7 @@ final class ChoosingTypeOfTrackerViewController: UIViewController {
     // MARK: - Private Methods
     private func setupUI() {
         
-        self.title = "Creating a tracker".localized()
+        self.title = SGen.creatingATracker
         view.backgroundColor = .systemBackground
         
         creatingTrackerButton.addTarget(self, action: #selector(creatingTrackerButtonTapped), for: .touchUpInside)

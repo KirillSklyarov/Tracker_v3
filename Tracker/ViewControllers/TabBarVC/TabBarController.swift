@@ -18,13 +18,13 @@ final class TabBarController: UITabBarController {
     
     func setupTabBarController() {
         let trackerViewModel = TrackerViewModel()
-        let trackerVC = setupNavigationController(controller: TrackerViewController(viewModel: trackerViewModel), title: "Trackers".localized())
+        let trackerVC = setupNavigationController(controller: TrackerViewController(viewModel: trackerViewModel), title: SGen.trackers)
         
         let statisticsViewModel = StatisticViewModel()
-        let statisticVC = setupNavigationController(controller: StatisticViewController(viewModel: statisticsViewModel), title: "Statistics".localized())
+        let statisticVC = setupNavigationController(controller: StatisticViewController(viewModel: statisticsViewModel), title: SGen.statistics)
         
-        trackerVC.tabBarItem = UITabBarItem(title: "Trackers".localized(), image: UIImage(systemName: "record.circle.fill"), tag: 0)
-        statisticVC.tabBarItem = UITabBarItem(title: "Statistics".localized(), image: UIImage(systemName: "hare.fill"), tag: 1)
+        trackerVC.tabBarItem = UITabBarItem(title: SGen.trackers, image: UIImage(systemName: "record.circle.fill"), tag: 0)
+        statisticVC.tabBarItem = UITabBarItem(title: SGen.statistics, image: UIImage(systemName: "hare.fill"), tag: 1)
         
         self.viewControllers = [trackerVC, statisticVC]
         

@@ -143,7 +143,7 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         cell.plusButton.addTarget(self, action: #selector(cellButtonTapped), for: .touchUpInside)
         cell.plusButton.isEnabled = currentDate > today ? false : true
         
-        let countOfDays = viewModel.countOfDaysForTheTrackerInString(trackerId: trackerID.uuidString)
+        let countOfDays = MainHelper.countOfDaysForTheTrackerInString(trackerId: trackerID.uuidString)
         cell.daysLabel.text = countOfDays
 
         showDoneOrUndoneTaskForDatePickerDate(tracker: tracker, cell: cell)

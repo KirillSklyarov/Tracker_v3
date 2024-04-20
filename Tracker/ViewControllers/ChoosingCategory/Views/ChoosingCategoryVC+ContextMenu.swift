@@ -27,13 +27,13 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
     }
     
     private func showContextMenu(indexPath: IndexPath) -> UIMenu {
-        let editAction = UIAction(title: "Edit".localized()) { [weak self] _ in
+        let editAction = UIAction(title: SGen.edit) { [weak self] _ in
             guard let self = self,
                   let cell = self.categoryTableView.cellForRow(at: indexPath) as? CustomCategoryCell else { return }
             openEditingCategoryVC(cell: cell)
         }
         
-        let deleteAction = UIAction(title: "Delete".localized(), attributes: .destructive) { _ in
+        let deleteAction = UIAction(title: SGen.delete, attributes: .destructive) { _ in
             self.showAlert(indexPath: indexPath)
         }
         return UIMenu(children: [editAction, deleteAction])
@@ -58,13 +58,13 @@ extension ChoosingCategoryViewController: UIContextMenuInteractionDelegate {
     private func showAlert(indexPath: IndexPath) {
         let alert = UIAlertController(title: "Эта категория точно не нужна", message: nil, preferredStyle: .actionSheet)
         
-        let deleteAction = UIAlertAction(title: "Delete".localized(), style: .destructive) { [weak self] _ in
+        let deleteAction = UIAlertAction(title: SGen.delete, style: .destructive) { [weak self] _ in
             guard let self = self,
                   let cell = self.categoryTableView.cellForRow(at: indexPath) as? CustomCategoryCell else { return }
             deleteCategory(cell: cell, indexPath: indexPath)
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel".localized(), style: .cancel)
+        let cancelAction = UIAlertAction(title: SGen.cancel, style: .cancel)
         
         [deleteAction, cancelAction].forEach({ alert.addAction($0)})
         

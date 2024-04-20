@@ -19,17 +19,15 @@ class StatisticViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
-        label.text = "There's nothing to analyze".localized()
+        label.text = SGen.thereSNothingToAnalyze
         return label
     } ()
     
     let tableView = UITableView()
     
     // MARK: - Other Properties
-    let titleData = ["The best period".localized(), 
-                     "Ideal days".localized(),
-                     "Completed trackers".localized(),
-                     "Trackers per day".localized()
+    let titleData = [SGen.theBestPeriod, SGen.idealDays,
+                     SGen.completedTrackers, SGen.trackersPerDay
     ]
             
     let rowHeight = CGFloat(102)

@@ -44,7 +44,7 @@ final class ScheduleViewController: UIViewController {
         
         setupTableView()
                 
-        self.title = "Schedule".localized()
+        self.title = SGen.schedule
         view.backgroundColor = UIColor(named: "projectBackground")
         
         view.addSubViews([tableView, doneButton])
@@ -62,7 +62,7 @@ final class ScheduleViewController: UIViewController {
     }
     
     private func setupButton() {
-        doneButton.setTitle("Done".localized(), for: .normal)
+        doneButton.setTitle(SGen.done, for: .normal)
         doneButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         doneButton.setTitleColor(.white, for: .normal)
         doneButton.backgroundColor = .black

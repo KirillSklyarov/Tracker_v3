@@ -72,7 +72,7 @@ final class TrackerCoreManager: NSObject {
     func getAllTrackersForWeekday(weekDay: String) {
         let request = TrackerCoreData.fetchRequest()
         let predicate1 = NSPredicate(format: "schedule CONTAINS %@", weekDay)
-        let predicate2 = NSPredicate(format: "schedule CONTAINS %@", "Everyday".localized())
+        let predicate2 = NSPredicate(format: "schedule CONTAINS %@", SGen.everyday)
         let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2])
         let sort = NSSortDescriptor(key: "category.header", ascending: true)
         request.sortDescriptors = [sort]
@@ -704,7 +704,7 @@ extension TrackerCoreManager {
     func getTrackersExceptWithID(trackerNotToShow trackerId: [String], weekDay: String) {
         let request = TrackerCoreData.fetchRequest()
         let predicate1 = NSPredicate(format: "schedule CONTAINS %@", weekDay)
-        let predicate2 = NSPredicate(format: "schedule CONTAINS %@", "Everyday".localized())
+        let predicate2 = NSPredicate(format: "schedule CONTAINS %@", SGen.everyday)
         let predicate3 = NSPredicate(format: "NOT (%K IN %@)",
                                     #keyPath(TrackerCoreData.id), trackerId)
         let datePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2])

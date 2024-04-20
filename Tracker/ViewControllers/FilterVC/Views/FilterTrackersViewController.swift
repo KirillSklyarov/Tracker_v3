@@ -13,11 +13,8 @@ final class FilterTrackersViewController: UIViewController {
     private let filterTrackersTableView = UITableView()
     
     // MARK: - Private Properties
-    private let filters = [
-        "All trackers".localized(),
-        "Today trackers".localized(),
-        "Completed".localized(),
-        "Incomplete".localized()
+    private let filters = [ SGen.allTrackers, SGen.todayTrackers,
+                            SGen.completed, SGen.incomplete
     ]
     
     private let cellHeight = CGFloat(75)
@@ -48,7 +45,7 @@ final class FilterTrackersViewController: UIViewController {
     // MARK: - Private Methods
     private func setupUI() {
         
-        self.title = "Filters".localized()
+        self.title = SGen.filters
         view.backgroundColor = .systemBackground
         
         let tableViewHeight = cellHeight * CGFloat(filters.count)

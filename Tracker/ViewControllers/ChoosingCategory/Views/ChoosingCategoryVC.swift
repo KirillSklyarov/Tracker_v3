@@ -12,7 +12,7 @@ final class ChoosingCategoryViewController: BaseViewController {
     // MARK: - UI Properties
     private lazy var creatingCategoryButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Add a category".localized(), for: .normal)
+        button.setTitle(SGen.addACategory, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .black
@@ -29,7 +29,7 @@ final class ChoosingCategoryViewController: BaseViewController {
     } ()
     private lazy var textLabel: UILabel = {
         let label = UILabel()
-        label.text = "Trackers and events can be \ngrouped together in meaning".localized()
+        label.text = SGen.trackersAndEventsCanBeGroupedTogetherInMeaning
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
@@ -86,7 +86,7 @@ final class ChoosingCategoryViewController: BaseViewController {
         
         setupTableView()
         
-        self.title = "Category".localized()
+        self.title = SGen.category
         view.backgroundColor = .systemBackground
         view.addSubViews([categoryTableView, creatingCategoryButton])
         

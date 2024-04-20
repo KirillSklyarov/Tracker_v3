@@ -12,7 +12,7 @@ final class CreatingOneOffTrackerVC: UIViewController {
     // MARK: - UI Properties
     lazy var trackerNameTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Enter tracker's name".localized()
+        textField.placeholder = SGen.enterTrackerSName
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
         textField.leftView = leftPaddingView
         textField.leftViewMode = .always
@@ -26,7 +26,7 @@ final class CreatingOneOffTrackerVC: UIViewController {
     } ()
     lazy var exceedLabel: UILabel = {
         let label = UILabel()
-        label.text = "Exceed the limit of 38 characters".localized()
+        label.text = SGen.exceedTheLimitOf38Characters
         label.textColor = .red
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 17, weight: .regular)
@@ -34,8 +34,8 @@ final class CreatingOneOffTrackerVC: UIViewController {
         return label
     } ()
     
-    lazy var cancelButton = setupButtons(title: "Cancel".localized())
-    lazy var createButton = setupButtons(title: "Create".localized())
+    lazy var cancelButton = setupButtons(title: SGen.cancel)
+    lazy var createButton = setupButtons(title: SGen.create)
     
     lazy var contentStackView: UIStackView = {
         let stack = UIStackView()
@@ -103,7 +103,7 @@ final class CreatingOneOffTrackerVC: UIViewController {
         
         setupScrollView()
         
-        title = "New one-time event".localized()
+        title = SGen.newOneTimeEvent
         view.backgroundColor = UIColor(named: "projectBackground")
     }
     

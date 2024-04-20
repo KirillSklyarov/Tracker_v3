@@ -73,9 +73,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
             }
             
             
-            
-            
-            let editAction = UIAction(title: "Edit".localized()) { [weak self] _ in
+            let editAction = UIAction(title: SGen.edit) { [weak self] _ in
                 guard let self else { return }
                 
                 let convertedLocation = trackersCollectionView.convert(location, from: interaction.view)
@@ -89,7 +87,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
                 self.viewModel.passTrackerToEditDelegate?.passTrackerIndexPathToEdit(indexPath: indexPath)
             }
             
-            let deleteAction = UIAction(title: "Delete".localized(), attributes: .destructive) { [weak self] _ in
+            let deleteAction = UIAction(title: SGen.delete, attributes: .destructive) { [weak self] _ in
                 self?.showAlert(location: location, interaction: interaction)
             }
             
@@ -111,7 +109,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
     private func showAlert(location: CGPoint, interaction: UIContextMenuInteraction) {
         let alert = UIAlertController(title: "Уверены, что хотите удалить трекер", message: nil, preferredStyle: .actionSheet)
         
-        let deleteAction = UIAlertAction(title: "Delete".localized(), style: .destructive) { [weak self] _ in
+        let deleteAction = UIAlertAction(title: SGen.delete, style: .destructive) { [weak self] _ in
             guard let self = self else { return }
             
             // Здесь мы находим indexPath трекера
@@ -123,7 +121,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
             viewModel.coreDataManager.deleteTracker(at: indexPath)
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel".localized(), style: .cancel)
+        let cancelAction = UIAlertAction(title: SGen.cancel, style: .cancel)
         [deleteAction, cancelAction].forEach { alert.addAction($0)}
         self.present(alert, animated: true)
     }

@@ -29,13 +29,6 @@ final class TrackerViewModel: TrackerViewModelProtocol  {
     
     var dataUpdated: ( () -> Void )?
     
-    func countOfDaysForTheTrackerInString(trackerId: String) -> String {
-        let trackerCount = coreDataManager.countOfTrackerInRecords(trackerIDToCount: trackerId)
-        // Здесь мы делаем правильную локализацию для day/days
-        let correctDaysString = String.localizedStringWithFormat("numberOfDays".localized(), trackerCount)
-        return correctDaysString
-    }
-    
     func updateDataFromCoreData(weekDay: String) {
         coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
         categories = coreDataManager.fetchData()

@@ -12,7 +12,7 @@ final class TrackerViewController: UIViewController {
     // MARK: - UI Properties
     lazy var filtersButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Filters".localized(), for: .normal)
+        button.setTitle(SGen.filters, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(named: "filterButtonBackground")
@@ -295,7 +295,7 @@ final class TrackerViewController: UIViewController {
     private func makeTrackerDone(trackToAdd: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
         viewModel.coreDataManager.addTrackerRecord(trackerToAdd: trackToAdd)
         
-        let countOfDays = viewModel.countOfDaysForTheTrackerInString(trackerId: trackToAdd.id.uuidString)
+        let countOfDays = MainHelper.countOfDaysForTheTrackerInString(trackerId: trackToAdd.id.uuidString)
         cell.daysLabel.text = countOfDays
         
         designCompletedTracker(cell: cell, cellColor: cellColor)
@@ -304,7 +304,7 @@ final class TrackerViewController: UIViewController {
     private func makeTrackerUndone(trackToRemove: TrackerRecord, cellColor: UIColor, cell: TrackerCollectionViewCell) {
         viewModel.coreDataManager.removeTrackerRecordForThisDay(trackerToRemove: trackToRemove)
         
-        let countOfDays = viewModel.countOfDaysForTheTrackerInString(trackerId: trackToRemove.id.uuidString)
+        let countOfDays = MainHelper.countOfDaysForTheTrackerInString(trackerId: trackToRemove.id.uuidString)
         cell.daysLabel.text = countOfDays
         
         designInCompleteTracker(cell: cell, cellColor: cellColor)

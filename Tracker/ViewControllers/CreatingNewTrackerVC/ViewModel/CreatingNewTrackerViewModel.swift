@@ -9,7 +9,7 @@ import Foundation
 
 final class CreatingNewTrackerViewModel: CreatingNewTrackerViewModelProtocol {
    
-    var tableViewRows = ["Category".localized(), "Schedule".localized()]
+    var tableViewRows = [SGen.category, SGen.schedule]
     
     var arrayOfEmoji = MainHelper.arrayOfEmoji
     

@@ -9,7 +9,7 @@ import Foundation
 
 final class CreatingOneOffTrackerViewModel: CreatingOneOffTrackerViewModelProtocol {
     
-    var tableViewRows = ["Category".localized()]
+    var tableViewRows = [SGen.category]
     
     var arrayOfEmoji = MainHelper.arrayOfEmoji
     

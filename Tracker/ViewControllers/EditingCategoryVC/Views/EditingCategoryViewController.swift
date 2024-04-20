@@ -81,7 +81,7 @@ final class EditingCategoryViewController: UIViewController {
         
         setupTextField()
         
-        self.title = "Editing a category".localized()
+        self.title = SGen.editingACategory
         
         view.backgroundColor = UIColor(named: "projectBackground")
         

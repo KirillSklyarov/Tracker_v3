@@ -33,8 +33,8 @@ final class CreatingNewTrackerViewController: UIViewController {
         label.isHidden = true
         return label
     } ()
-    lazy var cancelButton = setupButtons(title: "Cancel".localized())
-    lazy var createButton = setupButtons(title: "Create".localized())
+    lazy var cancelButton = setupButtons(title: SGen.cancel)
+    lazy var createButton = setupButtons(title: SGen.create)
     
     lazy var contentStackView: UIStackView = {
         let stack = UIStackView()
@@ -103,7 +103,7 @@ final class CreatingNewTrackerViewController: UIViewController {
         
         setupColorsCollectionView()
         
-        self.title = "New tracker".localized()
+        self.title = SGen.newTracker
         view.backgroundColor = UIColor(named: "projectBackground")
         
         setupScrollView()
@@ -148,7 +148,7 @@ final class CreatingNewTrackerViewController: UIViewController {
             return stack
         } ()
         
-        trackerNameTextField.placeholder = "Enter tracker's name".localized()
+        trackerNameTextField.placeholder = SGen.enterTrackerSName
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
         trackerNameTextField.leftView = leftPaddingView
         trackerNameTextField.leftViewMode = .always

@@ -34,7 +34,6 @@ protocol EditingTrackerViewModelProtocol {
     
     func createNewTracker()
     func isAllFieldsFilled() -> Bool
-    func countOfDaysForTheTrackerInString(trackerId: String) -> String
     func getTrackerDataForEditing(indexPath: IndexPath)
     func updateTracker()
 
