@@ -73,7 +73,7 @@ class StatisticViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = AppColors.background
         
         setupTableView()
         

@@ -28,7 +28,7 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         
         stickyCollectionView.layer.borderWidth = 1
         
-        let collectionHeight = calculationOfStickyCollectionHeight()
+        _ = calculationOfStickyCollectionHeight()
 //                print("collectionHeight \(collectionHeight)")
 
 
@@ -65,6 +65,8 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         
         trackersCollectionView.dataSource = self
         trackersCollectionView.delegate = self
+        
+        trackersCollectionView.backgroundColor = AppColors.background
         
         trackersCollectionView.register(TrackerCollectionViewCell.self, forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)
         

@@ -24,9 +24,9 @@ extension CreatingOneOffTrackerVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         cell.textLabel?.text = viewModel.tableViewRows[indexPath.row]
-        cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        cell.backgroundColor = AppColors.textFieldBackground
         cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        cell.detailTextLabel?.textColor = UIColor(named: "createButtonGrayColor")
+        cell.detailTextLabel?.textColor = AppColors.buttonGray
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.selectionStyle = .none
         

@@ -15,7 +15,7 @@ extension EditingTrackerViewController: UICollectionViewDataSource, UICollection
         emojiCollection.delegate = self
         emojiCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
         emojiCollection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-        emojiCollection.backgroundColor = .white
+        emojiCollection.backgroundColor = AppColors.background
         emojiCollection.isScrollEnabled = false
     }
     
@@ -24,7 +24,7 @@ extension EditingTrackerViewController: UICollectionViewDataSource, UICollection
         colorsCollection.delegate = self
         colorsCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "colorsCell")
         colorsCollection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-        colorsCollection.backgroundColor = .white
+        colorsCollection.backgroundColor = AppColors.background
         colorsCollection.isScrollEnabled = false
     }
     
@@ -50,7 +50,7 @@ extension EditingTrackerViewController: UICollectionViewDataSource, UICollection
             if indexPath == viewModel.emojiIndexPath {
                 cell.isSelected = true
                 cell.layer.cornerRadius = 8
-                cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+                cell.backgroundColor = AppColors.background 
             }
             
             return cell
@@ -90,7 +90,7 @@ extension EditingTrackerViewController: UICollectionViewDataSource, UICollection
             
             if let cell = collectionView.cellForItem(at: indexPath) {
                 cell.layer.cornerRadius = 8
-                cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+                cell.backgroundColor = AppColors.selectionCell
                 viewModel.emoji = viewModel.arrayOfEmoji[indexPath.row]
             }
         } else {

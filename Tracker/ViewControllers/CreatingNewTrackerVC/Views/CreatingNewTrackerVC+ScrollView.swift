@@ -87,11 +87,11 @@ extension CreatingNewTrackerViewController {
     func setupButtonsStack() -> UIStackView {
         cancelButton.backgroundColor = .clear
         cancelButton.layer.borderWidth = 1
-        cancelButton.layer.borderColor = UIColor(named: "cancelButtonRedColor")?.cgColor
-        cancelButton.setTitleColor(UIColor(named: "cancelButtonRedColor"), for: .normal)
+        cancelButton.layer.borderColor = AppColors.buttonRed?.cgColor
+        cancelButton.setTitleColor(AppColors.buttonRed, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         
-        createButton.setTitleColor(.white, for: .normal)
+        createButton.setTitleColor(AppColors.buttonTextColor, for: .normal)
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         
         let stack = UIStackView()

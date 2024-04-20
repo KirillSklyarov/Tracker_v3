@@ -22,7 +22,7 @@ final class CustomCategoryCell: UITableViewCell {
     
     func setupCellDesign() {
         
-        self.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        self.backgroundColor = AppColors.textFieldBackground
         
         checkmarkImage.isHidden = true
         

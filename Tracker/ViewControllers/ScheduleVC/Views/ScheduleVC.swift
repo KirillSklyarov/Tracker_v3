@@ -45,7 +45,7 @@ final class ScheduleViewController: UIViewController {
         setupTableView()
                 
         self.title = SGen.schedule
-        view.backgroundColor = UIColor(named: "projectBackground")
+        view.backgroundColor = AppColors.background
         
         view.addSubViews([tableView, doneButton])
         
@@ -64,8 +64,8 @@ final class ScheduleViewController: UIViewController {
     private func setupButton() {
         doneButton.setTitle(SGen.done, for: .normal)
         doneButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        doneButton.setTitleColor(.white, for: .normal)
-        doneButton.backgroundColor = .black
+        doneButton.setTitleColor(AppColors.buttonTextColor, for: .normal)
+        doneButton.backgroundColor = AppColors.buttonBlack
         doneButton.layer.masksToBounds = true
         doneButton.layer.cornerRadius = 15
         doneButton.translatesAutoresizingMaskIntoConstraints = false

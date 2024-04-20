@@ -40,7 +40,7 @@ final class ChoosingTypeOfTrackerViewController: UIViewController {
     private func setupUI() {
         
         self.title = SGen.creatingATracker
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = AppColors.background
         
         creatingTrackerButton.addTarget(self, action: #selector(creatingTrackerButtonTapped), for: .touchUpInside)
         creatingEventButton.addTarget(self, action: #selector(creatingEventButtonTapped), for: .touchUpInside)
@@ -62,8 +62,8 @@ final class ChoosingTypeOfTrackerViewController: UIViewController {
         let button = UIButton()
         button.setTitle(title, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .black
+        button.setTitleColor(AppColors.buttonTextColor, for: .normal)
+        button.backgroundColor = AppColors.buttonBlack
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 15
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true

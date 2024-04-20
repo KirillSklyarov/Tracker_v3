@@ -15,6 +15,7 @@ extension ChoosingCategoryViewController: UITableViewDataSource, UITableViewDele
         categoryTableView.layer.cornerRadius = 16
         categoryTableView.tableHeaderView = UIView()
         categoryTableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        categoryTableView.separatorColor = AppColors.separatorColor
         
         categoryTableView.dataSource = self
         categoryTableView.delegate = self

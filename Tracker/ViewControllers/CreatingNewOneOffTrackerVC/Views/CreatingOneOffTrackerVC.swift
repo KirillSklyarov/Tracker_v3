@@ -19,7 +19,7 @@ final class CreatingOneOffTrackerVC: UIViewController {
         textField.rightViewMode = .whileEditing
         textField.textAlignment = .left
         textField.layer.cornerRadius = 10
-        textField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        textField.backgroundColor = AppColors.textFieldBackground
         textField.heightAnchor.constraint(equalToConstant: 75).isActive = true
         textField.delegate = self
         return textField
@@ -104,15 +104,15 @@ final class CreatingOneOffTrackerVC: UIViewController {
         setupScrollView()
         
         title = SGen.newOneTimeEvent
-        view.backgroundColor = UIColor(named: "projectBackground")
+        view.backgroundColor = AppColors.background
     }
     
     private func setupButtons(title: String) -> UIButton {
         let button = UIButton()
         button.setTitle(title, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .black
+        button.setTitleColor(AppColors.buttonTextColor, for: .normal)
+        button.backgroundColor = AppColors.buttonBlack
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 15
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -122,12 +122,12 @@ final class CreatingOneOffTrackerVC: UIViewController {
     
     private func createButtonIsActive() {
         createButton.isEnabled = true
-        createButton.backgroundColor = .black
+        createButton.backgroundColor = AppColors.buttonBlack
     }
     
     private func createButtonIsNotActive() {
         createButton.isEnabled = false
-        createButton.backgroundColor = UIColor(named: "createButtonGrayColor")
+        createButton.backgroundColor = AppColors.buttonGray
     }
     
     func showLabelExceedTextFieldLimit() {

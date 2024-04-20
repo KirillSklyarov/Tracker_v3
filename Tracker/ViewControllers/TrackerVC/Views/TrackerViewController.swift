@@ -14,8 +14,8 @@ final class TrackerViewController: UIViewController {
         let button = UIButton()
         button.setTitle(SGen.filters, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(named: "filterButtonBackground")
+        button.setTitleColor(AppColors.filterButtonTextColor, for: .normal)
+        button.backgroundColor = AppColors.filterButton
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
         return button
@@ -31,7 +31,6 @@ final class TrackerViewController: UIViewController {
     lazy var datePicker: UIDatePicker = {
         let myDatePicker = UIDatePicker()
         myDatePicker.datePickerMode = .date
-        myDatePicker.layer.backgroundColor = UIColor.white.cgColor
         myDatePicker.layer.cornerRadius = 13
         if #available(iOS 14.0, *) {
             myDatePicker.preferredDatePickerStyle = .inline
@@ -45,9 +44,9 @@ final class TrackerViewController: UIViewController {
         let button = UIButton()
         let date = MainHelper.dateToString(date: datePicker.date)
         button.setTitle(date, for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(AppColors.background, for: .normal)
         button.frame = CGRect(x: 0, y: 0, width: 77, height: 34)
-        button.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        button.backgroundColor = AppColors.dateLabelBackground
         button.layer.cornerRadius = 8
         button.addTarget(self, action: #selector(dateButtonTapped), for: .touchUpInside)
         return button
@@ -145,11 +144,12 @@ final class TrackerViewController: UIViewController {
         
         navigationItem.hidesSearchBarWhenScrolling = false
         
-        let image = UIImage(systemName: "plus")?.withRenderingMode(.alwaysOriginal)
+        guard let color = AppColors.buttonBlack,
+              let image = UIImage(systemName: "plus")?.withRenderingMode(.alwaysOriginal).withTintColor(color) else { print("We have some color problems"); return }
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: dateButton)
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: image?.withTintColor(.black), style: .done, target: self, action: #selector(addNewHabitButtonTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: image, style: .done, target: self, action: #selector(addNewHabitButtonTapped))
     }
     
     private func setupFiltersButton() {
@@ -175,7 +175,7 @@ final class TrackerViewController: UIViewController {
         
         setupFiltersButton()
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = AppColors.background
         
         showOrHidePlaceholder()
     }
@@ -311,13 +311,17 @@ final class TrackerViewController: UIViewController {
     }
     
     func designCompletedTracker(cell: TrackerCollectionViewCell, cellColor: UIColor) {
-        let doneImage = UIImage(named: "done")
+        guard let color = AppColors.trackerCellDoneLabel,
+              let image = UIImage(named: "done") else { return }
+        
+        let doneImage = image.withTintColor(color)
         cell.plusButton.setImage(doneImage, for: .normal)
         cell.plusButton.backgroundColor = cellColor.withAlphaComponent(0.3)
     }
     
     func designInCompleteTracker(cell: TrackerCollectionViewCell, cellColor: UIColor) {
-        let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        guard let color = AppColors.plusButtonColor else { return }
+        let plusImage = UIImage(systemName: "plus")?.withTintColor(color, renderingMode: .alwaysOriginal)
         cell.plusButton.backgroundColor = cellColor.withAlphaComponent(1)
         cell.plusButton.setImage(plusImage, for: .normal)
         cell.plusButton.layer.cornerRadius = cell.plusButton.frame.width / 2

@@ -17,6 +17,7 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
         
         tableView.layer.cornerRadius = 16
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.separatorColor = AppColors.separatorColor
         tableView.tableHeaderView = UIView()
     }
     
@@ -28,11 +29,13 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.selectionStyle = .none
         let weekDaySwitch = UISwitch()
-        weekDaySwitch.onTintColor = UIColor(named: "switchOnColor")
+        weekDaySwitch.backgroundColor = AppColors.switchOff
+        weekDaySwitch.layer.cornerRadius = 16
+        weekDaySwitch.onTintColor = AppColors.switchOn
         weekDaySwitch.addTarget(self, action: #selector(weekDaySwitchValueChanged), for: .valueChanged)
         cell.accessoryView = weekDaySwitch
         cell.textLabel?.text = viewModel.weekdays[indexPath.row]
-        cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        cell.backgroundColor = AppColors.textFieldBackground
         
         if indexPath.row == viewModel.weekdays.count - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)

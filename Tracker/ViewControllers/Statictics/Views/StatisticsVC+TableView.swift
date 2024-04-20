@@ -17,6 +17,8 @@ extension StatisticViewController: UITableViewDataSource, UITableViewDelegate {
         
         tableView.separatorStyle = .none
         tableView.isScrollEnabled = false
+        
+        tableView.backgroundColor = AppColors.background
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

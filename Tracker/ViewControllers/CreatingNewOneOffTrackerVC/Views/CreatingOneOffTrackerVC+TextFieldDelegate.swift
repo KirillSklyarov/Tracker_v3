@@ -16,7 +16,7 @@ extension CreatingOneOffTrackerVC: UITextFieldDelegate {
         let clearTextFieldButton: UIButton = {
             let button = UIButton(type: .custom)
             let configuration = UIImage.SymbolConfiguration(pointSize: 17)
-            let imageColor = UIColor(named: "createButtonGrayColor") ?? .lightGray
+            let imageColor = AppColors.buttonGray ?? .lightGray
             let image = UIImage(systemName: "xmark.circle.fill", withConfiguration: configuration)?
                 .withRenderingMode(.alwaysOriginal)
                 .withTintColor(imageColor)

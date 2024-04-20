@@ -15,7 +15,7 @@ extension CreatingOneOffTrackerVC: UICollectionViewDataSource, UICollectionViewD
         emojiCollection.delegate = self
         emojiCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "emojiCell")
         emojiCollection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-        emojiCollection.backgroundColor = .white
+        emojiCollection.backgroundColor = AppColors.background
         emojiCollection.isScrollEnabled = false
     }
     
@@ -24,7 +24,7 @@ extension CreatingOneOffTrackerVC: UICollectionViewDataSource, UICollectionViewD
         colorsCollection.delegate = self
         colorsCollection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "colorsCell")
         colorsCollection.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-        colorsCollection.backgroundColor = .white
+        colorsCollection.backgroundColor = AppColors.background
         colorsCollection.isScrollEnabled = false
     }
     
@@ -63,7 +63,7 @@ extension CreatingOneOffTrackerVC: UICollectionViewDataSource, UICollectionViewD
         if collectionView == emojiCollection {
             let cell = collectionView.cellForItem(at: indexPath)
             cell?.layer.cornerRadius = 8
-            cell?.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+            cell?.backgroundColor = AppColors.textFieldBackground
             viewModel.selectedEmoji = viewModel.arrayOfEmoji[indexPath.row]
         } else {
             let cell = collectionView.cellForItem(at: indexPath)

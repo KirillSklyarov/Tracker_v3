@@ -26,7 +26,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        contentView.backgroundColor = .systemBackground
+        contentView.backgroundColor = AppColors.background
         
         frameView.layer.cornerRadius = 16
         
@@ -37,7 +37,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         emojiLabel.font = .systemFont(ofSize: 12, weight: .medium)
         emojiLabel.textAlignment = .center
         
-        emojiView.backgroundColor = .white.withAlphaComponent(0.1)
+        emojiView.backgroundColor = AppColors.trackerCellEmojiRound 
         
         emojiView.addSubViews([emojiLabel])
         NSLayoutConstraint.activate([
@@ -47,7 +47,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         
         titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
         titleLabel.numberOfLines = 0
-        titleLabel.textColor = .white
+        titleLabel.textColor = AppColors.trackerCellTitleLabel
         
         let pin = UIImage(named: "pin")
         pinImage.image = pin
@@ -60,7 +60,9 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         plusButton.layer.cornerRadius = plusButton.frame.width / 2
         plusButton.clipsToBounds = true
         
-        let plusImage = UIImage(systemName: "plus")?.withTintColor(.white, renderingMode: .alwaysOriginal)
+        guard let color = AppColors.plusButtonColor else { return }
+        
+        let plusImage = UIImage(systemName: "plus")?.withTintColor(color, renderingMode: .alwaysOriginal)
         plusButton.setImage(plusImage, for: .normal)
         
         daysLabel.font = .systemFont(ofSize: 12, weight: .medium)

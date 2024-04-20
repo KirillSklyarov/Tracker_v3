@@ -14,8 +14,8 @@ final class ChoosingCategoryViewController: BaseViewController {
         let button = UIButton()
         button.setTitle(SGen.addACategory, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .black
+        button.setTitleColor(AppColors.buttonTextColor, for: .normal)
+        button.backgroundColor = AppColors.buttonBlack
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 15
         button.addTarget(self, action: #selector(addCategoryButtonTapped), for: .touchUpInside)
@@ -87,7 +87,7 @@ final class ChoosingCategoryViewController: BaseViewController {
         setupTableView()
         
         self.title = SGen.category
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = AppColors.background
         view.addSubViews([categoryTableView, creatingCategoryButton])
         
         NSLayoutConstraint.activate([

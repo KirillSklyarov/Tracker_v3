@@ -44,7 +44,7 @@ final class EditingCategoryViewController: UIViewController {
         let clearTextFieldButton: UIButton = {
             let button = UIButton(type: .custom)
             let configuration = UIImage.SymbolConfiguration(pointSize: 17)
-            let imageColor = UIColor(named: "createButtonGrayColor") ?? .lightGray
+            let imageColor = AppColors.buttonGray ?? .lightGray
             let image = UIImage(systemName: "xmark.circle.fill", withConfiguration: configuration)?
                 .withRenderingMode(.alwaysOriginal)
                 .withTintColor(imageColor)
@@ -70,7 +70,7 @@ final class EditingCategoryViewController: UIViewController {
         categoryNameTextField.rightViewMode = .whileEditing
         categoryNameTextField.textAlignment = .left
         categoryNameTextField.layer.cornerRadius = 10
-        categoryNameTextField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        categoryNameTextField.backgroundColor = AppColors.textFieldBackground
         categoryNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
         categoryNameTextField.delegate = self
     }
@@ -83,7 +83,7 @@ final class EditingCategoryViewController: UIViewController {
         
         self.title = SGen.editingACategory
         
-        view.backgroundColor = UIColor(named: "projectBackground")
+        view.backgroundColor = AppColors.background
         
         view.addSubViews([categoryNameTextField, doneButton])
         
@@ -101,12 +101,12 @@ final class EditingCategoryViewController: UIViewController {
     private func setupDoneButton() {
         doneButton.setTitle("Готово", for: .normal)
         doneButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        doneButton.setTitleColor(.white, for: .normal)
+        doneButton.setTitleColor(AppColors.buttonTextColor, for: .normal)
         doneButton.layer.masksToBounds = true
         doneButton.layer.cornerRadius = 15
         doneButton.translatesAutoresizingMaskIntoConstraints = false
         doneButton.heightAnchor.constraint(equalToConstant: 60).isActive = true
         doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        doneButton.backgroundColor = .black
+        doneButton.backgroundColor = AppColors.buttonBlack
     }
 }

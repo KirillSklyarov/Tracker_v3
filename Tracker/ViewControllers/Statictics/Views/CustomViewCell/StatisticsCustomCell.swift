@@ -32,9 +32,9 @@ final class StatisticsCustomCell: UITableViewCell {
     } ()
     
     let colors: [CGColor] = [
-        UIColor(named: "gradient1")?.cgColor ?? UIColor.red.cgColor,
-        UIColor(named: "gradient2")?.cgColor ?? UIColor.red.cgColor,
-        UIColor(named: "gradient3")?.cgColor ?? UIColor.red.cgColor
+        AppColors.gradient1 ?? UIColor.red.cgColor,
+        AppColors.gradient2 ?? UIColor.red.cgColor,
+        AppColors.gradient3 ?? UIColor.red.cgColor
     ]
     
     lazy var gradientLayer: CAGradientLayer = {
@@ -52,6 +52,9 @@ final class StatisticsCustomCell: UITableViewCell {
     
     func setupCellDesign() {
         
+        contentView.backgroundColor = AppColors.background
+        
+        
         let stack = UIStackView()
         stack.axis = .vertical
         stack.distribution = .fill
@@ -60,7 +63,7 @@ final class StatisticsCustomCell: UITableViewCell {
         
         let mainView: UIView = {
             let view = UIView()
-            view.backgroundColor = .white
+            view.backgroundColor = AppColors.background
             view.layer.cornerRadius = 16
             return view
         } ()

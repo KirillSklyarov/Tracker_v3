@@ -26,7 +26,7 @@ final class EditingTrackerViewController: UIViewController {
         textField.leftViewMode = .always
         textField.textAlignment = .left
         textField.layer.cornerRadius = 10
-        textField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        textField.backgroundColor = AppColors.textFieldBackground
         textField.heightAnchor.constraint(equalToConstant: 75).isActive = true
         textField.delegate = self
         return textField
@@ -113,7 +113,7 @@ final class EditingTrackerViewController: UIViewController {
         let clearTextFieldButton: UIButton = {
             let button = UIButton(type: .custom)
             let configuration = UIImage.SymbolConfiguration(pointSize: 17)
-            let imageColor = UIColor(named: "createButtonGrayColor") ?? .lightGray
+            let imageColor = AppColors.buttonGray ?? .lightGray
             let image = UIImage(systemName: "xmark.circle.fill", withConfiguration: configuration)?
                 .withRenderingMode(.alwaysOriginal)
                 .withTintColor(imageColor)
@@ -142,18 +142,18 @@ final class EditingTrackerViewController: UIViewController {
     
     func saveButtonIsActive() {
         saveButton.isEnabled = true
-        saveButton.backgroundColor = .black
+        saveButton.backgroundColor = AppColors.buttonBlack
     }
     
     func saveButtonIsNotActive() {
         saveButton.isEnabled = false
-        saveButton.backgroundColor = UIColor(named: "createButtonGrayColor")
+        saveButton.backgroundColor = AppColors.buttonGray
     }
     
     private func setupUI() {
         
         self.title = SGen.editingATracker
-        view.backgroundColor = UIColor(named: "projectBackground")
+        view.backgroundColor = AppColors.background 
         
         setupTextField()
         setupContentStack()
@@ -168,8 +168,8 @@ final class EditingTrackerViewController: UIViewController {
         let button = UIButton()
         button.setTitle(title, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .black
+        button.setTitleColor(AppColors.buttonTextColor, for: .normal)
+        button.backgroundColor = AppColors.buttonBlack
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 15
         button.translatesAutoresizingMaskIntoConstraints = false

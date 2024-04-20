@@ -65,7 +65,7 @@ final class OnboardingCustomVC: UIViewController {
     private func setupButton() {
         button.setTitle("Вот это технологии!", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        button.backgroundColor = .black
+        button.backgroundColor = AppColors.buttonBlack
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(onboardingButtonTapped), for: .touchUpInside)
     }

@@ -28,9 +28,9 @@ final class TabBarController: UITabBarController {
         
         self.viewControllers = [trackerVC, statisticVC]
         
-        self.tabBar.backgroundColor = .white
+        self.tabBar.backgroundColor = AppColors.background
         self.tabBar.layer.borderWidth = 0.5
-        self.tabBar.layer.borderColor = UIColor(named: "tabBarBorderColor")?.cgColor
+        self.tabBar.layer.borderColor = AppColors.tabBarBorder?.cgColor
     }
     
     private func setupNavigationController(controller: UIViewController, title: String) -> UINavigationController {
@@ -38,7 +38,7 @@ final class TabBarController: UITabBarController {
         navigationController.navigationBar.topItem?.title = title
         navigationController.navigationBar.barStyle = .default
         navigationController.navigationBar.isTranslucent = true
-        navigationController.navigationBar.backgroundColor = .systemBackground
+        navigationController.navigationBar.backgroundColor = AppColors.background
         navigationController.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationController.navigationBar.prefersLargeTitles = true
         navigationController.navigationItem.hidesSearchBarWhenScrolling = false

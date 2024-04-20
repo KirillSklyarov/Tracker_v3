@@ -19,7 +19,7 @@ final class CreatingNewCategoryViewController: BaseViewController {
         textField.rightViewMode = .whileEditing
         textField.textAlignment = .left
         textField.layer.cornerRadius = 10
-        textField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        textField.backgroundColor = AppColors.textFieldBackground
         textField.heightAnchor.constraint(equalToConstant: 75).isActive = true
         textField.addTarget(self, action: #selector(textFieldEditing), for: .editingChanged)
         textField.delegate = self
@@ -29,8 +29,8 @@ final class CreatingNewCategoryViewController: BaseViewController {
         let button = UIButton()
         button.setTitle("Готово", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(named: "createButtonGrayColor")
+        button.setTitleColor(AppColors.createButtonText, for: .normal)
+        button.backgroundColor = AppColors.buttonGray
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 15
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -69,7 +69,7 @@ final class CreatingNewCategoryViewController: BaseViewController {
         
         self.title = "Новая категория"
         
-        view.backgroundColor = UIColor(named: "projectBackground")
+        view.backgroundColor = AppColors.background
         
         view.addSubViews([categoryNameTextField, doneButton])
         
@@ -86,11 +86,11 @@ final class CreatingNewCategoryViewController: BaseViewController {
     
     private func doneButtonIsActive() {
         doneButton.isEnabled = true
-        doneButton.backgroundColor = .black
+        doneButton.backgroundColor = AppColors.buttonBlack
     }
     
     private func doneButtonIsNotActive() {
         doneButton.isEnabled = false
-        doneButton.backgroundColor = .systemGray4
+        doneButton.backgroundColor = AppColors.buttonGray
     }
 }

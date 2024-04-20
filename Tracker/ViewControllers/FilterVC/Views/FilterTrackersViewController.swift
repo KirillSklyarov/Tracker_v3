@@ -46,7 +46,7 @@ final class FilterTrackersViewController: UIViewController {
     private func setupUI() {
         
         self.title = SGen.filters
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = AppColors.background
         
         let tableViewHeight = cellHeight * CGFloat(filters.count)
         
@@ -67,6 +67,7 @@ final class FilterTrackersViewController: UIViewController {
         filterTrackersTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
         filterTrackersTableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        filterTrackersTableView.separatorColor = AppColors.separatorColor
         filterTrackersTableView.layer.cornerRadius = 16
         filterTrackersTableView.tableHeaderView = UIView()
     }
@@ -107,7 +108,7 @@ extension FilterTrackersViewController: UITableViewDataSource, UITableViewDelega
     }
     
     func configureCell(cell: UITableViewCell, indexPath: IndexPath) {
-        cell.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        cell.backgroundColor = AppColors.textFieldBackground
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.textLabel?.text = filters[indexPath.row]
     }

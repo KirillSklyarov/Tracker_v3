@@ -12,14 +12,13 @@ final class CreatingNewTrackerViewController: UIViewController {
     // MARK: - UI Properties
     lazy var trackerNameTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = SGen.enterTrackerSName
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
         textField.leftView = leftPaddingView
         textField.leftViewMode = .always
         textField.rightViewMode = .whileEditing
-        textField.textAlignment = .left
         textField.layer.cornerRadius = 10
-        textField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
+        textField.backgroundColor = AppColors.textFieldBackground
         textField.heightAnchor.constraint(equalToConstant: 75).isActive = true
         textField.delegate = self
         return textField
@@ -91,6 +90,9 @@ final class CreatingNewTrackerViewController: UIViewController {
     // MARK: - Private Methods
     private func setupUI() {
         
+        self.title = SGen.newTracker
+        view.backgroundColor = AppColors.background
+                
         createButtonIsNotActive()
         
         setupTextField()
@@ -103,9 +105,6 @@ final class CreatingNewTrackerViewController: UIViewController {
         
         setupColorsCollectionView()
         
-        self.title = SGen.newTracker
-        view.backgroundColor = UIColor(named: "projectBackground")
-        
         setupScrollView()
     }
     
@@ -113,8 +112,8 @@ final class CreatingNewTrackerViewController: UIViewController {
         let button = UIButton()
         button.setTitle(title, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .black
+        button.setTitleColor(AppColors.buttonTextColor, for: .normal)
+        button.backgroundColor = AppColors.buttonBlack
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 15
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -129,7 +128,7 @@ final class CreatingNewTrackerViewController: UIViewController {
         let clearTextFieldButton: UIButton = {
             let button = UIButton(type: .custom)
             let configuration = UIImage.SymbolConfiguration(pointSize: 17)
-            let imageColor = UIColor(named: "createButtonGrayColor") ?? .lightGray
+            let imageColor = AppColors.buttonGray ?? .lightGray
             let image = UIImage(systemName: "xmark.circle.fill", withConfiguration: configuration)?
                 .withRenderingMode(.alwaysOriginal)
                 .withTintColor(imageColor)
@@ -148,18 +147,9 @@ final class CreatingNewTrackerViewController: UIViewController {
             return stack
         } ()
         
-        trackerNameTextField.placeholder = SGen.enterTrackerSName
-        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
-        trackerNameTextField.leftView = leftPaddingView
-        trackerNameTextField.leftViewMode = .always
         trackerNameTextField.rightView = clearTextStack
-        trackerNameTextField.rightViewMode = .whileEditing
         trackerNameTextField.textAlignment = .left
-        trackerNameTextField.layer.cornerRadius = 10
-        trackerNameTextField.backgroundColor = UIColor(named: "textFieldBackgroundColor")
-        trackerNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
-        
-        trackerNameTextField.delegate = self
+        trackerNameTextField.textColor = AppColors.textFieldTextColor
     }
     
     // MARK: - Private Methods
@@ -174,12 +164,13 @@ final class CreatingNewTrackerViewController: UIViewController {
     
     func createButtonIsActive() {
         createButton.isEnabled = true
-        createButton.backgroundColor = .black
+        createButton.backgroundColor = AppColors.buttonBlack
     }
     
     func createButtonIsNotActive() {
         createButton.isEnabled = false
-        createButton.backgroundColor = UIColor(named: "createButtonGrayColor")
+        createButton.backgroundColor = AppColors.buttonGray
+        createButton.setTitleColor(AppColors.createButtonText, for: .disabled)
     }
     
     func showLabelExceedTextFieldLimit() {

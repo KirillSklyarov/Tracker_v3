@@ -11,6 +11,7 @@ import UIKit
 extension CreatingNewTrackerViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
+        textField.textColor = AppColors.textFieldTextColor
         viewModel.trackerName = textField.text
     }
     
