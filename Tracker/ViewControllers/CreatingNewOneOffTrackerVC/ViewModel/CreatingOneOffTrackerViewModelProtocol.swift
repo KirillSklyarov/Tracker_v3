@@ -18,7 +18,7 @@ protocol CreatingOneOffTrackerViewModelProtocol {
     var selectedColor: String? { get set }
     var trackerName: String? { get set }
     var selectedSchedule: String? { get set }
-    
+
     func createNewTracker()
     func isAllFieldsFilled() -> Bool
     func getBackToMainScreen()

@@ -14,7 +14,7 @@ final class TrackerViewController: UIViewController {
         let button = UIButton()
         button.setTitle(SGen.filters, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        button.setTitleColor(AppColors.filterButtonTextColor, for: .normal)
+        button.setTitleColor(AppColors.filterButtonText, for: .normal)
         button.backgroundColor = AppColors.filterButton
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
@@ -44,7 +44,7 @@ final class TrackerViewController: UIViewController {
         let button = UIButton()
         let date = MainHelper.dateToString(date: datePicker.date)
         button.setTitle(date, for: .normal)
-        button.setTitleColor(AppColors.background, for: .normal)
+        button.setTitleColor(AppColors.dateButtonText, for: .normal)
         button.frame = CGRect(x: 0, y: 0, width: 77, height: 34)
         button.backgroundColor = AppColors.dateLabelBackground
         button.layer.cornerRadius = 8
@@ -320,7 +320,7 @@ final class TrackerViewController: UIViewController {
     }
     
     func designInCompleteTracker(cell: TrackerCollectionViewCell, cellColor: UIColor) {
-        guard let color = AppColors.plusButtonColor else { return }
+        guard let color = AppColors.plusButton else { return }
         let plusImage = UIImage(systemName: "plus")?.withTintColor(color, renderingMode: .alwaysOriginal)
         cell.plusButton.backgroundColor = cellColor.withAlphaComponent(1)
         cell.plusButton.setImage(plusImage, for: .normal)

@@ -69,7 +69,7 @@ extension EditingTrackerViewController {
         cancelButton.setTitleColor(AppColors.buttonRed, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         
-        saveButton.setTitleColor(AppColors.buttonTextColor, for: .normal)
+        saveButton.setTitleColor(AppColors.buttonText, for: .normal)
         saveButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         
         let buttonsStack: UIStackView = {

@@ -101,7 +101,7 @@ final class EditingCategoryViewController: UIViewController {
     private func setupDoneButton() {
         doneButton.setTitle("Готово", for: .normal)
         doneButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        doneButton.setTitleColor(AppColors.buttonTextColor, for: .normal)
+        doneButton.setTitleColor(AppColors.buttonText, for: .normal)
         doneButton.layer.masksToBounds = true
         doneButton.layer.cornerRadius = 15
         doneButton.translatesAutoresizingMaskIntoConstraints = false

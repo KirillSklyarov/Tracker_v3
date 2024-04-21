@@ -67,7 +67,7 @@ final class FilterTrackersViewController: UIViewController {
         filterTrackersTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
         filterTrackersTableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        filterTrackersTableView.separatorColor = AppColors.separatorColor
+        filterTrackersTableView.separatorColor = AppColors.separator
         filterTrackersTableView.layer.cornerRadius = 16
         filterTrackersTableView.tableHeaderView = UIView()
     }

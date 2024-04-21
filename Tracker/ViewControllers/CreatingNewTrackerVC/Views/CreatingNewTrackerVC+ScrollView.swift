@@ -91,7 +91,7 @@ extension CreatingNewTrackerViewController {
         cancelButton.setTitleColor(AppColors.buttonRed, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         
-        createButton.setTitleColor(AppColors.buttonTextColor, for: .normal)
+        createButton.setTitleColor(AppColors.buttonText, for: .normal)
         createButton.addTarget(self, action: #selector(createButtonTapped), for: .touchUpInside)
         
         let stack = UIStackView()

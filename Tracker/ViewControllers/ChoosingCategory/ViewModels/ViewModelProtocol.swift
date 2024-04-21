@@ -12,11 +12,11 @@ protocol ViewModelProtocol {
     var dataUpdated: ( () -> Void )? { get set }
     var categories: [String] { get set }
     var delegateToPassCategoryNameToEdit: PassCategoryNamesToEditingVC? { get set }
-    
+
     func getDataFromCoreData()
     func createNewCategory(newCategoryName: String)
     func deleteCategory(categoryNameToDelete: String)
     func getLastChosenCategoryFromStore() -> String
     func sendLastChosenCategoryToStore(categoryName: String)
-        
+
 }

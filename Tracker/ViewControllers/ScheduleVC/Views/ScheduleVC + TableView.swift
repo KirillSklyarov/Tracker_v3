@@ -17,7 +17,7 @@ extension ScheduleViewController: UITableViewDataSource, UITableViewDelegate {
         
         tableView.layer.cornerRadius = 16
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        tableView.separatorColor = AppColors.separatorColor
+        tableView.separatorColor = AppColors.separator
         tableView.tableHeaderView = UIView()
     }
     

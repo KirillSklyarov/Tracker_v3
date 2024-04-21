@@ -64,7 +64,7 @@ final class ScheduleViewController: UIViewController {
     private func setupButton() {
         doneButton.setTitle(SGen.done, for: .normal)
         doneButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        doneButton.setTitleColor(AppColors.buttonTextColor, for: .normal)
+        doneButton.setTitleColor(AppColors.buttonText, for: .normal)
         doneButton.backgroundColor = AppColors.buttonBlack
         doneButton.layer.masksToBounds = true
         doneButton.layer.cornerRadius = 15

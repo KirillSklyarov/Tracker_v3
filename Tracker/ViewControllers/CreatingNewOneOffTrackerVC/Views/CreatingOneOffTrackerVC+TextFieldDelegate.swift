@@ -9,9 +9,9 @@ import UIKit
 
 // MARK: - TextFieldDelegate - control of TextField length
 extension CreatingOneOffTrackerVC: UITextFieldDelegate {
-    
+
     func setupTextField() {
-        
+
         let rightPaddingView = UIView()
         let clearTextFieldButton: UIButton = {
             let button = UIButton(type: .custom)
@@ -23,8 +23,8 @@ extension CreatingOneOffTrackerVC: UITextFieldDelegate {
             button.setImage(image, for: .normal)
             button.addTarget(self, action: #selector(clearTextButtonTapped), for: .touchUpInside)
             return button
-        } ()
-        
+        }()
+
         lazy var clearTextStack: UIStackView = {
             let stack = UIStackView()
             stack.axis = .horizontal
@@ -33,17 +33,19 @@ extension CreatingOneOffTrackerVC: UITextFieldDelegate {
             stack.translatesAutoresizingMaskIntoConstraints = false
             stack.widthAnchor.constraint(equalToConstant: 28).isActive = true
             return stack
-        } ()
-        
+        }()
+
         trackerNameTextField.rightView = clearTextStack
     }
-    
+
     func textFieldDidChangeSelection(_ textField: UITextField) {
         viewModel.trackerName = textField.text
     }
-    
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        
+
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
+
         let currentCharacterCount = textField.text?.count ?? 0
         if currentCharacterCount <= 38 {
             hideLabelExceedTextFieldLimit()
@@ -56,7 +58,7 @@ extension CreatingOneOffTrackerVC: UITextFieldDelegate {
             return true
         }
     }
-    
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         trackerNameTextField.resignFirstResponder()
     }

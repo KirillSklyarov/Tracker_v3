@@ -60,7 +60,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         plusButton.layer.cornerRadius = plusButton.frame.width / 2
         plusButton.clipsToBounds = true
         
-        guard let color = AppColors.plusButtonColor else { return }
+        guard let color = AppColors.plusButton else { return }
         
         let plusImage = UIImage(systemName: "plus")?.withTintColor(color, renderingMode: .alwaysOriginal)
         plusButton.setImage(plusImage, for: .normal)

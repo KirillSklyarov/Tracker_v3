@@ -17,7 +17,7 @@ extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelega
         
         tableView.layer.cornerRadius = 10
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-        tableView.separatorColor = AppColors.separatorColor
+        tableView.separatorColor = AppColors.separator
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {

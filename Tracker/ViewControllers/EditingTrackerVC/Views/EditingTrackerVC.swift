@@ -168,7 +168,7 @@ final class EditingTrackerViewController: UIViewController {
         let button = UIButton()
         button.setTitle(title, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(AppColors.buttonTextColor, for: .normal)
+        button.setTitleColor(AppColors.buttonText, for: .normal)
         button.backgroundColor = AppColors.buttonBlack
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 15

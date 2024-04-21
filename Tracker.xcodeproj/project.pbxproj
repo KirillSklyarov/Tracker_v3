@@ -33,6 +33,8 @@
 		7366C6A02BC87DF800F37FBF /* StatisticViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7366C69F2BC87DF800F37FBF /* StatisticViewModel.swift */; };
 		7366C6A22BC87E3700F37FBF /* StatisticViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7366C6A12BC87E3700F37FBF /* StatisticViewModelProtocol.swift */; };
 		7366C6A52BC87F7200F37FBF /* StatisticsCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7366C6A42BC87F7100F37FBF /* StatisticsCustomCell.swift */; };
+		7367C7E12BD596450069194E /* TrackerCDManager+Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7367C7E02BD596450069194E /* TrackerCDManager+Statistics.swift */; };
+		7367C7E32BD596B40069194E /* TrackerCDManager+TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7367C7E22BD596B40069194E /* TrackerCDManager+TrackerRecord.swift */; };
 		736F5D542BBDA6C400C629DD /* EditingTrackerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736F5D532BBDA6C400C629DD /* EditingTrackerVC.swift */; };
 		737BEEA02BBBFD9E00101D51 /* FilterTrackersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737BEE9F2BBBFD9E00101D51 /* FilterTrackersViewController.swift */; };
 		737D9E032BC40EA90002391F /* ScheduleVC + TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737D9E022BC40EA90002391F /* ScheduleVC + TableView.swift */; };
@@ -124,6 +126,8 @@
 		7366C69F2BC87DF800F37FBF /* StatisticViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewModel.swift; sourceTree = "<group>"; };
 		7366C6A12BC87E3700F37FBF /* StatisticViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticViewModelProtocol.swift; sourceTree = "<group>"; };
 		7366C6A42BC87F7100F37FBF /* StatisticsCustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsCustomCell.swift; sourceTree = "<group>"; };
+		7367C7E02BD596450069194E /* TrackerCDManager+Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerCDManager+Statistics.swift"; sourceTree = "<group>"; };
+		7367C7E22BD596B40069194E /* TrackerCDManager+TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerCDManager+TrackerRecord.swift"; sourceTree = "<group>"; };
 		736F5D532BBDA6C400C629DD /* EditingTrackerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingTrackerVC.swift; sourceTree = "<group>"; };
 		737BEE9F2BBBFD9E00101D51 /* FilterTrackersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTrackersViewController.swift; sourceTree = "<group>"; };
 		737D9E022BC40EA90002391F /* ScheduleVC + TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScheduleVC + TableView.swift"; sourceTree = "<group>"; };
@@ -508,6 +512,8 @@
 			isa = PBXGroup;
 			children = (
 				73A7F59B2BB304B4006BE2C2 /* TrackerCoreManager.swift */,
+				7367C7E02BD596450069194E /* TrackerCDManager+Statistics.swift */,
+				7367C7E22BD596B40069194E /* TrackerCDManager+TrackerRecord.swift */,
 				73A630522BB17B6600CDD02C /* CoreData */,
 			);
 			path = Models;
@@ -669,8 +675,11 @@
 			buildRules = (
 			);
 			dependencies = (
+				731569A22BD58F33001E9912 /* PBXTargetDependency */,
 			);
 			name = Tracker;
+			packageProductDependencies = (
+			);
 			productName = Tracker;
 			productReference = 73E562D92BA0A936003A61AB /* Tracker.app */;
 			productType = "com.apple.product-type.application";
@@ -700,6 +709,9 @@
 				ru,
 			);
 			mainGroup = 73E562D02BA0A936003A61AB;
+			packageReferences = (
+				731569A02BD58D30001E9912 /* XCRemoteSwiftPackageReference "SwiftLint" */,
+			);
 			productRefGroup = 73E562DA2BA0A936003A61AB /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -743,6 +755,7 @@
 				739DABFD2BC5689700B13471 /* TrackerVC+HideDatePicker.swift in Sources */,
 				7335BCC12BA1FF8D002271F3 /* TrackerRecord.swift in Sources */,
 				739DABFF2BC5696800B13471 /* TrackerViewModel.swift in Sources */,
+				7367C7E12BD596450069194E /* TrackerCDManager+Statistics.swift in Sources */,
 				73F10E052BC546C30010F5AD /* CreatingNewTrackerVC+ScrollView.swift in Sources */,
 				73B69E942BC7FFB90034A5DA /* EditingTrackerViewModel.swift in Sources */,
 				730CC7122BCEC65D00A43AB4 /* FilterViewModel.swift in Sources */,
@@ -764,6 +777,7 @@
 				73E562F72BA0B411003A61AB /* TabBarController.swift in Sources */,
 				73F10E072BC547990010F5AD /* CreatingNewTrackerVC+CollectionView.swift in Sources */,
 				737D9E202BC477590002391F /* CreatingOneOffTrackerVC+CollectionView.swift in Sources */,
+				7367C7E32BD596B40069194E /* TrackerCDManager+TrackerRecord.swift in Sources */,
 				73FE24122BAAEF9200D2AACA /* CreatingNewTrackerViewController.swift in Sources */,
 				737BEEA02BBBFD9E00101D51 /* FilterTrackersViewController.swift in Sources */,
 				73B5C0112BAE112D00FEF126 /* PassCategoryNameToEditingVC.swift in Sources */,
@@ -814,6 +828,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		731569A22BD58F33001E9912 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 731569A12BD58F33001E9912 /* SwiftLintPlugin */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		73412A962BD3D1370052DD59 /* InfoPlist.strings */ = {
@@ -1064,6 +1085,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		731569A02BD58D30001E9912 /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/SwiftLint.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.54.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		731569A12BD58F33001E9912 /* SwiftLintPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 731569A02BD58D30001E9912 /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintPlugin";
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		73A630482BAF6CFB00CDD02C /* TrackerCoreData.xcdatamodeld */ = {
