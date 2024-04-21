@@ -8,7 +8,7 @@
 import UIKit
 
 final class EditingTrackerViewController: UIViewController {
-    
+
     // MARK: - UI Properties
     lazy var counterLabel: UILabel = {
         let label = UILabel()
@@ -16,7 +16,7 @@ final class EditingTrackerViewController: UIViewController {
         label.textAlignment = .center
         label.text = viewModel.countOfCompletedDays
         return label
-    } ()
+    }()
     lazy var trackerNameTextField: UITextField = {
         let textField = UITextField()
         textField.text = viewModel.trackerName
@@ -30,7 +30,7 @@ final class EditingTrackerViewController: UIViewController {
         textField.heightAnchor.constraint(equalToConstant: 75).isActive = true
         textField.delegate = self
         return textField
-    } ()
+    }()
     lazy var cancelButton = setupButtons(title: SGen.cancel)
     lazy var saveButton = setupButtons(title: SGen.save)
     lazy var exceedLabel: UILabel = {
@@ -41,47 +41,47 @@ final class EditingTrackerViewController: UIViewController {
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.isHidden = true
         return label
-    } ()
+    }()
     lazy var contentStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.distribution = .equalCentering
         return stack
-    } ()
-    
+    }()
+
     let emojiCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     let colorsCollection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-    
+
     let tableView = UITableView()
     let rowHeight = CGFloat(75)
-    
+
     // MARK: - Public Properties
     var viewModel: EditingTrackerViewModelProtocol
-    
+
     // MARK: - Initializers
-    
+
     init(viewModel: EditingTrackerViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         dataBinding()
-        
+
         setupUI()
-                
+
         addTapGestureToHideKeyboard()
     }
-    
+
     // MARK: - IB Actions
-    
+
     func dataBinding() {
         viewModel.updateSaveButton = { [weak self] in
             guard let self else { return }
@@ -90,25 +90,25 @@ final class EditingTrackerViewController: UIViewController {
             }
         }
     }
-    
+
     @objc private func clearTextButtonTapped(_ sender: UIButton) {
         trackerNameTextField.text = ""
         isCreateButtonEnable()
     }
-    
+
     @objc func cancelButtonTapped(_ sender: UIButton) {
         dismiss(animated: true)
     }
-    
+
     @objc func createButtonTapped(_ sender: UIButton) {
         viewModel.updateTracker()
         dismiss(animated: true)
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func setupTextField() {
-        
+
         let rightPaddingView = UIView()
         let clearTextFieldButton: UIButton = {
             let button = UIButton(type: .custom)
@@ -120,8 +120,8 @@ final class EditingTrackerViewController: UIViewController {
             button.setImage(image, for: .normal)
             button.addTarget(self, action: #selector(clearTextButtonTapped), for: .touchUpInside)
             return button
-        } ()
-        
+        }()
+
         lazy var clearTextStack: UIStackView = {
             let stack = UIStackView()
             stack.axis = .horizontal
@@ -130,40 +130,43 @@ final class EditingTrackerViewController: UIViewController {
             stack.translatesAutoresizingMaskIntoConstraints = false
             stack.widthAnchor.constraint(equalToConstant: 28).isActive = true
             return stack
-        } ()
-        
+        }()
+
         trackerNameTextField.rightView = clearTextStack
         trackerNameTextField.rightViewMode = .whileEditing
     }
-    
+
     func isCreateButtonEnable() {
-        viewModel.isAllFieldsFilled() ? saveButtonIsActive() : saveButtonIsNotActive()
+        if viewModel.isAllFieldsFilled() {
+            saveButtonIsActive()
+        } else { saveButtonIsNotActive()
+        }
     }
-    
+
     func saveButtonIsActive() {
         saveButton.isEnabled = true
         saveButton.backgroundColor = AppColors.buttonBlack
     }
-    
+
     func saveButtonIsNotActive() {
         saveButton.isEnabled = false
         saveButton.backgroundColor = AppColors.buttonGray
     }
-    
+
     private func setupUI() {
-        
+
         self.title = SGen.editingATracker
-        view.backgroundColor = AppColors.background 
-        
+        view.backgroundColor = AppColors.background
+
         setupTextField()
         setupContentStack()
         setupScrollView()
         setupTableView()
         setupEmojiCollectionView()
         setupColorsCollectionView()
-        
+
     }
-    
+
     private func setupButtons(title: String) -> UIButton {
         let button = UIButton()
         button.setTitle(title, for: .normal)
@@ -176,11 +179,11 @@ final class EditingTrackerViewController: UIViewController {
         button.heightAnchor.constraint(equalToConstant: 60).isActive = true
         return button
     }
-    
+
     func showLabelExceedTextFieldLimit() {
         exceedLabel.isHidden = false
     }
-    
+
     func hideLabelExceedTextFieldLimit() {
         exceedLabel.isHidden = true
     }

@@ -8,11 +8,11 @@
 import Foundation
 
 protocol FilterViewModelProtocol {
-    
+
     var selectedFilter: String { get set }
-    
+
     func sendLastFilterToCoreData(filter: String)
-    
+
     func getLastFilterFromCoreData()
-    
+
 }

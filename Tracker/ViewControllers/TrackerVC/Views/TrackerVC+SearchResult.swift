@@ -9,23 +9,24 @@ import UIKit
 
 // MARK: - UISearchResultsUpdating
 extension TrackerViewController: UISearchResultsUpdating {
-    
+
     func setupSearchController() {
-        
+
         // Устанавливаем цвет плейсхолдера серчбара
         guard let textFieldInsideSearchBar = searchController.searchBar.value(forKey: "searchField") as? UITextField,
               let color = AppColors.searchTextFieldPlaceholder else { return }
-        
-        textFieldInsideSearchBar.attributedPlaceholder = NSAttributedString(string: SGen.search, attributes: [NSAttributedString.Key.foregroundColor: color])
-        
+
+        textFieldInsideSearchBar.attributedPlaceholder = NSAttributedString(
+            string: SGen.search, attributes: [NSAttributedString.Key.foregroundColor: color])
+
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
-        
+
         navigationItem.searchController = searchController
         definesPresentationContext = false
     }
-    
+
     func updateSearchResults(for searchController: UISearchController) {
         if let searchBarText = searchController.searchBar.text?.lowercased(),
            !searchBarText.isEmpty {

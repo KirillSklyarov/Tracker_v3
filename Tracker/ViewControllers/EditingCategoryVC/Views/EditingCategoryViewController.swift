@@ -8,39 +8,39 @@
 import UIKit
 
 final class EditingCategoryViewController: UIViewController {
-    
+
     // MARK: - UI Properties
     let categoryNameTextField = UITextField()
     let doneButton = UIButton()
-    
+
     // MARK: - Private Properties
     let viewModel = EditingCategoryViewModel()
-            
+
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupUI()
-        
+
         addTapGestureToHideKeyboard()
     }
-    
+
     // MARK: - IB Actions
     @objc private func clearTextButtonTapped(_ sender: UIButton) {
         categoryNameTextField.text = ""
     }
-    
+
     @objc private func doneButtonTapped(_ sender: UIButton) {
         guard let newCategoryHeader = categoryNameTextField.text else { return }
         viewModel.doneButtonTapped(newCategoryHeader: newCategoryHeader)
         dismiss(animated: true)
     }
-    
+
     // MARK: - Private Methods
     private func setupTextField() {
-        
+
         let rightPaddingView = UIView()
-        
+
         let clearTextFieldButton: UIButton = {
             let button = UIButton(type: .custom)
             let configuration = UIImage.SymbolConfiguration(pointSize: 17)
@@ -51,8 +51,8 @@ final class EditingCategoryViewController: UIViewController {
             button.setImage(image, for: .normal)
             button.addTarget(self, action: #selector(clearTextButtonTapped), for: .touchUpInside)
             return button
-        } ()
-        
+        }()
+
         let clearTextStack: UIStackView = {
             let stack = UIStackView()
             stack.axis = .horizontal
@@ -61,8 +61,8 @@ final class EditingCategoryViewController: UIViewController {
             stack.translatesAutoresizingMaskIntoConstraints = false
             stack.widthAnchor.constraint(equalToConstant: 28).isActive = true
             return stack
-        } ()
-        
+        }()
+
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
         categoryNameTextField.leftView = leftPaddingView
         categoryNameTextField.leftViewMode = .always
@@ -74,30 +74,30 @@ final class EditingCategoryViewController: UIViewController {
         categoryNameTextField.heightAnchor.constraint(equalToConstant: 75).isActive = true
         categoryNameTextField.delegate = self
     }
-    
+
     private func setupUI() {
-        
+
         setupDoneButton()
-        
+
         setupTextField()
-        
+
         self.title = SGen.editingACategory
-        
+
         view.backgroundColor = AppColors.background
-        
+
         view.addSubViews([categoryNameTextField, doneButton])
-        
+
         NSLayoutConstraint.activate([
             categoryNameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             categoryNameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             categoryNameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            
+
             doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
     }
-    
+
     private func setupDoneButton() {
         doneButton.setTitle("Готово", for: .normal)
         doneButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)

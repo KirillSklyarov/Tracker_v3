@@ -9,25 +9,25 @@ import UIKit
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
 extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelegate {
-    
+
     func setupTableView() {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        
+
         tableView.layer.cornerRadius = 10
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         tableView.separatorColor = AppColors.separator
     }
-    
+
     func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.tableViewRows.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
         cell.textLabel?.text = viewModel.tableViewRows[indexPath.row]
@@ -36,7 +36,7 @@ extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelega
         cell.detailTextLabel?.textColor = AppColors.buttonGray
         cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.selectionStyle = .none
-        
+
         if indexPath.row == 0 {
             if viewModel.category != nil {
                 cell.detailTextLabel?.text = viewModel.category
@@ -46,22 +46,22 @@ extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelega
                 cell.detailTextLabel?.text = viewModel.schedule
             }
         }
-        
+
         let disclosureImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 7, height: 12))
         disclosureImage.image = UIImage(named: "chevron")
         cell.accessoryView = disclosureImage
-        
+
         if indexPath.row == viewModel.tableViewRows.count - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         }
-        
+
         return cell
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-       rowHeight
+        rowHeight
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let data = viewModel.tableViewRows[indexPath.row]
         if data == SGen.category {
@@ -87,7 +87,7 @@ extension EditingTrackerViewController: UITableViewDataSource, UITableViewDelega
             present(navVC, animated: true)
         }
     }
-    
+
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }

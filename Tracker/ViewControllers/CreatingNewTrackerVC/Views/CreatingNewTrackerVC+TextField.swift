@@ -9,13 +9,15 @@ import UIKit
 
 // MARK: - UITextFieldDelegate
 extension CreatingNewTrackerViewController: UITextFieldDelegate {
-    
+
     func textFieldDidChangeSelection(_ textField: UITextField) {
         textField.textColor = AppColors.textFieldText
         viewModel.trackerName = textField.text
     }
-    
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
         let currentCharacterCount = textField.text?.count ?? 0
         if currentCharacterCount <= 25 {
             hideLabelExceedTextFieldLimit()
@@ -29,4 +31,3 @@ extension CreatingNewTrackerViewController: UITextFieldDelegate {
         }
     }
 }
-

@@ -8,19 +8,19 @@
 import Foundation
 
 final class EditingCategoryViewModel {
-    
+
     let coreDataManager = TrackerCoreManager.shared
-    
+
     var updateCategoryNameClosure: ( () -> Void )?
-    
+
     var categoryHeader = String() {
         didSet {
             categoryNameClosure?(categoryHeader)
         }
     }
-    
+
     var categoryNameClosure: ( (String) -> Void )?
-    
+
     func doneButtonTapped(newCategoryHeader: String) {
         coreDataManager.renameCategory(header: self.categoryHeader, newHeader: newCategoryHeader)
         let renameCategoryNotification = Notification.Name("renameCategory")
@@ -28,4 +28,3 @@ final class EditingCategoryViewModel {
         updateCategoryNameClosure?()
     }
 }
-

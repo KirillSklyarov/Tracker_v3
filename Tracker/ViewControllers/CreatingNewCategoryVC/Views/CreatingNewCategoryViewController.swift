@@ -8,7 +8,7 @@
 import UIKit
 
 final class CreatingNewCategoryViewController: BaseViewController {
-    
+
     // MARK: - UI Properties
     lazy var categoryNameTextField: UITextField = {
         let textField = UITextField()
@@ -24,7 +24,7 @@ final class CreatingNewCategoryViewController: BaseViewController {
         textField.addTarget(self, action: #selector(textFieldEditing), for: .editingChanged)
         textField.delegate = self
         return textField
-    } ()
+    }()
     lazy var doneButton: UIButton = {
         let button = UIButton()
         button.setTitle("Готово", for: .normal)
@@ -38,57 +38,61 @@ final class CreatingNewCategoryViewController: BaseViewController {
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         button.isEnabled = false
         return button
-    } ()
-    
+    }()
+
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupUI()
-        
+
         addTapGestureToHideKeyboard()
-        
+
     }
-    
+
     // MARK: - IB Actions
     @objc private func textFieldEditing(_ sender: UITextField) {
         if let text = sender.text {
-            !text.isEmpty ? doneButtonIsActive() : doneButtonIsNotActive()
+            if !text.isEmpty {
+                doneButtonIsActive()
+            } else {
+                doneButtonIsNotActive()
+            }
         }
     }
-    
+
     @objc private func doneButtonTapped(_ sender: UIButton) {
         guard let newCategoryName = categoryNameTextField.text else { return }
         viewModel.updateCategory?(newCategoryName)
         dismiss(animated: true)
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func setupUI() {
-        
+
         self.title = "Новая категория"
-        
+
         view.backgroundColor = AppColors.background
-        
+
         view.addSubViews([categoryNameTextField, doneButton])
-        
+
         NSLayoutConstraint.activate([
             categoryNameTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             categoryNameTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             categoryNameTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            
+
             doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
     }
-    
+
     private func doneButtonIsActive() {
         doneButton.isEnabled = true
         doneButton.backgroundColor = AppColors.buttonBlack
     }
-    
+
     private func doneButtonIsNotActive() {
         doneButton.isEnabled = false
         doneButton.backgroundColor = AppColors.buttonGray

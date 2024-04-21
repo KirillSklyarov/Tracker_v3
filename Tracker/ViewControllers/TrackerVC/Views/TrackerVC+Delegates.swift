@@ -8,13 +8,12 @@
 import UIKit
 
 extension TrackerViewController: DataProviderDelegate {
-    
+
     func didUpdate(_ update: TrackersStoreUpdate) {
         trackersCollectionView.reloadData()
         showOrHidePlaceholder()
     }
 }
-
 
 extension TrackerViewController {
     @objc func closeFewVCAfterCreatingTracker() {

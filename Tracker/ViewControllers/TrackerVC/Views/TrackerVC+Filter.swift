@@ -8,11 +8,11 @@
 import UIKit
 
 extension TrackerViewController: FilterCategoryDelegate {
-    
+
     var completedTrackersID: [String] {
         getCompletedTrackers()
     }
-    
+
     func getFilterFromPreviousVC(filter: String) {
         switch filter {
         case "Все трекеры": showAllTrackersForThisDay()
@@ -22,20 +22,20 @@ extension TrackerViewController: FilterCategoryDelegate {
         default: dismiss(animated: true)
         }
     }
-    
+
     // MARK: - Фильтр "Все трекеры"
     func showAllTrackersForThisDay() {
         viewModel.coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
         viewModel.dataUpdated?()
     }
-    
+
     // MARK: - Фильтр "Трекеры на сегодня"
     func showAllTrackersForToday() {
         uploadDataFromCoreDataForToday()
         setDateForDatePicker()
         viewModel.dataUpdated?()
     }
-    
+
     func uploadDataFromCoreDataForToday() {
         let calendar = Calendar.current
         let date = Date()
@@ -45,17 +45,17 @@ extension TrackerViewController: FilterCategoryDelegate {
         print(weekDayString)
         viewModel.coreDataManager.getAllTrackersForWeekday(weekDay: weekDayString)
     }
-    
+
     func setDateForDatePicker() {
         let date = Date()
         let dateToString = MainHelper.dateToString(date: date)
         dateButton.setTitle(dateToString, for: .normal)
         datePicker.date = date
     }
-    
+
     // MARK: - Фильтр "Завершенные"
     func showCompletedTrackersForDay() {
-        
+
         if completedTrackersID.isEmpty {
             viewModel.coreDataManager.getEmptyBaseForEmptyScreen()
         } else {
@@ -63,10 +63,10 @@ extension TrackerViewController: FilterCategoryDelegate {
         }
         viewModel.dataUpdated?()
     }
-    
+
     // MARK: - Фильтр "Незавершенные"
     func showIncompleteTrackersForDay() {
-        
+
         if completedTrackersID.isEmpty {
             viewModel.coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
         } else {
@@ -74,7 +74,7 @@ extension TrackerViewController: FilterCategoryDelegate {
         }
         viewModel.dataUpdated?()
     }
-    
+
     // MARK: - Supporting Methods
     func getCompletedTrackers() -> [String] {
         let date = datePicker.date
