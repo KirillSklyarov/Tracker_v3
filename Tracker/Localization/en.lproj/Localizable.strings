@@ -13,7 +13,7 @@
 "Filters";
 "Creating a tracker";
 "One-time event";
-"There's nothing to analyze";
+"There's nothing to analyze yet";
 "The best period";
 "Ideal days";
 "Completed trackers";
@@ -45,3 +45,4 @@
 "Today trackers";
 "Completed";
 "Incomplete";
+"Pin";

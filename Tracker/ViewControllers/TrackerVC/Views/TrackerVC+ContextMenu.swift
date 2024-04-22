@@ -15,7 +15,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
 
         return UIContextMenuConfiguration(actionProvider: { (_) -> UIMenu? in
 
-            let lockAction = UIAction(title: "Закрепить") { [weak self] _ in
+            let lockAction = UIAction(title: SGen.pin) { [weak self] _ in
                 guard let self else { return }
 
                 //                if stickyCollectionView.frame.contains(location) {

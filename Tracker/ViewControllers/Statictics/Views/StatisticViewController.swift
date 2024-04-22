@@ -19,7 +19,7 @@ class StatisticViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
-        label.text = SGen.thereSNothingToAnalyze
+        label.text = SGen.thereSNothingToAnalyzeYet
         return label
     }()
 

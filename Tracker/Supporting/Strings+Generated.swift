@@ -60,6 +60,8 @@ internal enum SGen {
   internal static let newTracker = SGen.tr("Localizable", "New tracker", fallback: "Новая привычка")
   /// Нерегулярные события
   internal static let oneTimeEvent = SGen.tr("Localizable", "One-time event", fallback: "Нерегулярные события")
+  /// Закрепить
+  internal static let pin = SGen.tr("Localizable", "Pin", fallback: "Закрепить")
   /// Суббота
   internal static let saturday = SGen.tr("Localizable", "Saturday", fallback: "Суббота")
   /// Сохранить
@@ -75,7 +77,7 @@ internal enum SGen {
   /// Лучший период
   internal static let theBestPeriod = SGen.tr("Localizable", "The best period", fallback: "Лучший период")
   /// Анализировать пока нечего
-  internal static let thereSNothingToAnalyze = SGen.tr("Localizable", "There's nothing to analyze", fallback: "Анализировать пока нечего")
+  internal static let thereSNothingToAnalyzeYet = SGen.tr("Localizable", "There's nothing to analyze yet", fallback: "Анализировать пока нечего")
   /// Четверг
   internal static let thursday = SGen.tr("Localizable", "Thursday", fallback: "Четверг")
   /// Трекеры на сегодня
@@ -119,4 +121,4 @@ private final class BundleToken {
   }()
 }
 // swiftlint:enable convenience_type
-// swiftlint:enable all
+// swiftlint:disable all

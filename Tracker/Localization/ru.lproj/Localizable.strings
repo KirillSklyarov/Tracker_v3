@@ -15,7 +15,7 @@
 "Creating a tracker" = "Создание трекера";
 "Tracker" = "Привычка";
 "One-time event" = "Нерегулярные события";
-"There's nothing to analyze" = "Анализировать пока нечего";
+"There's nothing to analyze yet" = "Анализировать пока нечего";
 "The best period" = "Лучший период";
 "Ideal days" = "Идеальные дни";
 "Completed trackers" = "Трекеров завершено";
@@ -49,3 +49,5 @@
 "Today trackers" = "Трекеры на сегодня";
 "Completed" = "Завершенные";
 "Incomplete" = "Незавершенные";
+"Pin" = "Закрепить";
+

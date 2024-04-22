@@ -56,7 +56,7 @@ extension EditingTrackerViewController: UICollectionViewDataSource,
             if indexPath == viewModel.emojiIndexPath {
                 cell.isSelected = true
                 cell.layer.cornerRadius = 8
-                cell.backgroundColor = AppColors.background
+                cell.backgroundColor = AppColors.selectionCell
             }
 
             return cell

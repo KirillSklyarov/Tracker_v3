@@ -79,12 +79,12 @@ extension CreatingOneOffTrackerVC {
             tableView.heightAnchor.constraint(equalToConstant: 75),
 
             emojiCollection.topAnchor.constraint(equalTo: tableView.bottomAnchor),
-            emojiCollection.heightAnchor.constraint(equalToConstant: 204),
+            emojiCollection.heightAnchor.constraint(equalToConstant: 222),
 
-            colorsCollection.topAnchor.constraint(equalTo: emojiCollection.bottomAnchor, constant: 8),
-            colorsCollection.heightAnchor.constraint(equalToConstant: 230),
+            colorsCollection.topAnchor.constraint(equalTo: emojiCollection.bottomAnchor),
+            colorsCollection.heightAnchor.constraint(equalToConstant: 222),
 
-            buttonsStack.topAnchor.constraint(equalTo: colorsCollection.bottomAnchor, constant: 16),
+            buttonsStack.topAnchor.constraint(equalTo: colorsCollection.bottomAnchor, constant: 8),
             buttonsStack.heightAnchor.constraint(equalToConstant: 60)
 
         ])

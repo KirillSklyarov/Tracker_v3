@@ -27,9 +27,9 @@ extension EditingTrackerViewController {
 
         screenScrollView.addSubViews([contentView])
 
-        let hConst = contentView.heightAnchor.constraint(equalTo: screenScrollView.heightAnchor)
-        hConst.isActive = true
-        hConst.priority = UILayoutPriority(50)
+//        let hConst = contentView.heightAnchor.constraint(equalTo: screenScrollView.heightAnchor)
+//        hConst.isActive = true
+//        hConst.priority = UILayoutPriority(50)
 
         NSLayoutConstraint.activate([
             contentView.topAnchor.constraint(equalTo: screenScrollView.topAnchor),
@@ -104,10 +104,10 @@ extension EditingTrackerViewController {
             tableView.heightAnchor.constraint(equalToConstant: 150),
 
             emojiCollection.topAnchor.constraint(equalTo: tableView.bottomAnchor),
-            emojiCollection.heightAnchor.constraint(equalToConstant: 204),
+            emojiCollection.heightAnchor.constraint(equalToConstant: 222),
 
-            colorsCollection.topAnchor.constraint(equalTo: emojiCollection.bottomAnchor, constant: 8),
-            colorsCollection.heightAnchor.constraint(equalToConstant: 238),
+            colorsCollection.topAnchor.constraint(equalTo: emojiCollection.bottomAnchor),
+            colorsCollection.heightAnchor.constraint(equalToConstant: 222),
 
             buttonsStack.topAnchor.constraint(equalTo: colorsCollection.bottomAnchor, constant: 16),
             buttonsStack.bottomAnchor.constraint(equalTo: contentStackView.bottomAnchor)
