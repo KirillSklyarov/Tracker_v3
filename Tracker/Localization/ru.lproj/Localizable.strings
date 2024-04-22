@@ -50,4 +50,10 @@
 "Completed" = "Завершенные";
 "Incomplete" = "Незавершенные";
 "Pin" = "Закрепить";
-
+"Unpin" = "Открепить";
+"What are we going to track?" = "Что будем отслеживать?";
+"Nothing found" = "Ничего не найдено";
+"New category" = "Новая категория";
+"Enter new category name" = "Введите название категории";
+"Are you sure you want to delete the tracker" = "Уверены, что хотите удалить трекер";
+"Pinned" = "Закрепленные";

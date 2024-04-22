@@ -18,7 +18,7 @@ extension TrackerCoreManager {
             let answer = !result.filter { $0.header == "Закрепленные" }.isEmpty
             return answer
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return false
         }
     }
@@ -69,7 +69,7 @@ extension TrackerCoreManager {
             save()
             print("Tracker is Fixed successfully ✅")
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
         }
     }
 
@@ -78,7 +78,7 @@ extension TrackerCoreManager {
         do {
             return try context.count(for: request)
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return 0
         }
     }
@@ -94,7 +94,7 @@ extension TrackerCoreManager {
             }
             return result
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return ["Ooops"]
         }
     }
@@ -115,7 +115,7 @@ extension TrackerCoreManager {
             }
             return result
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return ["Ooops"]
         }
     }
@@ -133,7 +133,7 @@ extension TrackerCoreManager {
             result[weekDay] = data
             return result
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return [:]
         }
     }
@@ -151,7 +151,7 @@ extension TrackerCoreManager {
             result[weekDay] = data
             return result
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return [:]
         }
     }
@@ -212,7 +212,7 @@ extension TrackerCoreManager {
             let sortedArray = countsByDate.sorted(by: {$0.key < $1.key})
             return Dictionary(uniqueKeysWithValues: sortedArray)
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return [:]
         }
     }
@@ -234,7 +234,7 @@ extension TrackerCoreManager {
             let sortedArray = trackerRecordsForDate.sorted(by: {$0.key < $1.key})
             return Dictionary(uniqueKeysWithValues: sortedArray)
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return [:]
         }
     }
@@ -256,7 +256,7 @@ extension TrackerCoreManager {
             print("AllTrackers \(trackers)")
             return trackers
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return [:]
         }
     }
@@ -279,7 +279,7 @@ extension TrackerCoreManager {
             }
             return countsByID
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return [:]
         }
     }
@@ -306,7 +306,7 @@ extension TrackerCoreManager {
             }
             return countsByID
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return [:]
         }
     }

@@ -87,10 +87,13 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
 
         let newTask = TrackerCategory(header: category,
                                       trackers: [Tracker(id: UUID(),
-                                                         name: name,
-                                                         color: color,
-                                                         emoji: emoji,
-                                                         schedule: schedule)])
+                                                    name: name,
+                                                    color: color,
+                                                    emoji: emoji,
+                                                    schedule: schedule
+//                                                    isPinned: false
+                                                        )
+                                      ])
         coreDataManager.createNewTracker(newTracker: newTask)
         getBackToMainScreen()
     }
@@ -164,14 +167,17 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
             print("Hmmmm, bad thing"); return
         }
 
-        let trackerWithAnotherCategory = TrackerCategory(header: category,
-                                                         trackers: [Tracker(
-                                                            id: id,
-                                                            name: name,
-                                                            color: colorHex,
-                                                            emoji: emoji,
-                                                            schedule: schedule)
-                                                         ])
+        let trackerWithAnotherCategory = TrackerCategory(
+            header: category,
+            trackers: [Tracker(
+                id: id,
+                name: name,
+                color: colorHex,
+                emoji: emoji,
+                schedule: schedule
+//                isPinned: false
+            )
+            ])
 
         print(trackerWithAnotherCategory)
 

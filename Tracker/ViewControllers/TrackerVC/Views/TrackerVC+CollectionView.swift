@@ -17,23 +17,24 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
 
         stickyCollectionView.isScrollEnabled = false
 
-        stickyCollectionView.register(TrackerCollectionViewCell.self,
-                                      forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)
+        stickyCollectionView.register(
+            TrackerCollectionViewCell.self,
+            forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)
 
-        stickyCollectionView.register(SupplementaryView.self,
-                                      forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                                      withReuseIdentifier: "header")
-        stickyCollectionView.register(SupplementaryView.self,
-                                      forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-                                      withReuseIdentifier: "footer")
+        stickyCollectionView.register(
+            SupplementaryView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "header")
+        stickyCollectionView.register(
+            SupplementaryView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "footer")
 
-        //        print("collectionElements \(collectionElements)")
-        //        print("collectionElements / 2 \(collectionElements / 2)")
+        stickyCollectionView.backgroundColor = AppColors.background
+        //        stickyCollectionView.layer.borderWidth = 1
 
-        stickyCollectionView.layer.borderWidth = 1
-
-        _ = calculationOfStickyCollectionHeight()
-        //                print("collectionHeight \(collectionHeight)")
+        let collectionHeight = calculationOfStickyCollectionHeight()
+        print("collectionHeight \(collectionHeight)")
 
         view.addSubViews([stickyCollectionView])
 
@@ -41,24 +42,20 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
             stickyCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             stickyCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             stickyCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            stickyCollectionView.heightAnchor.constraint(equalToConstant: 0)
-            //                collectionHeight)
+            stickyCollectionView.heightAnchor.constraint(equalToConstant: collectionHeight)
         ])
     }
 
     func calculationOfStickyCollectionHeight() -> CGFloat {
-        var collectionElements = viewModel.coreDataManager.numberOfRowsInStickySection()
+        var collectionElements = viewModel.coreDataManager.numberOfPinnedItems()
         var collectionHeight: CGFloat  // = CGFloat(200)
-        let cellHeight = 200
+        var cellHeight = 200
 
         if collectionElements % 2 != 0 {
-            //            cellHeight = 180
+            cellHeight = 180
             collectionElements += 1
-            //            collectionHeight = Double(collectionElements / 2) * Double(cellHeight)
-        } else {
-            //            cellHeight = 200
-            //            collectionHeight = Double(collectionElements + 1 / 2) * Double(cellHeight)
         }
+
         collectionHeight = Double(collectionElements / 2) * Double(cellHeight)
 
         return collectionHeight
@@ -71,20 +68,23 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
 
         trackersCollectionView.backgroundColor = AppColors.background
 
-        trackersCollectionView.register(TrackerCollectionViewCell.self,
-                                        forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)
+        trackersCollectionView.register(
+            TrackerCollectionViewCell.self,
+            forCellWithReuseIdentifier: TrackerCollectionViewCell.identifier)
 
-        trackersCollectionView.register(SupplementaryView.self,
-                                        forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                                        withReuseIdentifier: "header")
-        trackersCollectionView.register(SupplementaryView.self,
-                                        forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-                                        withReuseIdentifier: "footer")
+        trackersCollectionView.register(
+            SupplementaryView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "header")
+        trackersCollectionView.register(
+            SupplementaryView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "footer")
 
         view.addSubViews([trackersCollectionView])
 
         NSLayoutConstraint.activate([
-            trackersCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0),
+            trackersCollectionView.topAnchor.constraint(equalTo: stickyCollectionView.bottomAnchor, constant: 0),
             trackersCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             trackersCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
@@ -93,22 +93,18 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         if collectionView == stickyCollectionView {
-            return 0
+            return 1
         } else {
             return viewModel.coreDataManager.numberOfSections
         }
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        //        if collectionView == stickyCollectionView {
-        //            print(" Trackers in Sticky \(viewModel.coreDataManager.numberOfRowsInStickySection())")
-
-        //            return 0
-        //            viewModel.coreDataManager.numberOfRowsInStickySection()
-        //        } else {
-        //            print(section)
-        //            print(viewModel.coreDataManager.numberOfRowsInSection(section))
-        return viewModel.coreDataManager.numberOfRowsInSection(section)
+        if collectionView == stickyCollectionView {
+            return viewModel.coreDataManager.numberOfPinnedItems()
+        } else {
+            return viewModel.coreDataManager.numberOfRowsInSection(section)
+        }
     }
 
     func collectionView(_ collectionView: UICollectionView,
@@ -126,27 +122,39 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
             return UICollectionViewCell()
         }
 
-        //        guard let object = viewModel.coreDataManager.getObjectWithStickyCategory(
-        // indexPath: indexPath) as? TrackerCoreData else {
-        //            print("We have some problems with decoding here")
-        //            return UICollectionViewCell()
-        //        }
+        if collectionView == stickyCollectionView {
 
-        //        print("object: \(object)")
+            configureStickyCollection(cell: cell, indexPath: indexPath)
+            print(cell.plusButton.isEnabled)
+        } else {
+            configureTrackerCollection(cell: cell, indexPath: indexPath)
 
-        guard let object = viewModel.coreDataManager.object(at: indexPath) else {
-            print("We have some problems with decoding here")
-            return UICollectionViewCell()
         }
-
-        configureCell(tracker: object, cell: cell, indexPath: indexPath)
-
         return cell
     }
 
+    func configureStickyCollection(cell: TrackerCollectionViewCell, indexPath: IndexPath) {
+        guard let pinnedTrackers = viewModel.coreDataManager.getAllPinnedTrackers() else {
+            print("1We have some problems with decoding here")
+            return
+        }
+        //        print("pinnedTrackers \(pinnedTrackers)")
+        let pinnedTracker = pinnedTrackers[indexPath.item]
+        configureCell(tracker: pinnedTracker, cell: cell)
+    }
+
+    func configureTrackerCollection(cell: TrackerCollectionViewCell, indexPath: IndexPath) {
+        guard let unpinnedTrackers = viewModel.coreDataManager.getAllUnPinnedTrackers() else {
+            print("2We have some problems with decoding here")
+            return
+        }
+        //        print("unpinnedTrackers \(unpinnedTrackers)")
+        let unpinnedTracker = unpinnedTrackers[indexPath.item]
+        configureCell(tracker: unpinnedTracker, cell: cell)
+    }
+
     private func configureCell(tracker: TrackerCoreData,
-                               cell: TrackerCollectionViewCell,
-                               indexPath: IndexPath) {
+                               cell: TrackerCollectionViewCell) {
         guard let trackerID = tracker.id else { print("Pam-pa-ram"); return }
 
         let trackerColor = UIColor(hex: tracker.colorHex ?? "#000000")
@@ -163,21 +171,19 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
         let countOfDays = MainHelper.countOfDaysForTheTrackerInString(trackerId: trackerID.uuidString)
         cell.daysLabel.text = countOfDays
 
+        showPinImage(tracker: tracker, cell: cell)
+
         showDoneOrUndoneTaskForDatePickerDate(tracker: tracker, cell: cell)
 
         let interaction = UIContextMenuInteraction(delegate: self)
         cell.frameView.addInteraction(interaction)
     }
 
-    //    func showPinForStickyTrackers(cell: TrackerCollectionViewCell, indexPath: IndexPath) {
-    //        guard let section = viewModel.coreDataManager.correctSectionsWithStickySectionFirst()
-    // else { print("Jopa"); return }
-    //        let categoryName = section[indexPath.section].name
-    //
-    //        if categoryName == "Закрепленные" {
-    //            cell.pinImage.isHidden = false
-    //        }
-    //    }
+    func showPinImage(tracker: TrackerCoreData, cell: TrackerCollectionViewCell) {
+        if tracker.isPinned == true {
+            cell.pinImage.isHidden = false
+        }
+    }
 
     func collectionView(_ collectionView: UICollectionView,
                         viewForSupplementaryElementOfKind kind: String,
@@ -196,17 +202,13 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
             print("We have some problems with header"); return UICollectionReusableView()
         }
         if collectionView == stickyCollectionView {
-            let header = "Закрепленные"
+            let header = SGen.pinned
             view.label.text = header
         } else {
             if let headers = viewModel.coreDataManager.fetchedResultsController?.sections {
                 view.label.text = headers[indexPath.section].name
             }
         }
-
-        //   guard let headers = viewModel.coreDataManager.correctSectionsWithStickySectionFirst()
-        // else { print("Shit"); return UICollectionReusableView()}
-        //        view.label.text = headers[indexPath.section].name
 
         return view
     }

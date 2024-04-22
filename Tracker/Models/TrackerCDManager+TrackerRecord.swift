@@ -19,7 +19,7 @@ extension TrackerCoreManager {
             print("All TrackerRecords deleted successfully ✅")
             save()
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
         }
     }
 
@@ -30,7 +30,7 @@ extension TrackerCoreManager {
             let result = try context.fetch(request)
             print("AllTrackerRecord: \(result)")
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
         }
     }
 
@@ -61,7 +61,7 @@ extension TrackerCoreManager {
                 print("We can't find the tracker")
             }
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
         }
     }
 
@@ -80,7 +80,7 @@ extension TrackerCoreManager {
             let result = try context.count(for: request)
             return result > 0
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return false
         }
     }
@@ -95,7 +95,7 @@ extension TrackerCoreManager {
         do {
             return try context.count(for: request)
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return 0
         }
     }
@@ -127,7 +127,7 @@ extension TrackerCoreManager {
             }
             print("TrackerRecords for this tracker deleted ✅")
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
         }
     }
 
@@ -147,7 +147,7 @@ extension TrackerCoreManager {
                 save()
             }
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
         }
     }
 }

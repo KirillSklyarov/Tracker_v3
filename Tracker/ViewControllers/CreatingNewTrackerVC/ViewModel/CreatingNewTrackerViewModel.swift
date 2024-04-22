@@ -65,10 +65,13 @@ final class CreatingNewTrackerViewModel: CreatingNewTrackerViewModelProtocol {
 
         let newTask = TrackerCategory(header: category,
                                       trackers: [Tracker(id: UUID(),
-                                                         name: name,
-                                                         color: color,
-                                                         emoji: emoji,
-                                                         schedule: schedule)])
+                                                    name: name,
+                                                    color: color,
+                                                    emoji: emoji,
+                                                    schedule: schedule
+//                                                    isPinned: false
+                                                        )
+                                      ])
         coreDataManager.createNewTracker(newTracker: newTask)
         getBackToMainScreen()
     }

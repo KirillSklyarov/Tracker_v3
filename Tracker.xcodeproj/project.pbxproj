@@ -59,6 +59,7 @@
 		73A42E1E2BBAA9F700830AF5 /* TrackerRecordCoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A42E182BBAA9F700830AF5 /* TrackerRecordCoreData.swift */; };
 		73A6304A2BAF6CFB00CDD02C /* TrackerCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 73A630482BAF6CFB00CDD02C /* TrackerCoreData.xcdatamodeld */; };
 		73A7F59C2BB304B4006BE2C2 /* TrackerCoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A7F59B2BB304B4006BE2C2 /* TrackerCoreManager.swift */; };
+		73AAB0712BD7006700FBFE88 /* TrackerCDM+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73AAB0702BD7006700FBFE88 /* TrackerCDM+Controller.swift */; };
 		73B0643C2BC6823B00AEDCBA /* ViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B0643B2BC6823B00AEDCBA /* ViewModelProtocol.swift */; };
 		73B064402BC6A13100AEDCBA /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B0643F2BC6A13100AEDCBA /* BaseViewController.swift */; };
 		73B064422BC6AAEF00AEDCBA /* CreatingOneOffTrackerViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B064412BC6AAEF00AEDCBA /* CreatingOneOffTrackerViewModelProtocol.swift */; };
@@ -75,6 +76,7 @@
 		73B69E9C2BC802840034A5DA /* EditingTrackerVC+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B69E9B2BC802840034A5DA /* EditingTrackerVC+TableView.swift */; };
 		73B69E9E2BC802B10034A5DA /* EditingTrackerVC+Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B69E9D2BC802B10034A5DA /* EditingTrackerVC+Delegate.swift */; };
 		73B748D32BCEDABE008091A1 /* MainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B748D22BCEDABE008091A1 /* MainHelper.swift */; };
+		73B75CD82BD6896900723AA5 /* TrackerCoreManager+Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B75CD72BD6896900723AA5 /* TrackerCoreManager+Pin.swift */; };
 		73C961302BBB41A7004E53C1 /* FilterCategoryDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C9612F2BBB41A7004E53C1 /* FilterCategoryDelegate.swift */; };
 		73C97E6A2BA85B2B00725D70 /* ChoosingCategoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C97E692BA85B2B00725D70 /* ChoosingCategoryVC.swift */; };
 		73C97E6C2BA860BE00725D70 /* CreatingNewCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C97E6B2BA860BE00725D70 /* CreatingNewCategoryViewController.swift */; };
@@ -152,6 +154,7 @@
 		73A42E182BBAA9F700830AF5 /* TrackerRecordCoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordCoreData.swift; sourceTree = "<group>"; };
 		73A630492BAF6CFB00CDD02C /* TrackerCoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TrackerCoreData.xcdatamodel; sourceTree = "<group>"; };
 		73A7F59B2BB304B4006BE2C2 /* TrackerCoreManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackerCoreManager.swift; sourceTree = "<group>"; };
+		73AAB0702BD7006700FBFE88 /* TrackerCDM+Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerCDM+Controller.swift"; sourceTree = "<group>"; };
 		73B0643B2BC6823B00AEDCBA /* ViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelProtocol.swift; sourceTree = "<group>"; };
 		73B0643F2BC6A13100AEDCBA /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		73B064412BC6AAEF00AEDCBA /* CreatingOneOffTrackerViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatingOneOffTrackerViewModelProtocol.swift; sourceTree = "<group>"; };
@@ -168,6 +171,7 @@
 		73B69E9B2BC802840034A5DA /* EditingTrackerVC+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditingTrackerVC+TableView.swift"; sourceTree = "<group>"; };
 		73B69E9D2BC802B10034A5DA /* EditingTrackerVC+Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditingTrackerVC+Delegate.swift"; sourceTree = "<group>"; };
 		73B748D22BCEDABE008091A1 /* MainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainHelper.swift; sourceTree = "<group>"; };
+		73B75CD72BD6896900723AA5 /* TrackerCoreManager+Pin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerCoreManager+Pin.swift"; sourceTree = "<group>"; };
 		73C9612F2BBB41A7004E53C1 /* FilterCategoryDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterCategoryDelegate.swift; sourceTree = "<group>"; };
 		73C97E692BA85B2B00725D70 /* ChoosingCategoryVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChoosingCategoryVC.swift; sourceTree = "<group>"; };
 		73C97E6B2BA860BE00725D70 /* CreatingNewCategoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreatingNewCategoryViewController.swift; sourceTree = "<group>"; };
@@ -512,8 +516,10 @@
 			isa = PBXGroup;
 			children = (
 				73A7F59B2BB304B4006BE2C2 /* TrackerCoreManager.swift */,
+				73B75CD72BD6896900723AA5 /* TrackerCoreManager+Pin.swift */,
 				7367C7E02BD596450069194E /* TrackerCDManager+Statistics.swift */,
 				7367C7E22BD596B40069194E /* TrackerCDManager+TrackerRecord.swift */,
+				73AAB0702BD7006700FBFE88 /* TrackerCDM+Controller.swift */,
 				73A630522BB17B6600CDD02C /* CoreData */,
 			);
 			path = Models;
@@ -747,6 +753,7 @@
 				73E562DD2BA0A936003A61AB /* AppDelegate.swift in Sources */,
 				73B69E8C2BC7D2430034A5DA /* CreatingNewTrackerViewModelProtocol.swift in Sources */,
 				737D9E222BC477CF0002391F /* CreatingOneOffTrackerVC+TableView.swift in Sources */,
+				73AAB0712BD7006700FBFE88 /* TrackerCDM+Controller.swift in Sources */,
 				73E562DF2BA0A936003A61AB /* SceneDelegate.swift in Sources */,
 				73A6304A2BAF6CFB00CDD02C /* TrackerCoreData.xcdatamodeld in Sources */,
 				73B69E8E2BC7DF4E0034A5DA /* TrackerViewModelProtocol.swift in Sources */,
@@ -806,6 +813,7 @@
 				7323AE5A2BD2B46700076143 /* String+Ext.swift in Sources */,
 				73B748D32BCEDABE008091A1 /* MainHelper.swift in Sources */,
 				737D9E192BC472B40002391F /* CreatingNewCategoryVC+TextFieldDelegate.swift in Sources */,
+				73B75CD82BD6896900723AA5 /* TrackerCoreManager+Pin.swift in Sources */,
 				73F10E0D2BC5488B0010F5AD /* CreatingNewTrackerViewModel.swift in Sources */,
 				73142ABA2BD411D1006FD67E /* Colors.swift in Sources */,
 				737D9E0B2BC464130002391F /* EditingCategoryViewModel.swift in Sources */,
@@ -1091,8 +1099,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/SwiftLint.git";
 			requirement = {
-				kind = exactVersion;
-				version = 0.54.0;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.54.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

@@ -12,7 +12,7 @@ final class CreatingNewCategoryViewController: BaseViewController {
     // MARK: - UI Properties
     lazy var categoryNameTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название категории"
+        textField.placeholder = SGen.enterNewCategoryName
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 75))
         textField.leftView = leftPaddingView
         textField.leftViewMode = .always
@@ -27,7 +27,7 @@ final class CreatingNewCategoryViewController: BaseViewController {
     }()
     lazy var doneButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Готово", for: .normal)
+        button.setTitle(SGen.done, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(AppColors.createButtonText, for: .normal)
         button.backgroundColor = AppColors.buttonGray
@@ -71,7 +71,7 @@ final class CreatingNewCategoryViewController: BaseViewController {
 
     private func setupUI() {
 
-        self.title = "Новая категория"
+        self.title = SGen.newCategory
 
         view.backgroundColor = AppColors.background
 

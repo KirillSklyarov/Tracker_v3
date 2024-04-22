@@ -7,15 +7,6 @@
 
 import CoreData
 
-struct TrackersStoreUpdate {
-    let insertedIndexes: IndexSet
-    let deletedIndexes: IndexSet
-}
-
-protocol DataProviderDelegate: AnyObject {
-    func didUpdate(_ update: TrackersStoreUpdate)
-}
-
 final class TrackerCoreManager: NSObject {
     static let shared = TrackerCoreManager()
 
@@ -64,7 +55,7 @@ final class TrackerCoreManager: NSObject {
         do {
             try fetchedResultsController?.performFetch()
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
         }
     }
 
@@ -72,10 +63,13 @@ final class TrackerCoreManager: NSObject {
         let request = TrackerCoreData.fetchRequest()
         let predicate1 = NSPredicate(format: "schedule CONTAINS %@", weekDay)
         let predicate2 = NSPredicate(format: "schedule CONTAINS %@", SGen.everyday)
+        let predicate3 = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerCoreData.isPinned), NSNumber(value: false))
         let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2])
+        let finalCompoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [compoundPredicate, predicate3])
         let sort = NSSortDescriptor(key: "category.header", ascending: true)
         request.sortDescriptors = [sort]
-        request.predicate = compoundPredicate
+        request.predicate = finalCompoundPredicate
 
         updateFetchedResultsControllerWithRequest(request: request)
     }
@@ -95,10 +89,9 @@ final class TrackerCoreManager: NSObject {
                 print("trackerCategory.trackers \(trackerCategory.trackers)")
                 print("------------------------------")
             }
-            //            print("fetchData: \(result)")
             return result
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return []
         }
     }
@@ -110,7 +103,7 @@ final class TrackerCoreManager: NSObject {
             let result = transformCoreDataToModel(trackerCategoryCoreData: allTrackers)
             print("printAllTrackersInCoreData: \(result)")
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
         }
     }
 
@@ -129,7 +122,7 @@ final class TrackerCoreManager: NSObject {
             save()
             print("Data deleted ✅")
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
         }
     }
 
@@ -158,11 +151,12 @@ final class TrackerCoreManager: NSObject {
             newTrackerToAdd.colorHex = tracker.color
             newTrackerToAdd.emoji = tracker.emoji
             newTrackerToAdd.schedule = tracker.schedule
+            newTrackerToAdd.isPinned = false
             category.addToTrackers(newTrackerToAdd)
             save()
             print("New Tracker created and Added to category \(header) ✅")
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
         }
     }
 
@@ -172,7 +166,7 @@ final class TrackerCoreManager: NSObject {
             do {
                 try context.save()
             } catch {
-                print(error.localizedDescription)
+                print("\(error.localizedDescription) 🟥")
             }
         }
     }
@@ -214,25 +208,33 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
 
     func numberOfRowsInSection(_ section: Int) -> Int {
         fetchedResultsController?.sections?[section].numberOfObjects ?? 0
-
-        //        guard let sections = correctSectionsWithStickySectionFirst() else { print("Some shit"); return 0}
-        //        return sections[section].numberOfObjects
     }
 
-    //    func getObjectWithStickyCategory(indexPath: IndexPath) -> Any {
-    //        guard let sections = correctSectionsWithStickySectionFirst() else { print("Hmmm"); return 0}
-    ////        print("sections: \(sections[indexPath.section].name)")
-    //        let object = sections[indexPath.section].objects![indexPath.item]
-    //        return object
-    //    }
+    func numberOfPinnedItems() -> Int {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerCoreData.isPinned), NSNumber(value: true))
+        request.predicate = predicate
+        do {
+            return try context.count(for: request)
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+            return 0
+        }
+    }
 
-    //    func correctSectionsWithStickySectionFirst() ->  [any NSFetchedResultsSectionInfo]? {
-    //        guard var sections = fetchedResultsController?.sections else { print("We have problems here"); return nil}
-    //        let firstIndex = sections.firstIndex { $0.name == "Закрепленные" }!
-    //        let firstSection = sections.remove(at: firstIndex)
-    //        sections.insert(firstSection, at: 0)
-    //        return sections
-    //    }
+    func pinnedTrackers() {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerCoreData.isPinned), NSNumber(value: true))
+        request.predicate = predicate
+        do {
+            let result = try context.fetch(request)
+            print("result \(result)")
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+        }
+    }
 
     func numberOfRowsInStickySection() -> Int {
         guard let sections = fetchedResultsController?.sections else { print("Hmmm"); return 0}
@@ -260,7 +262,7 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
                 print("trackers: \(trackers)")
             }
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
         }
     }
 
@@ -271,7 +273,7 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
             let count = try context.count(for: request)
             return count <= 1 ? true : false
         } catch {
-            print(error.localizedDescription)
+            print("\(error.localizedDescription) 🟥")
             return nil
         }
     }
@@ -347,44 +349,6 @@ extension TrackerCoreManager {
             return lastChosenFilter
         } else {
             return "Smth is going wrong"
-        }
-    }
-}
-
-extension TrackerCoreManager {
-
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        insertedIndexes = IndexSet()
-        deletedIndexes = IndexSet()
-    }
-
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-        delegate?.didUpdate(TrackersStoreUpdate(
-            insertedIndexes: insertedIndexes!,
-            deletedIndexes: deletedIndexes!
-        )
-        )
-        insertedIndexes = nil
-        deletedIndexes = nil
-    }
-
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
-                    didChange anObject: Any,
-                    at indexPath: IndexPath?,
-                    for type: NSFetchedResultsChangeType,
-                    newIndexPath: IndexPath?) {
-
-        switch type {
-        case .delete:
-            if let indexPath = indexPath {
-                deletedIndexes?.insert(indexPath.item)
-            }
-        case .insert:
-            if let indexPath = newIndexPath {
-                insertedIndexes?.insert(indexPath.item)
-            }
-        default:
-            break
         }
     }
 }

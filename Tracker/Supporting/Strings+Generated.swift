@@ -14,6 +14,8 @@ internal enum SGen {
   internal static let addACategory = SGen.tr("Localizable", "Add a category", fallback: "Добавить категорию")
   /// Все трекеры
   internal static let allTrackers = SGen.tr("Localizable", "All trackers", fallback: "Все трекеры")
+  /// Уверены, что хотите удалить трекер
+  internal static let areYouSureYouWantToDeleteTheTracker = SGen.tr("Localizable", "Are you sure you want to delete the tracker", fallback: "Уверены, что хотите удалить трекер")
   /// Отменить
   internal static let cancel = SGen.tr("Localizable", "Cancel", fallback: "Отменить")
   /// Категория
@@ -38,6 +40,8 @@ internal enum SGen {
   internal static let editingACategory = SGen.tr("Localizable", "Editing a category", fallback: "Редактирование категории")
   /// Редактирование привычки
   internal static let editingATracker = SGen.tr("Localizable", "Editing a tracker", fallback: "Редактирование привычки")
+  /// Введите название категории
+  internal static let enterNewCategoryName = SGen.tr("Localizable", "Enter new category name", fallback: "Введите название категории")
   /// Введите название трекера
   internal static let enterTrackerSName = SGen.tr("Localizable", "Enter tracker's name", fallback: "Введите название трекера")
   /// Каждый день
@@ -54,14 +58,20 @@ internal enum SGen {
   internal static let incomplete = SGen.tr("Localizable", "Incomplete", fallback: "Незавершенные")
   /// Понедельник
   internal static let monday = SGen.tr("Localizable", "Monday", fallback: "Понедельник")
+  /// Новая категория
+  internal static let newCategory = SGen.tr("Localizable", "New category", fallback: "Новая категория")
   /// Новое нерегулярное событие
   internal static let newOneTimeEvent = SGen.tr("Localizable", "New one-time event", fallback: "Новое нерегулярное событие")
   /// Новая привычка
   internal static let newTracker = SGen.tr("Localizable", "New tracker", fallback: "Новая привычка")
+  /// Ничего не найдено
+  internal static let nothingFound = SGen.tr("Localizable", "Nothing found", fallback: "Ничего не найдено")
   /// Нерегулярные события
   internal static let oneTimeEvent = SGen.tr("Localizable", "One-time event", fallback: "Нерегулярные события")
   /// Закрепить
   internal static let pin = SGen.tr("Localizable", "Pin", fallback: "Закрепить")
+  /// Закрепленные
+  internal static let pinned = SGen.tr("Localizable", "Pinned", fallback: "Закрепленные")
   /// Суббота
   internal static let saturday = SGen.tr("Localizable", "Saturday", fallback: "Суббота")
   /// Сохранить
@@ -95,8 +105,12 @@ internal enum SGen {
   internal static let trackersPerDay = SGen.tr("Localizable", "Trackers per day", fallback: "Среднее значение")
   /// Вторник
   internal static let tuesday = SGen.tr("Localizable", "Tuesday", fallback: "Вторник")
+  /// Открепить
+  internal static let unpin = SGen.tr("Localizable", "Unpin", fallback: "Открепить")
   /// Среда
   internal static let wednesday = SGen.tr("Localizable", "Wednesday", fallback: "Среда")
+  /// Что будем отслеживать?
+  internal static let whatAreWeGoingToTrack = SGen.tr("Localizable", "What are we going to track?", fallback: "Что будем отслеживать?")
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces
@@ -121,4 +135,3 @@ private final class BundleToken {
   }()
 }
 // swiftlint:enable convenience_type
-// swiftlint:disable all

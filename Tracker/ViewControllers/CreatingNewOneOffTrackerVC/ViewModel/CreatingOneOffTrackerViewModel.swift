@@ -64,10 +64,13 @@ final class CreatingOneOffTrackerViewModel: CreatingOneOffTrackerViewModelProtoc
 
         let newTask = TrackerCategory(header: category,
                                       trackers: [Tracker(id: UUID(),
-                                                         name: name,
-                                                         color: color,
-                                                         emoji: emoji,
-                                                         schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс")])
+                                                    name: name,
+                                                    color: color,
+                                                    emoji: emoji,
+                                                    schedule: "Пн, Вт, Ср, Чт, Пт, Сб, Вс"
+//                                                    isPinned: false
+                                                        )
+                                      ])
         coreDataManager.createNewTracker(newTracker: newTask)
         getBackToMainScreen()
     }

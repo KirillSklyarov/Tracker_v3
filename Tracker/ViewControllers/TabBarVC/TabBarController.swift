@@ -25,18 +25,16 @@ final class TabBarController: UITabBarController {
         let statisticVC = setupNavigationController(
             controller: StatisticViewController(viewModel: statisticsViewModel), title: SGen.statistics)
 
-        trackerVC.tabBarItem = UITabBarItem(title: SGen.trackers,
-                                            image: UIImage(systemName: "record.circle.fill"),
-                                            tag: 0)
-        statisticVC.tabBarItem = UITabBarItem(title: SGen.statistics,
-                                              image: UIImage(systemName: "hare.fill"),
-                                              tag: 1)
+        trackerVC.tabBarItem = UITabBarItem(
+            title: SGen.trackers, image: UIImage(systemName: "record.circle.fill"), tag: 0)
+        statisticVC.tabBarItem = UITabBarItem(
+            title: SGen.statistics, image: UIImage(systemName: "hare.fill"), tag: 1)
 
         self.viewControllers = [trackerVC, statisticVC]
 
-        self.tabBar.backgroundColor = AppColors.background
-        self.tabBar.layer.borderWidth = 0.5
-        self.tabBar.layer.borderColor = AppColors.tabBarBorder?.cgColor
+        tabBar.backgroundColor = AppColors.background
+        tabBar.layer.borderWidth = 0.5
+        tabBar.layer.borderColor = AppColors.tabBarBorder?.cgColor
     }
 
     private func setupNavigationController(controller: UIViewController, title: String) -> UINavigationController {
@@ -50,5 +48,17 @@ final class TabBarController: UITabBarController {
         navigationController.navigationBar.prefersLargeTitles = true
         navigationController.navigationItem.hidesSearchBarWhenScrolling = false
         return navigationController
+    }
+
+    // Обновляем цвет границы при изменении темы устройства
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateTabBarBorderColor()
+    }
+
+    func updateTabBarBorderColor() {
+        if let tabBarBorderColor = AppColors.tabBarBorder {
+            tabBar.layer.borderColor = tabBarBorderColor.cgColor
+        }
     }
 }

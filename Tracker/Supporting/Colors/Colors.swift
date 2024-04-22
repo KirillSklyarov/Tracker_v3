@@ -27,6 +27,7 @@ enum AppColors {
     static let plusButton = UIColor(named: "plusButtonColor")
     static let trackerCellDoneLabel = UIColor(named: "plusButtonColor")
     static let searchTextFieldPlaceholder = UIColor(named: "searchTextFieldPlaceholder")
+    static let datePickerBackground = UIColor(named: "datePickerBackground")
 
     static let trackerCellTitleLabel = UIColor(named: "titleLabelColor")
     static let trackerCellEmojiRound = UIColor.white.withAlphaComponent(0.1)

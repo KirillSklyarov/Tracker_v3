@@ -32,6 +32,7 @@ final class TrackerViewController: UIViewController {
         let myDatePicker = UIDatePicker()
         myDatePicker.datePickerMode = .date
         myDatePicker.layer.cornerRadius = 13
+        myDatePicker.backgroundColor = AppColors.datePickerBackground
         if #available(iOS 14.0, *) {
             myDatePicker.preferredDatePickerStyle = .inline
         } else {
@@ -40,6 +41,7 @@ final class TrackerViewController: UIViewController {
         myDatePicker.addTarget(self, action: #selector(datePickerTapped), for: .valueChanged)
         return myDatePicker
     }()
+
     lazy var dateButton: UIButton = {
         let button = UIButton()
         let date = MainHelper.dateToString(date: datePicker.date)
@@ -150,10 +152,9 @@ final class TrackerViewController: UIViewController {
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: dateButton)
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: image,
-                                                           style: .done,
-                                                           target: self,
-                                                           action: #selector(addNewHabitButtonTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: image, style: .done, target: self,
+            action: #selector(addNewHabitButtonTapped))
     }
 
     private func setupFiltersButton() {
@@ -185,9 +186,9 @@ final class TrackerViewController: UIViewController {
     }
 
     private func setupDatePicker() {
-        datePicker.isHidden = false
+        datePicker.backgroundColor = AppColors.datePickerBackground
 
-        navigationItem.searchController = nil
+        datePicker.isHidden = false
 
         view.addSubViews([datePicker])
 
@@ -204,10 +205,10 @@ final class TrackerViewController: UIViewController {
         viewModel.dataUpdated = { [weak self] in
             guard let self else { return }
             DispatchQueue.main.async {
-                print(self.viewModel.categories)
+//                print(self.viewModel.categories)
                 self.trackersCollectionView.reloadData()
+                self.stickyCollectionView.reloadData()
                 self.showOrHidePlaceholder()
-                self.navigationItem.searchController = self.searchController
             }
         }
     }
@@ -218,13 +219,14 @@ final class TrackerViewController: UIViewController {
     }
 
     private func setupNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(updateDataWithNewCategoryNames),
-                                               name: Notification.Name("renameCategory"),
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(updateDataWithNewCategoryNames),
+            name: Notification.Name("renameCategory"), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(closeFewVCAfterCreatingTracker),
-                                               name: Notification.Name("cancelCreatingTracker"),
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(closeFewVCAfterCreatingTracker),
+            name: Notification.Name("cancelCreatingTracker"),
+            object: nil)
     }
 
     private func isSearchMode(_ searchController: UISearchController) {
@@ -246,10 +248,10 @@ final class TrackerViewController: UIViewController {
     func showPlaceholderForEmptyScreen() {
         if viewModel.isSearchMode {
             swooshImage.image = UIImage(named: "searchPlaceholder")
-            textLabel.text = "Ничего не найдено"
+            textLabel.text = SGen.nothingFound
         } else {
             swooshImage.image = UIImage(named: "swoosh")
-            textLabel.text = "Что будем отслеживать?"
+            textLabel.text = SGen.whatAreWeGoingToTrack
         }
 
         swooshImage.isHidden = false
