@@ -61,11 +61,11 @@ final class TrackerViewModel: TrackerViewModelProtocol {
         return (trackerToCheck, check)
     }
 
-    func isTrackerExistInTrackerRecordForDatePickerDate(tracker: TrackerCoreData, dateOnDatePicker: Date) -> Bool? {
-        guard let trackerId = tracker.id else { return nil}
+    func isTrackerExistInTrackerRecordForDatePickerDate(tracker: Tracker, dateOnDatePicker: Date) -> Bool? {
+//        guard let trackerId = tracker.id else { return nil}
 
         let dateOnDatePickerString = MainHelper.dateToString(date: dateOnDatePicker)
-        let trackerToCheck = TrackerRecord(id: trackerId, date: dateOnDatePickerString)
+        let trackerToCheck = TrackerRecord(id: tracker.id, date: dateOnDatePickerString)
         let check = coreDataManager.isTrackerExistInTrackerRecord(trackerToCheck: trackerToCheck)
         return check
     }

@@ -34,7 +34,7 @@ protocol EditingTrackerViewModelProtocol {
 
     func createNewTracker()
     func isAllFieldsFilled() -> Bool
-    func getTrackerDataForEditing(indexPath: IndexPath)
+    func getTrackerDataForEditing(tracker: TrackerCoreData)
     func updateTracker()
 
 }

@@ -12,7 +12,7 @@ protocol TrackerViewModelProtocol {
     func updateDataFromCoreData(weekDay: String)
     func isTrackerExistInTrackerRecord(indexPath: IndexPath,
                                        date: Date) -> (TrackerRecord: TrackerRecord, isExist: Bool)
-    func isTrackerExistInTrackerRecordForDatePickerDate(tracker: TrackerCoreData, dateOnDatePicker: Date) -> Bool?
+    func isTrackerExistInTrackerRecordForDatePickerDate(tracker: Tracker, dateOnDatePicker: Date) -> Bool?
     func dayNumberToDayString(weekDayNumber: Int?) -> String
 
     var coreDataManager: TrackerCoreManager { get }

@@ -57,6 +57,8 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
 
     var indexPath: IndexPath?
 
+    var trackerId: UUID?
+
     var updateSaveButton: ( () -> Void )?
 
     var emojiIndexPath: IndexPath? {
@@ -70,6 +72,8 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
               let colorIndex = arrayOfColors.firstIndex(of: color) else { print("Oops"); return nil}
         return IndexPath(row: colorIndex, section: 0)
     }
+
+    var isPinned = false
 
     func getBackToMainScreen() {
         let cancelCreatingTrackerNotification = Notification.Name("cancelCreatingTracker")
@@ -85,15 +89,15 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
             print("Smth's going wrong here"); return
         }
 
-        let newTask = TrackerCategory(header: category,
-                                      trackers: [Tracker(id: UUID(),
-                                                    name: name,
-                                                    color: color,
-                                                    emoji: emoji,
-                                                    schedule: schedule
-//                                                    isPinned: false
-                                                        )
-                                      ])
+        let newTask = TrackerCategory(
+            header: category,
+            trackers: [Tracker(id: UUID(),
+                               name: name,
+                               color: color,
+                               emoji: emoji,
+                               schedule: schedule,
+                               isPinned: isPinned)
+            ])
         coreDataManager.createNewTracker(newTracker: newTask)
         getBackToMainScreen()
     }
@@ -109,11 +113,11 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
         return allFieldsFilled
     }
 
-    func getTrackerDataForEditing(indexPath: IndexPath) {
-        guard let tracker = coreDataManager.object(at: indexPath),
-              let trackerID = tracker.id else { return }
+    func getTrackerDataForEditing(tracker: TrackerCoreData) {
+        guard let trackerID = tracker.id else { return }
         let countOfDays = MainHelper.countOfDaysForTheTrackerInString(trackerId: trackerID.uuidString)
 
+        trackerId = tracker.id
         trackerName = tracker.name
         category = tracker.category?.header
         schedule = tracker.schedule
@@ -122,16 +126,51 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
         countOfCompletedDays = countOfDays
 
         initialTrackerCategory = tracker.category?.header
+        isPinned = tracker.isPinned
     }
 
     func updateTracker() {
+        if isPinned {
+            //            print("Tracker is Pinned")
+            updatePinnedTracker()
+        } else {
+            //            print("Tracker is NOT Pinned")
+            updateUnpinnedTracker()
+        }
+    }
+
+    func updatePinnedTracker() {
         guard let indexPath,
-              let tracker = coreDataManager.object(at: indexPath) else { return }
+              let tracker = coreDataManager.pinnedTrackersFRC?.object(at: indexPath) else { print("Ooops"); return }
 
         if isCategoryChanged() {
-            changeTrackerCategory(tracker: tracker, indexPath: indexPath)
+            changeTrackerCategory(tracker: tracker)
         } else {
-            saveCorrectedTracker(tracker: tracker)
+            updateTracker(tracker: tracker)
+        }
+    }
+
+    func updateTracker(tracker: TrackerCoreData) {
+        tracker.name = trackerName
+        tracker.schedule = schedule
+        tracker.emoji = emoji
+        tracker.colorHex = color
+
+        coreDataManager.save()
+
+        print("Tracker updated successfully ✅")
+    }
+
+    func updateUnpinnedTracker() {
+
+        guard let indexPath,
+              let tracker = coreDataManager.trackersFRC?.object(at: indexPath) else {
+            print("We cant find tracker"); return }
+
+        if isCategoryChanged() {
+            changeTrackerCategory(tracker: tracker)
+        } else {
+            updateTracker(tracker: tracker)
         }
     }
 
@@ -139,26 +178,9 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
         return category != initialTrackerCategory
     }
 
-    func saveCorrectedTracker(tracker: TrackerCoreData) {
-        let allDataBefore = coreDataManager.fetchData()
-        print("allData before: \(allDataBefore)")
-
-        tracker.name = trackerName
-        tracker.category?.header = category
-        tracker.schedule = schedule
-        tracker.emoji = emoji
-        tracker.colorHex = color
-
-        coreDataManager.save()
-
-        let allDataAfter = coreDataManager.fetchData()
-        print("allData after: \(allDataAfter)")
-
-        print("Tracker updated successfully ✅")
-    }
-
-    func changeTrackerCategory(tracker: TrackerCoreData, indexPath: IndexPath) {
+    func changeTrackerCategory(tracker: TrackerCoreData) {
         guard let category,
+              let initialTrackerCategory,
               let id = tracker.id,
               let name = tracker.name,
               let colorHex = tracker.colorHex,
@@ -174,8 +196,8 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
                 name: name,
                 color: colorHex,
                 emoji: emoji,
-                schedule: schedule
-//                isPinned: false
+                schedule: schedule,
+                isPinned: tracker.isPinned
             )
             ])
 
@@ -183,10 +205,10 @@ final class EditingTrackerViewModel: EditingTrackerViewModelProtocol {
 
         coreDataManager.createNewTracker(newTracker: trackerWithAnotherCategory)
 
-        coreDataManager.deleteTrackerFromCategory(categoryName: initialTrackerCategory!, trackerIDToDelete: id)
+        coreDataManager.deleteTrackerFromCategory(categoryName: initialTrackerCategory, trackerIDToDelete: id)
 
-        let allDataAfter = coreDataManager.fetchData()
-        print("allData after: \(allDataAfter)")
+        //        let allDataAfter = coreDataManager.fetchData()
+        //        print("allData after: \(allDataAfter)")
 
     }
 }

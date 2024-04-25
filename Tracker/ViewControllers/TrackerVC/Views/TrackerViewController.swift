@@ -54,6 +54,12 @@ final class TrackerViewController: UIViewController {
         return button
     }()
 
+    lazy var contentStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        return stack
+    }()
+
     let searchController = UISearchController(searchResultsController: nil)
     let trackersCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     let stickyCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -66,6 +72,10 @@ final class TrackerViewController: UIViewController {
     var weekDay: String {
         viewModel.getWeekdayFromCurrentDate(currentDate: currentDate)
     }
+
+    var stickyCollectionHeightConstraint: NSLayoutConstraint?
+    var scrollViewHeightConstraint: NSLayoutConstraint?
+    var trackerCollectionHeightConstraint: NSLayoutConstraint?
 
     // MARK: - Initializers
     init(viewModel: TrackerViewModelProtocol) {
@@ -81,17 +91,21 @@ final class TrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        viewModel.coreDataManager.setupPinnedFRC()
+
         uploadDataFormCoreData()
 
         dataBinding()
 
         setupUI()
 
+//        calculateScrollViewHeight()
+
         setupNotification()
 
         addTapGestureToHideDatePicker()
 
-        viewModel.coreDataManager.printAllCategoryNamesFromCD()
+//        viewModel.coreDataManager.printAllCategoryNamesFromCD()
 
     }
 
@@ -170,19 +184,29 @@ final class TrackerViewController: UIViewController {
 
     private func setupUI() {
 
+        view.backgroundColor = AppColors.background
+
         setupNavigation()
 
         setupSearchController()
 
         setupStickyCollectionView()
 
-        setupCollectionView()
+//        setStickyCollectionHeight()
+
+        setupTrackerCollectionView()
+
+        setupContraints()
+
+//        setupScrollView()
 
         setupFiltersButton()
 
-        view.backgroundColor = AppColors.background
-
         showOrHidePlaceholder()
+
+//        setupContentStackNEW()
+//        calculateScrollViewHeight()
+
     }
 
     private func setupDatePicker() {
@@ -208,6 +232,7 @@ final class TrackerViewController: UIViewController {
 //                print(self.viewModel.categories)
                 self.trackersCollectionView.reloadData()
                 self.stickyCollectionView.reloadData()
+//                self.calculationOfStickyCollectionHeight()
                 self.showOrHidePlaceholder()
             }
         }
@@ -281,8 +306,8 @@ final class TrackerViewController: UIViewController {
         filtersButton.isHidden = false
     }
 
-    func showDoneOrUndoneTaskForDatePickerDate(tracker: TrackerCoreData, cell: TrackerCollectionViewCell) {
-        let trackerColor = UIColor(hex: tracker.colorHex ?? "#000000")
+    func showDoneOrUndoneTaskForDatePickerDate(tracker: Tracker, cell: TrackerCollectionViewCell) {
+        let trackerColor = UIColor(hex: tracker.color)
         let dateOnDatePicker = datePicker.date
 
         guard let check = viewModel.isTrackerExistInTrackerRecordForDatePickerDate(

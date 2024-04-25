@@ -104,7 +104,7 @@ extension TrackerCoreManager {
 
         deleteAllTrackerRecordsForTracker(at: indexPath)
 
-        guard let tracker = fetchedResultsController?.object(at: indexPath) else {
+        guard let tracker = trackersFRC?.object(at: indexPath) else {
             print("Smth is going wrong"); return }
         context.delete(tracker)
         print("Tracker deleted ✅")
@@ -112,7 +112,7 @@ extension TrackerCoreManager {
     }
 
     func deleteAllTrackerRecordsForTracker(at indexPath: IndexPath) {
-        guard let tracker = fetchedResultsController?.object(at: indexPath),
+        guard let tracker = trackersFRC?.object(at: indexPath),
               let trackerID = tracker.id?.uuidString else { print("Smth is going wrong"); return }
         let request = TrackerRecordCoreData.fetchRequest()
         let predicate = NSPredicate(format: "%K == %@",
@@ -131,19 +131,36 @@ extension TrackerCoreManager {
         }
     }
 
-    func deleteTrackerFromCategory(categoryName: String, trackerIDToDelete: UUID) {
-        let request = TrackerCategoryCoreData.fetchRequest()
+    func deleteAllTrackerRecordsForTracker(trackerID: String) {
+        let request = TrackerRecordCoreData.fetchRequest()
         let predicate = NSPredicate(format: "%K == %@",
-                                    #keyPath(TrackerCategoryCoreData.header),
-                                    categoryName)
+                                    #keyPath(TrackerRecordCoreData.id), trackerID)
         request.predicate = predicate
 
         do {
-            guard let result = try context.fetch(request).first,
-                  let trackers = result.trackers as? Set<TrackerCoreData> else { return }
-            for tracker in trackers where tracker.id?.uuidString == trackerIDToDelete.uuidString {
+            let result = try context.fetch(request)
+            for records in result {
+                context.delete(records)
+                save()
+            }
+            print("TrackerRecords for this tracker deleted ✅")
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+        }
+    }
+
+    func deleteTrackerFromCategory(categoryName: String, trackerIDToDelete: UUID) {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K == %@",
+                                    #keyPath(TrackerCoreData.id),
+                                    trackerIDToDelete.uuidString)
+        request.predicate = predicate
+
+        do {
+            let result = try context.fetch(request)
+            for tracker in result where tracker.category?.header == categoryName {
                 context.delete(tracker)
-                print("Tracker removed from previous category successfully ✅")
+                print("Tracker removed from previous category (\(categoryName)) successfully ✅")
                 save()
             }
         } catch {

@@ -91,6 +91,7 @@
 		73E562F52BA0B14C003A61AB /* UIView-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E562F42BA0B14C003A61AB /* UIView-Extension.swift */; };
 		73E562F72BA0B411003A61AB /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E562F62BA0B411003A61AB /* TabBarController.swift */; };
 		73E899692BD28F1E00EE0DB0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 73E899672BD28F1E00EE0DB0 /* Localizable.strings */; };
+		73EB0FDB2BD956D800C26535 /* TrackerVC+ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73EB0FDA2BD956D800C26535 /* TrackerVC+ScrollView.swift */; };
 		73F10E052BC546C30010F5AD /* CreatingNewTrackerVC+ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F10E042BC546C30010F5AD /* CreatingNewTrackerVC+ScrollView.swift */; };
 		73F10E072BC547990010F5AD /* CreatingNewTrackerVC+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F10E062BC547990010F5AD /* CreatingNewTrackerVC+CollectionView.swift */; };
 		73F10E092BC547EB0010F5AD /* CreatingNewTrackerVC+TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F10E082BC547EB0010F5AD /* CreatingNewTrackerVC+TextField.swift */; };
@@ -190,6 +191,7 @@
 		73E899682BD28F1E00EE0DB0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		73E8996A2BD28F8B00EE0DB0 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		73E8996B2BD28F8B00EE0DB0 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		73EB0FDA2BD956D800C26535 /* TrackerVC+ScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackerVC+ScrollView.swift"; sourceTree = "<group>"; };
 		73F10E042BC546C30010F5AD /* CreatingNewTrackerVC+ScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreatingNewTrackerVC+ScrollView.swift"; sourceTree = "<group>"; };
 		73F10E062BC547990010F5AD /* CreatingNewTrackerVC+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreatingNewTrackerVC+CollectionView.swift"; sourceTree = "<group>"; };
 		73F10E082BC547EB0010F5AD /* CreatingNewTrackerVC+TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CreatingNewTrackerVC+TextField.swift"; sourceTree = "<group>"; };
@@ -493,6 +495,7 @@
 			isa = PBXGroup;
 			children = (
 				73E562E02BA0A936003A61AB /* TrackerViewController.swift */,
+				73EB0FDA2BD956D800C26535 /* TrackerVC+ScrollView.swift */,
 				739DABF22BC562AE00B13471 /* TrackerVC+ContextMenu.swift */,
 				739DABF42BC5635700B13471 /* TrackerVC+CollectionView.swift */,
 				739DABF62BC566D600B13471 /* TrackerVC+Filter.swift */,
@@ -758,6 +761,7 @@
 				73A6304A2BAF6CFB00CDD02C /* TrackerCoreData.xcdatamodeld in Sources */,
 				73B69E8E2BC7DF4E0034A5DA /* TrackerViewModelProtocol.swift in Sources */,
 				73B5C00F2BAE0D3900FEF126 /* EditingCategoryViewController.swift in Sources */,
+				73EB0FDB2BD956D800C26535 /* TrackerVC+ScrollView.swift in Sources */,
 				73060C422BBDB10300035DAE /* PassTrackerToEditDelegate.swift in Sources */,
 				739DABFD2BC5689700B13471 /* TrackerVC+HideDatePicker.swift in Sources */,
 				7335BCC12BA1FF8D002271F3 /* TrackerRecord.swift in Sources */,

@@ -164,7 +164,7 @@ extension TrackerCoreManager {
         request.predicate = predicate
         request.sortDescriptors = [sort]
 
-        updateFetchedResultsControllerWithRequest(request: request)
+        setupTrackerFRC(request: request)
     }
 
     func getTrackersExceptWithID(trackerNotToShow trackerId: [String], weekDay: String) {
@@ -182,7 +182,7 @@ extension TrackerCoreManager {
 
         filterButtonForEmptyScreenIsEnable = true
 
-        updateFetchedResultsControllerWithRequest(request: request)
+        setupTrackerFRC(request: request)
     }
 
     func getEmptyBaseForEmptyScreen() {
@@ -195,7 +195,7 @@ extension TrackerCoreManager {
 
         filterButtonForEmptyScreenIsEnable = true
 
-        updateFetchedResultsControllerWithRequest(request: request)
+        setupTrackerFRC(request: request)
     }
 
     func getAllTrackerRecordsDaysAndCounts() -> [String: Int] {

@@ -8,8 +8,8 @@
 import Foundation
 
 extension EditingTrackerViewController: PassTrackerToEditDelegate {
-    func passTrackerIndexPathToEdit(indexPath: IndexPath) {
-        viewModel.getTrackerDataForEditing(indexPath: indexPath)
+    func passTrackerIndexPathToEdit(tracker: TrackerCoreData, indexPath: IndexPath) {
+        viewModel.getTrackerDataForEditing(tracker: tracker)
         viewModel.indexPath = indexPath
     }
 }

@@ -40,42 +40,42 @@ final class TrackerCoreManager: NSObject {
     var insertedIndexes: IndexSet?
     var deletedIndexes: IndexSet?
 
-    // MARK: - FetchResultsController
-    var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
+    // MARK: - FetchResultsControllers
+    var trackersFRC: NSFetchedResultsController<TrackerCoreData>?
+    var pinnedTrackersFRC: NSFetchedResultsController<TrackerCoreData>?
 
-    func updateFetchedResultsControllerWithRequest(request: NSFetchRequest<TrackerCoreData>) {
-        fetchedResultsController = NSFetchedResultsController(
+    // MARK: - SetupFRCs
+    func setupTrackerFRC(request: NSFetchRequest<TrackerCoreData>) {
+        trackersFRC = NSFetchedResultsController(
             fetchRequest: request,
             managedObjectContext: context,
             sectionNameKeyPath: "category.header",
             cacheName: nil)
 
-        fetchedResultsController?.delegate = self
+        trackersFRC?.delegate = self
 
         do {
-            try fetchedResultsController?.performFetch()
+            try trackersFRC?.performFetch()
         } catch {
             print("\(error.localizedDescription) 🟥")
         }
     }
 
+    // MARK: - CRUD
     func getAllTrackersForWeekday(weekDay: String) {
         let request = TrackerCoreData.fetchRequest()
         let predicate1 = NSPredicate(format: "schedule CONTAINS %@", weekDay)
         let predicate2 = NSPredicate(format: "schedule CONTAINS %@", SGen.everyday)
         let predicate3 = NSPredicate(format: "%K == %@",
-                                    #keyPath(TrackerCoreData.isPinned), NSNumber(value: false))
+                                     #keyPath(TrackerCoreData.isPinned), NSNumber(value: false))
         let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2])
         let finalCompoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [compoundPredicate, predicate3])
         let sort = NSSortDescriptor(key: "category.header", ascending: true)
         request.sortDescriptors = [sort]
         request.predicate = finalCompoundPredicate
 
-        updateFetchedResultsControllerWithRequest(request: request)
+        setupTrackerFRC(request: request)
     }
-
-    // MARK: - CRUD
-    var collectionSections: [NSFetchedResultsSectionInfo]?
 
     func fetchData() -> [TrackerCategory] {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
@@ -199,15 +199,23 @@ final class TrackerCoreManager: NSObject {
 extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
 
     var isCoreDataEmpty: Bool {
-        fetchedResultsController?.sections?.isEmpty ?? true
+        trackersFRC?.sections?.isEmpty ?? true
     }
 
     var numberOfSections: Int {
-        fetchedResultsController?.sections?.count ?? 0
+        trackersFRC?.sections?.count ?? 0
     }
 
     func numberOfRowsInSection(_ section: Int) -> Int {
-        fetchedResultsController?.sections?[section].numberOfObjects ?? 0
+        trackersFRC?.sections?[section].numberOfObjects ?? 0
+    }
+
+    var pinnedSection: Int {
+        pinnedTrackersFRC?.sections?.count ?? 0
+    }
+
+    func numberOfPinnedTrackers(_ section: Int) -> Int {
+        pinnedTrackersFRC?.sections?[section].numberOfObjects ?? 0
     }
 
     func numberOfPinnedItems() -> Int {
@@ -237,7 +245,7 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
     }
 
     func numberOfRowsInStickySection() -> Int {
-        guard let sections = fetchedResultsController?.sections else { print("Hmmm"); return 0}
+        guard let sections = trackersFRC?.sections else { print("Hmmm"); return 0}
 
         for section in sections where section.name == "Закрепленные" {
             //            print(section.objects as Any)
@@ -250,7 +258,7 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
     }
 
     func object(at indexPath: IndexPath) -> TrackerCoreData? {
-        fetchedResultsController?.object(at: indexPath)
+        trackersFRC?.object(at: indexPath)
     }
 
     func printAllTrackersInCategory(header: String) {
@@ -279,14 +287,14 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
     }
 
     func getTrackersForWeekDay(weekDay: String) {
-        let request = fetchedResultsController?.fetchRequest
+        let request = trackersFRC?.fetchRequest
         let predicate = NSPredicate(format: "%K CONTAINS %@",
                                     #keyPath(TrackerCoreData.schedule), weekDay)
         let sort = NSSortDescriptor(key: "category.header", ascending: true)
         request?.sortDescriptors = [sort]
         request?.predicate = predicate
         do {
-            try? fetchedResultsController?.performFetch()
+            try? trackersFRC?.performFetch()
             print("Tracker updated to weekday ✅")
         }
     }

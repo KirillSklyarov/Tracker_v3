@@ -10,8 +10,10 @@ import UIKit
 extension TrackerViewController: DataProviderDelegate {
 
     func didUpdate(_ update: TrackersStoreUpdate) {
-//        trackersCollectionView.reloadData()
-//        showOrHidePlaceholder()
+        trackersCollectionView.reloadData()
+        stickyCollectionView.reloadData()
+        setStickyCollectionHeight()
+        showOrHidePlaceholder()
     }
 }
 
