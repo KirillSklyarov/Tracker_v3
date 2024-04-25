@@ -15,10 +15,10 @@ extension TrackerViewController: FilterCategoryDelegate {
 
     func getFilterFromPreviousVC(filter: String) {
         switch filter {
-        case "Все трекеры": showAllTrackersForThisDay()
-        case "Трекеры на сегодня": showAllTrackersForToday()
-        case "Завершенные": showCompletedTrackersForDay()
-        case "Незавершенные": showIncompleteTrackersForDay()
+        case SGen.allTrackers: showAllTrackersForThisDay()
+        case SGen.todayTrackers: showAllTrackersForToday()
+        case SGen.completed: showCompletedTrackersForDay()
+        case SGen.incomplete: showIncompleteTrackersForDay()
         default: dismiss(animated: true)
         }
     }
@@ -60,6 +60,7 @@ extension TrackerViewController: FilterCategoryDelegate {
             viewModel.coreDataManager.getEmptyBaseForEmptyScreen()
         } else {
             viewModel.coreDataManager.getTrackerWithID(trackerId: completedTrackersID)
+            viewModel.coreDataManager.getCompletedPinnedTracker(trackerId: completedTrackersID)
         }
         viewModel.dataUpdated?()
     }

@@ -50,19 +50,29 @@ final class TrackerViewModel: TrackerViewModelProtocol {
         return result
     }
 
-    func isTrackerExistInTrackerRecord(indexPath: IndexPath,
-                                       date: Date) -> (TrackerRecord: TrackerRecord, isExist: Bool) {
-        let category = newData[indexPath.section]
-        let tracker = category.trackers[indexPath.row]
+//    func isTrackerExistInTrackerRecord(indexPath: IndexPath, date: Date) ->
+//    (TrackerRecord: TrackerRecord, isExist: Bool) {
+//            let category = newData[indexPath.section]
+//            let tracker = category.trackers[indexPath.row]
+//            let currentDateString = MainHelper.dateToString(date: date)
+//            let trackerToCheck = TrackerRecord(id: tracker.id, date: currentDateString)
+//            let check = coreDataManager.isTrackerExistInTrackerRecord(trackerToCheck: trackerToCheck)
+//
+//            return (trackerToCheck, check)
+//        }
+
+    func isTrackerExistInTrackerRecord(tracker: TrackerCoreData, date: Date) ->
+    (TrackerRecord: TrackerRecord, isExist: Bool)? {
+        guard let trackerID = tracker.id else { print("234"); return nil }
         let currentDateString = MainHelper.dateToString(date: date)
-        let trackerToCheck = TrackerRecord(id: tracker.id, date: currentDateString)
+        let trackerToCheck = TrackerRecord(id: trackerID, date: currentDateString)
         let check = coreDataManager.isTrackerExistInTrackerRecord(trackerToCheck: trackerToCheck)
 
         return (trackerToCheck, check)
     }
 
     func isTrackerExistInTrackerRecordForDatePickerDate(tracker: Tracker, dateOnDatePicker: Date) -> Bool? {
-//        guard let trackerId = tracker.id else { return nil}
+        //        guard let trackerId = tracker.id else { return nil}
 
         let dateOnDatePickerString = MainHelper.dateToString(date: dateOnDatePicker)
         let trackerToCheck = TrackerRecord(id: tracker.id, date: dateOnDatePickerString)

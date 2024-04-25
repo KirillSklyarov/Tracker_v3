@@ -165,6 +165,7 @@ extension TrackerCoreManager {
         request.sortDescriptors = [sort]
 
         setupTrackerFRC(request: request)
+
     }
 
     func getTrackersExceptWithID(trackerNotToShow trackerId: [String], weekDay: String) {

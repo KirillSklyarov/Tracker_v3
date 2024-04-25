@@ -13,7 +13,7 @@ final class FilterTrackersViewController: UIViewController {
     private let filterTrackersTableView = UITableView()
 
     // MARK: - Private Properties
-    private let filters = [ SGen.allTrackers, SGen.todayTrackers,
+    private let filters = [SGen.allTrackers, SGen.todayTrackers,
                             SGen.completed, SGen.incomplete
     ]
 

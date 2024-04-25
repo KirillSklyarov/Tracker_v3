@@ -32,6 +32,50 @@ extension TrackerCoreManager {
         }
     }
 
+    func setupPinnedFRCWithRequest(request: NSFetchRequest<TrackerCoreData>) {
+        pinnedTrackersFRC = NSFetchedResultsController(
+            fetchRequest: request,
+            managedObjectContext: context,
+            sectionNameKeyPath: "category.header",
+            cacheName: nil)
+
+        pinnedTrackersFRC?.delegate = self
+
+        do {
+            try pinnedTrackersFRC?.performFetch()
+        } catch {
+            print("\(error.localizedDescription) 🟥")
+        }
+    }
+
+    func getCompletedPinnedTracker(trackerId: [String]) {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate1 = NSPredicate(format: "%K == %@",
+                                     #keyPath(TrackerCoreData.isPinned), NSNumber(value: true))
+        let predicate2 = NSPredicate(format: "%K IN %@",
+                                     #keyPath(TrackerCoreData.id), trackerId)
+        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.sortDescriptors = [sort]
+        request.predicate = compoundPredicate
+
+        setupPinnedFRCWithRequest(request: request)
+    }
+
+//        guard let pinnedTrackers = pinnedTrackersFRC?.fetchedObjects else {
+//            print("Hz"); return }
+//
+//        for tracker in pinnedTrackers where trackerId.contains(tracker.id!.uuidString) {
+
+//            print("We have found completed pinned tracker")
+//            } else {
+//                print("Nothing interesting")
+//            }
+//        }
+//    }
+
+
+
     func pinTracker(indexPath: IndexPath) {
         guard let tracker = trackersFRC?.object(
             at: indexPath) else {

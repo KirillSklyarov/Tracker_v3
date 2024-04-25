@@ -59,39 +59,6 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
             withReuseIdentifier: "footer")
     }
 
-    //        trackersCollectionView.setContentOffset(CGPoint(x: 0, y: 200), animated: true)
-    //    }
-
-    //    func setupContentStackNEW() {
-    //
-    //        contentStackView.spacing = 10
-    ////        contentStackView.distribution = .equalCentering
-    //
-    //        [stickyCollectionView, trackersCollectionView].forEach(
-//    { $0.translatesAutoresizingMaskIntoConstraints = false })
-    //
-    //        [stickyCollectionView, trackersCollectionView].forEach({ contentStackView.addArrangedSubview($0) })
-    //
-    //        view.addSubViews([contentStackView])
-    //
-    //        contentStackView.backgroundColor = AppColors.buttonRed
-    //        contentStackView.layer.borderColor = AppColors.buttonBlack?.cgColor
-    //        contentStackView.layer.borderWidth = 1
-    //
-    //        NSLayoutConstraint.activate([
-    //            contentStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-    //            contentStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-    //            contentStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-    //            contentStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-    //        ])
-    //
-    //        setStickyCollectionHeight()
-    //        stickyCollectionView.layer.borderWidth = 1
-    //        stickyCollectionView.layer.borderColor = AppColors.buttonRed?.cgColor
-    //
-    //
-    //    }
-
     func setupContraints() {
 
         view.addSubViews([stickyCollectionView, trackersCollectionView])
@@ -115,12 +82,14 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
 
         let height = calculationOfStickyCollectionHeight()
         stickyCollectionHeightConstraint?.constant = height
-        //        print("stickyCollectionHeightConstraint \(height)")
+        print("stickyCollectionHeightConstraint \(height)")
     }
 
     func calculationOfStickyCollectionHeight() -> CGFloat {
 
-        let collectionElements = viewModel.coreDataManager.numberOfPinnedItems()
+        guard let collectionElements = viewModel.coreDataManager.pinnedTrackersFRC?.fetchedObjects?.count else {
+            print("Nil"); return 0}
+//        coreDataManager.numberOfPinnedItems()
         //                print("collectionElements \(collectionElements)")
         let numberOfRows = ceil(Double(collectionElements) / 2.0)
         //                print("numberOfRows \(numberOfRows)")

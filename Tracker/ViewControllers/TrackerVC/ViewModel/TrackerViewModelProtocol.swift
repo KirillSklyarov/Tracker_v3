@@ -10,8 +10,10 @@ import Foundation
 protocol TrackerViewModelProtocol {
     func getWeekdayFromCurrentDate(currentDate: Date) -> String
     func updateDataFromCoreData(weekDay: String)
-    func isTrackerExistInTrackerRecord(indexPath: IndexPath,
-                                       date: Date) -> (TrackerRecord: TrackerRecord, isExist: Bool)
+
+    func isTrackerExistInTrackerRecord(tracker: TrackerCoreData, date: Date) ->
+    (TrackerRecord: TrackerRecord, isExist: Bool)?
+
     func isTrackerExistInTrackerRecordForDatePickerDate(tracker: Tracker, dateOnDatePicker: Date) -> Bool?
     func dayNumberToDayString(weekDayNumber: Int?) -> String
 

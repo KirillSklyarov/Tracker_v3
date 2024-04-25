@@ -28,7 +28,9 @@ extension TrackerCoreManager {
 
         do {
             let result = try context.fetch(request)
-            print("AllTrackerRecord: \(result)")
+            for element in result {
+                print("element.date \(element.date), element.id \(element.id)")
+            }
         } catch {
             print("\(error.localizedDescription) 🟥")
         }
