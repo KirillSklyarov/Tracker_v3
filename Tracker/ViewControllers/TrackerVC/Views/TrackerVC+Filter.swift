@@ -25,25 +25,40 @@ extension TrackerViewController: FilterCategoryDelegate {
 
     // MARK: - Фильтр "Все трекеры"
     func showAllTrackersForThisDay() {
-        viewModel.coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
+        getPinnedTrackersForToday()
+        getTrackersForWeekDay(weekDay: weekDay)
         viewModel.dataUpdated?()
+    }
+
+    func getPinnedTrackersForToday() {
+        viewModel.coreDataManager.setupPinnedFRC()
+    }
+
+    func getTrackersForWeekDay(weekDay: String) {
+        viewModel.coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
     }
 
     // MARK: - Фильтр "Трекеры на сегодня"
     func showAllTrackersForToday() {
-        uploadDataFromCoreDataForToday()
+        getPinnedTrackersForToday()
+        getTrackersForToday()
         setDateForDatePicker()
         viewModel.dataUpdated?()
     }
 
-    func uploadDataFromCoreDataForToday() {
+    func getTrackersForToday() {
+        let todayWeekDayString = getTodayWeekday()
+        viewModel.coreDataManager.getAllTrackersForWeekday(weekDay: todayWeekDayString)
+    }
+
+    func getTodayWeekday() -> String {
         let calendar = Calendar.current
         let date = Date()
         let dateComponents = calendar.dateComponents([.weekday], from: date)
         let weekDay = dateComponents.weekday
         let weekDayString = viewModel.dayNumberToDayString(weekDayNumber: weekDay)
         print(weekDayString)
-        viewModel.coreDataManager.getAllTrackersForWeekday(weekDay: weekDayString)
+        return weekDayString
     }
 
     func setDateForDatePicker() {
@@ -58,6 +73,7 @@ extension TrackerViewController: FilterCategoryDelegate {
 
         if completedTrackersID.isEmpty {
             viewModel.coreDataManager.getEmptyBaseForEmptyScreen()
+            viewModel.coreDataManager.getCompletedPinnedTracker(trackerId: completedTrackersID)
         } else {
             viewModel.coreDataManager.getTrackerWithID(trackerId: completedTrackersID)
             viewModel.coreDataManager.getCompletedPinnedTracker(trackerId: completedTrackersID)
@@ -70,8 +86,10 @@ extension TrackerViewController: FilterCategoryDelegate {
 
         if completedTrackersID.isEmpty {
             viewModel.coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
+            getPinnedTrackersForToday()
         } else {
             viewModel.coreDataManager.getTrackersExceptWithID(trackerNotToShow: completedTrackersID, weekDay: weekDay)
+            viewModel.coreDataManager.getInCompletePinnedTracker(trackerNotToShow: completedTrackersID)
         }
         viewModel.dataUpdated?()
     }

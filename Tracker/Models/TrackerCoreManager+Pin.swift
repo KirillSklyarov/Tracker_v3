@@ -62,19 +62,19 @@ extension TrackerCoreManager {
         setupPinnedFRCWithRequest(request: request)
     }
 
-//        guard let pinnedTrackers = pinnedTrackersFRC?.fetchedObjects else {
-//            print("Hz"); return }
-//
-//        for tracker in pinnedTrackers where trackerId.contains(tracker.id!.uuidString) {
+    func getInCompletePinnedTracker(trackerNotToShow trackerId: [String]) {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate1 = NSPredicate(format: "%K == %@",
+                                     #keyPath(TrackerCoreData.isPinned), NSNumber(value: true))
+        let predicate2 = NSPredicate(format: "NOT (%K IN %@)",
+                                     #keyPath(TrackerCoreData.id), trackerId)
+        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.sortDescriptors = [sort]
+        request.predicate = compoundPredicate
 
-//            print("We have found completed pinned tracker")
-//            } else {
-//                print("Nothing interesting")
-//            }
-//        }
-//    }
-
-
+        setupPinnedFRCWithRequest(request: request)
+    }
 
     func pinTracker(indexPath: IndexPath) {
         guard let tracker = trackersFRC?.object(

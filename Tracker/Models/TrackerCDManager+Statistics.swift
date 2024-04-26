@@ -174,8 +174,12 @@ extension TrackerCoreManager {
         let predicate2 = NSPredicate(format: "schedule CONTAINS %@", SGen.everyday)
         let predicate3 = NSPredicate(format: "NOT (%K IN %@)",
                                      #keyPath(TrackerCoreData.id), trackerId)
+        let predicate4 = NSPredicate(format: "%K == %@",
+                                     #keyPath(TrackerCoreData.isPinned),
+                                     NSNumber(value: false))
         let datePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2])
-        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [datePredicate, predicate3])
+        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates:
+                                [datePredicate, predicate3, predicate4])
         request.predicate = compoundPredicate
 
         let sort = NSSortDescriptor(key: "category.header", ascending: true)

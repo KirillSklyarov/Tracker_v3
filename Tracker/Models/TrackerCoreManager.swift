@@ -231,7 +231,7 @@ extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
         }
     }
 
-    func pinnedTrackers() {
+    func printAllpinnedTrackers() {
         let request = TrackerCoreData.fetchRequest()
         let predicate = NSPredicate(format: "%K == %@",
                                     #keyPath(TrackerCoreData.isPinned), NSNumber(value: true))
