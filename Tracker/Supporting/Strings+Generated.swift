@@ -44,6 +44,8 @@ internal enum SGen {
   internal static let enterNewCategoryName = SGen.tr("Localizable", "Enter new category name", fallback: "Введите название категории")
   /// Введите название трекера
   internal static let enterTrackerSName = SGen.tr("Localizable", "Enter tracker's name", fallback: "Введите название трекера")
+  /// Даже если это не литры воды и йога
+  internal static let evenIfItSNotWaterAndYoga = SGen.tr("Localizable", "Even if it's not water and yoga", fallback: "Даже если это не литры воды и йога")
   /// Каждый день
   internal static let everyday = SGen.tr("Localizable", "Everyday", fallback: "Каждый день")
   /// Ограничение 38 символов
@@ -92,6 +94,8 @@ internal enum SGen {
   internal static let thursday = SGen.tr("Localizable", "Thursday", fallback: "Четверг")
   /// Трекеры на сегодня
   internal static let todayTrackers = SGen.tr("Localizable", "Today trackers", fallback: "Трекеры на сегодня")
+  /// Отслеживайте только то, что хотите
+  internal static let trackOnlyWhatYouWant = SGen.tr("Localizable", "Track only what you want", fallback: "Отслеживайте только то, что хотите")
   /// Привычка
   internal static let tracker = SGen.tr("Localizable", "Tracker", fallback: "Привычка")
   /// Localizable.strings
@@ -109,6 +113,8 @@ internal enum SGen {
   internal static let unpin = SGen.tr("Localizable", "Unpin", fallback: "Открепить")
   /// Среда
   internal static let wednesday = SGen.tr("Localizable", "Wednesday", fallback: "Среда")
+  /// Вот это технологии!
+  internal static let whatAGreatTechnology = SGen.tr("Localizable", "What a great technology!", fallback: "Вот это технологии!")
   /// Что будем отслеживать?
   internal static let whatAreWeGoingToTrack = SGen.tr("Localizable", "What are we going to track?", fallback: "Что будем отслеживать?")
 }
@@ -134,5 +140,4 @@ private final class BundleToken {
     #endif
   }()
 }
-// swiftlint:enable all
 // swiftlint:enable convenience_type

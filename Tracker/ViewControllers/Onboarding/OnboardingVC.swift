@@ -34,8 +34,8 @@ final class OnboardingVC: UIPageViewController {
 
         pageController.addTarget(self, action: #selector(pageControllerTapped), for: .valueChanged)
 
-        let firstScreen = OnboardingCustomVC(image: "blueScreen", labelText: "Отслеживайте только то, что хотите")
-        let secondScreen = OnboardingCustomVC(image: "orangeScreen", labelText: "Даже если это не литры воды и йога")
+        let firstScreen = OnboardingCustomVC(image: "blueScreen", labelText: SGen.trackOnlyWhatYouWant)
+        let secondScreen = OnboardingCustomVC(image: "orangeScreen", labelText: SGen.evenIfItSNotWaterAndYoga)
 
         pages.append(firstScreen)
         pages.append(secondScreen)

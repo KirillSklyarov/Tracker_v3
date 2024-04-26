@@ -58,14 +58,15 @@ final class OnboardingCustomVC: UIViewController {
 
     private func setupLabel() {
         label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.textColor = AppColors.dateButtonText
         label.numberOfLines = 0
         label.textAlignment = .center
     }
 
     private func setupButton() {
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.setTitle(SGen.whatAGreatTechnology, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        button.backgroundColor = AppColors.buttonBlack
+        button.backgroundColor = AppColors.dateButtonText
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(onboardingButtonTapped), for: .touchUpInside)
     }
