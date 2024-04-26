@@ -29,7 +29,7 @@ final class CreatingNewCategoryViewController: BaseViewController {
         let button = UIButton()
         button.setTitle(SGen.done, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-        button.setTitleColor(AppColors.createButtonText, for: .normal)
+        button.setTitleColor(AppColors.doneButtonText, for: .normal)
         button.backgroundColor = AppColors.buttonGray
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 15
@@ -91,6 +91,7 @@ final class CreatingNewCategoryViewController: BaseViewController {
     private func doneButtonIsActive() {
         doneButton.isEnabled = true
         doneButton.backgroundColor = AppColors.buttonBlack
+        doneButton.setTitleColor(AppColors.buttonText, for: .normal)
     }
 
     private func doneButtonIsNotActive() {

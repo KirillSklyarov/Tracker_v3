@@ -193,7 +193,7 @@ extension StatisticViewModel {
 
     func calculateIsThisAnIdealDay(trackersToDo: Int, completedTracker: Int) -> Int? {
         if trackersToDo == 0 {
-            print("Nothing to do")
+//            print("Nothing to do")
             return nil
         } else {
             let resultForTheDay = isAllTrackerCompleted(trackersToDo: trackersToDo, completedTracker: completedTracker)

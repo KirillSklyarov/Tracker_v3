@@ -82,7 +82,7 @@ extension TrackerViewController: UICollectionViewDataSource, UICollectionViewDel
 
         let height = calculationOfStickyCollectionHeight()
         stickyCollectionHeightConstraint?.constant = height
-        print("stickyCollectionHeightConstraint \(height)")
+//        print("stickyCollectionHeightConstraint \(height)")
     }
 
     func calculationOfStickyCollectionHeight() -> CGFloat {

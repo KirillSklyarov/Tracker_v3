@@ -66,6 +66,7 @@ final class TrackerViewController: UIViewController {
 
     // MARK: - Other Properties
     var viewModel: TrackerViewModelProtocol
+    var analytics = AnalyticsService()
 
     lazy var currentDate = datePicker.date
 
@@ -105,15 +106,27 @@ final class TrackerViewController: UIViewController {
 
         addTapGestureToHideDatePicker()
 
+        analytics.openMainScreen()
+
         //        viewModel.coreDataManager.printAllCategoryNamesFromCD()
 
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        // Отправляем отчет в аналитику
+        analytics.closeMainScreen()
+    }
+
     // MARK: - UI Actions
-    @objc private func addNewHabitButtonTapped(_ sender: UIButton) {
+    @objc private func addNewTrackerButtonTapped(_ sender: UIButton) {
         let creatingNewHabitVC = ChoosingTypeOfTrackerViewController()
         let creatingNavi = UINavigationController(rootViewController: creatingNewHabitVC)
         present(creatingNavi, animated: true)
+
+        // Отправляем отчет в аналитику
+        analytics.addTrackerButton()
     }
 
     @objc private func updateDataWithNewCategoryNames(notification: Notification) {
@@ -130,6 +143,9 @@ final class TrackerViewController: UIViewController {
         print("trackerRecord \(trackerRecord)")
 
         makeTrackerDoneOrUndone(trackerRecord: trackerRecord)
+
+        // Отправляем отчет в аналитику
+        analytics.trackerButtonTapped()
 
     }
 
@@ -154,6 +170,7 @@ final class TrackerViewController: UIViewController {
         let filterVC = FilterTrackersViewController(viewModel: viewModel)
         let navVC = UINavigationController(rootViewController: filterVC)
         filterVC.filterDelegate = self
+        analytics.filterButtonTapped()
         present(navVC, animated: true)
     }
 
@@ -170,7 +187,7 @@ final class TrackerViewController: UIViewController {
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             image: image, style: .done, target: self,
-            action: #selector(addNewHabitButtonTapped))
+            action: #selector(addNewTrackerButtonTapped))
     }
 
     private func setupFiltersButton() {
@@ -352,9 +369,8 @@ final class TrackerViewController: UIViewController {
         guard let check = viewModel.isTrackerExistInTrackerRecordForDatePickerDate(
             tracker: tracker, dateOnDatePicker: dateOnDatePicker) else { print("Hmm, problems"); return }
 
-        print("check \(check), tracker: \(tracker.name), \(tracker.id)")
-
-        viewModel.coreDataManager.printAllTrackerRecords()
+//        print("check \(check), tracker: \(tracker.name), \(tracker.id)")
+//        viewModel.coreDataManager.printAllTrackerRecords()
 
         if check {
             designCompletedTracker(cell: cell, cellColor: trackerColor)
@@ -363,7 +379,7 @@ final class TrackerViewController: UIViewController {
         }
     }
 
-    func makeTrackerDoneOrUndone(trackerRecord: (TrackerRecord: TrackerRecord, isExist: Bool)) {
+    private func makeTrackerDoneOrUndone(trackerRecord: (TrackerRecord: TrackerRecord, isExist: Bool)) {
         if !trackerRecord.isExist {
             makeTrackerDone(trackToAdd: trackerRecord.TrackerRecord)
         } else {

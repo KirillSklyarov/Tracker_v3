@@ -39,6 +39,7 @@ extension CreatingOneOffTrackerVC: UITextFieldDelegate {
     }
 
     func textFieldDidChangeSelection(_ textField: UITextField) {
+        textField.textColor = AppColors.textFieldText
         viewModel.trackerName = textField.text
     }
 

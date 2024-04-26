@@ -29,7 +29,7 @@ extension TrackerCoreManager {
         do {
             let result = try context.fetch(request)
             for element in result {
-                print("element.date \(element.date), element.id \(element.id)")
+                print("element.date \(String(describing: element.date)), element.id \(String(describing: element.id))")
             }
         } catch {
             print("\(error.localizedDescription) 🟥")

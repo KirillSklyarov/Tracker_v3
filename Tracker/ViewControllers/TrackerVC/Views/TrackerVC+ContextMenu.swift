@@ -18,21 +18,21 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
         let touchPoint = interaction.location(in: view)
 
         // Находим к какой коллекции относится трекер
-        let stickyFrame = stickyCollectionView.frame
+//        let stickyFrame = stickyCollectionView.frame
 //        print("Stiky frame \(stickyFrame)")
-        let trackersFrame = trackersCollectionView.frame
+//        let trackersFrame = trackersCollectionView.frame
 //        print("Trackers frame \(trackersFrame)")
-        let checkSticky = stickyCollectionView.frame.contains(touchPoint)
+//        let checkSticky = stickyCollectionView.frame.contains(touchPoint)
 //        print("checkSticky: \(checkSticky)")
-        let checkTracker = trackersCollectionView.frame.contains(touchPoint)
+//        let checkTracker = trackersCollectionView.frame.contains(touchPoint)
 //        print("checkTracker: \(checkTracker)")
 
         if stickyCollectionView.frame.contains(touchPoint) {
             chosenCollection = stickyCollectionView
-            print("1")
+//            print("1")
         } else if trackersCollectionView.frame.contains(touchPoint) {
             chosenCollection = trackersCollectionView
-            print("2")
+//            print("2")
         }
 
         // Здесь мы находим indexPath трекера
@@ -91,7 +91,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
                 tracker = viewModel.coreDataManager.object(at: indexPath)
             } else {
                 tracker = viewModel.coreDataManager.getPinnedTrackerWithIndexPath(indexPath: indexPath)
-                //                print("tracker \(tracker)")
+    //                print("tracker \(tracker)")
             }
 
             guard let tracker else { return }
@@ -99,6 +99,10 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
             goToEditingVC()
 
             self.viewModel.passTrackerToEditDelegate?.passTrackerIndexPathToEdit(tracker: tracker, indexPath: indexPath)
+
+            analytics.editButtonTapped()
+
+
         }
         return editAction
     }
@@ -116,6 +120,7 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
         let deleteAction = UIAction(title: SGen.delete, attributes: .destructive) { [weak self] _ in
             guard let self else { return }
             self.showAlert(collection: collection, indexPath: indexPath)
+            analytics.deleteButtonTapped()
         }
         return deleteAction
     }
