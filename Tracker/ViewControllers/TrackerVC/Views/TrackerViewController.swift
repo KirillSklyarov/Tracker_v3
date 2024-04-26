@@ -145,7 +145,8 @@ final class TrackerViewController: UIViewController {
 
         sender.removeFromSuperview()
 
-        viewModel.updateDataFromCoreData(weekDay: weekDay)
+        showCorrectTrackersWithFilter()
+
     }
 
     @objc private func filterButtonTapped(_ sender: UIButton) {
@@ -239,6 +240,17 @@ final class TrackerViewController: UIViewController {
         }
     }
 
+    func showCorrectTrackersWithFilter() {
+        let isFilter = viewModel.isFilter
+
+        if isFilter {
+            guard let filter = viewModel.filter else { print("Ooops"); return }
+            getFilterFromPreviousVC(filter: filter)
+        } else {
+            uploadDataFormCoreData()
+        }
+    }
+
     private func uploadDataFormCoreData() {
         viewModel.updateDataFromCoreData(weekDay: weekDay)
         viewModel.coreDataManager.delegate = self
@@ -258,24 +270,24 @@ final class TrackerViewController: UIViewController {
     func findTrackerAndIndexPathByTouch(sender: UIButton) -> (Tracker: TrackerCoreData, indexPath: IndexPath)? {
 
         let touchPoint = sender.convert(CGPoint.zero, to: view)
-//        print("buttonIndexPath \(touchPoint)")
+        //        print("buttonIndexPath \(touchPoint)")
 
         if trackersCollectionView.frame.contains(touchPoint) {
-//            print("Tracker")
+            //            print("Tracker")
             let convertedPoint = view.convert(touchPoint, to: trackersCollectionView)
             guard let indexPath = trackersCollectionView.indexPathForItem(at: convertedPoint),
                   let tracker = viewModel.coreDataManager.trackersFRC?.object(at: indexPath) else { return nil }
-           return (tracker, indexPath)
+            return (tracker, indexPath)
         }
         if stickyCollectionView.frame.contains(touchPoint) {
-//            print("Sticky")
+            //            print("Sticky")
             let convertedPoint = view.convert(touchPoint, to: stickyCollectionView)
-//            print("convertedPoint \(convertedPoint)")
+            //            print("convertedPoint \(convertedPoint)")
 
             guard let indexPath = stickyCollectionView.indexPathForItem(at: convertedPoint),
                   let tracker = viewModel.coreDataManager.pinnedTrackersFRC?.object(at: indexPath)
             else { print("Yhhh"); return nil}
-//            print(indexPath)
+            //            print(indexPath)
             return (tracker, indexPath)
         }
         return nil

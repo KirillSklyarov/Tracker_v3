@@ -62,6 +62,17 @@ extension TrackerCoreManager {
         setupPinnedFRCWithRequest(request: request)
     }
 
+    func getEmptyPinnedCollection() {
+        let request = TrackerCoreData.fetchRequest()
+        let predicate = NSPredicate(format: "%K = %@",
+                                     #keyPath(TrackerCoreData.id.uuidString), "impossible trackerId")
+        let sort = NSSortDescriptor(key: "category.header", ascending: true)
+        request.sortDescriptors = [sort]
+        request.predicate = predicate
+
+        setupPinnedFRCWithRequest(request: request)
+    }
+
     func getInCompletePinnedTracker(trackerNotToShow trackerId: [String]) {
         let request = TrackerCoreData.fetchRequest()
         let predicate1 = NSPredicate(format: "%K == %@",

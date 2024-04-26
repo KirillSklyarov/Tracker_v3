@@ -199,7 +199,9 @@ final class TrackerCoreManager: NSObject {
 extension TrackerCoreManager: NSFetchedResultsControllerDelegate {
 
     var isCoreDataEmpty: Bool {
-        trackersFRC?.sections?.isEmpty ?? true
+        let pinnedEmpty = pinnedTrackersFRC?.sections?.isEmpty ?? true
+        let trackersEmpty = trackersFRC?.sections?.isEmpty ?? true
+        return pinnedEmpty && trackersEmpty
     }
 
     var numberOfSections: Int {

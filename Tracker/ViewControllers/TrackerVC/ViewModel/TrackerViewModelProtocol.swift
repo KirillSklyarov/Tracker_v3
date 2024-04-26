@@ -23,5 +23,7 @@ protocol TrackerViewModelProtocol {
     var categories: [TrackerCategory] { get set }
     var filteredData: [TrackerCategory] { get set }
     var passTrackerToEditDelegate: PassTrackerToEditDelegate? { get set }
+    var isFilter: Bool { get set }
+    var filter: String? { get set }
 
 }

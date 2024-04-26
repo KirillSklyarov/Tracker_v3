@@ -14,6 +14,8 @@ extension TrackerViewController: FilterCategoryDelegate {
     }
 
     func getFilterFromPreviousVC(filter: String) {
+        viewModel.isFilter = true
+        viewModel.filter = filter
         switch filter {
         case SGen.allTrackers: showAllTrackersForThisDay()
         case SGen.todayTrackers: showAllTrackersForToday()
@@ -48,7 +50,7 @@ extension TrackerViewController: FilterCategoryDelegate {
 
     func getTrackersForToday() {
         let todayWeekDayString = getTodayWeekday()
-        viewModel.coreDataManager.getAllTrackersForWeekday(weekDay: todayWeekDayString)
+        getTrackersForWeekDay(weekDay: todayWeekDayString)
     }
 
     func getTodayWeekday() -> String {
@@ -72,26 +74,46 @@ extension TrackerViewController: FilterCategoryDelegate {
     func showCompletedTrackersForDay() {
 
         if completedTrackersID.isEmpty {
-            viewModel.coreDataManager.getEmptyBaseForEmptyScreen()
-            viewModel.coreDataManager.getCompletedPinnedTracker(trackerId: completedTrackersID)
+            showEmptyCollections()
         } else {
-            viewModel.coreDataManager.getTrackerWithID(trackerId: completedTrackersID)
-            viewModel.coreDataManager.getCompletedPinnedTracker(trackerId: completedTrackersID)
+            getCompletedPinnedTrackers(completedTrackers: completedTrackersID)
+            getCompletedTrackers(completedTrackers: completedTrackersID)
         }
         viewModel.dataUpdated?()
+    }
+
+    func showEmptyCollections() {
+        viewModel.coreDataManager.getEmptyPinnedCollection()
+        viewModel.coreDataManager.getEmptyTrackerCollection()
+    }
+
+    func getCompletedPinnedTrackers(completedTrackers: [String]) {
+        viewModel.coreDataManager.getCompletedPinnedTracker(trackerId: completedTrackers)
+    }
+
+    func getCompletedTrackers(completedTrackers: [String]) {
+        viewModel.coreDataManager.getCompletedTrackersWithID(completedTrackerId: completedTrackers)
     }
 
     // MARK: - Фильтр "Незавершенные"
     func showIncompleteTrackersForDay() {
 
         if completedTrackersID.isEmpty {
-            viewModel.coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
             getPinnedTrackersForToday()
+            getTrackersForWeekDay(weekDay: weekDay)
         } else {
-            viewModel.coreDataManager.getTrackersExceptWithID(trackerNotToShow: completedTrackersID, weekDay: weekDay)
-            viewModel.coreDataManager.getInCompletePinnedTracker(trackerNotToShow: completedTrackersID)
+            getIncompletePinnedTrackers(trackerNotToShow: completedTrackersID)
+            getIncompleteTrackers(trackerNotToShow: completedTrackersID)
         }
         viewModel.dataUpdated?()
+    }
+
+    func getIncompletePinnedTrackers(trackerNotToShow: [String]) {
+        viewModel.coreDataManager.getInCompletePinnedTracker(trackerNotToShow: trackerNotToShow)
+    }
+
+    func getIncompleteTrackers(trackerNotToShow: [String]) {
+        viewModel.coreDataManager.getTrackersExceptWithID(trackerNotToShow: completedTrackersID, weekDay: weekDay)
     }
 
     // MARK: - Supporting Methods

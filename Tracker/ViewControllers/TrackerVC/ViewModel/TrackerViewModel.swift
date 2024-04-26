@@ -29,6 +29,10 @@ final class TrackerViewModel: TrackerViewModelProtocol {
 
     var dataUpdated: ( () -> Void )?
 
+    var isFilter = false
+
+    var filter: String?
+
     func updateDataFromCoreData(weekDay: String) {
         coreDataManager.getAllTrackersForWeekday(weekDay: weekDay)
         categories = coreDataManager.fetchData()
@@ -49,17 +53,6 @@ final class TrackerViewModel: TrackerViewModelProtocol {
               let result = weekDay[weekDayNumber] else { return ""}
         return result
     }
-
-//    func isTrackerExistInTrackerRecord(indexPath: IndexPath, date: Date) ->
-//    (TrackerRecord: TrackerRecord, isExist: Bool) {
-//            let category = newData[indexPath.section]
-//            let tracker = category.trackers[indexPath.row]
-//            let currentDateString = MainHelper.dateToString(date: date)
-//            let trackerToCheck = TrackerRecord(id: tracker.id, date: currentDateString)
-//            let check = coreDataManager.isTrackerExistInTrackerRecord(trackerToCheck: trackerToCheck)
-//
-//            return (trackerToCheck, check)
-//        }
 
     func isTrackerExistInTrackerRecord(tracker: TrackerCoreData, date: Date) ->
     (TrackerRecord: TrackerRecord, isExist: Bool)? {

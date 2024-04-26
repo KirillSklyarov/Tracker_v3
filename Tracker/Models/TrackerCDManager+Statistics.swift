@@ -156,12 +156,16 @@ extension TrackerCoreManager {
         }
     }
 
-    func getTrackerWithID(trackerId: [String]) {
+    func getCompletedTrackersWithID(completedTrackerId: [String]) {
         let request = TrackerCoreData.fetchRequest()
-        let predicate = NSPredicate(format: "%K IN %@",
-                                    #keyPath(TrackerCoreData.id), trackerId)
+        let predicate1 = NSPredicate(format: "%K IN %@",
+                                    #keyPath(TrackerCoreData.id), completedTrackerId)
+        let predicate2 = NSPredicate(format: "%K = %@",
+                                     #keyPath(TrackerCoreData.isPinned),
+                                     NSNumber(value: false))
+        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
         let sort = NSSortDescriptor(key: "category.header", ascending: true)
-        request.predicate = predicate
+        request.predicate = compoundPredicate
         request.sortDescriptors = [sort]
 
         setupTrackerFRC(request: request)
@@ -174,7 +178,7 @@ extension TrackerCoreManager {
         let predicate2 = NSPredicate(format: "schedule CONTAINS %@", SGen.everyday)
         let predicate3 = NSPredicate(format: "NOT (%K IN %@)",
                                      #keyPath(TrackerCoreData.id), trackerId)
-        let predicate4 = NSPredicate(format: "%K == %@",
+        let predicate4 = NSPredicate(format: "%K = %@",
                                      #keyPath(TrackerCoreData.isPinned),
                                      NSNumber(value: false))
         let datePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicate1, predicate2])
@@ -190,9 +194,9 @@ extension TrackerCoreManager {
         setupTrackerFRC(request: request)
     }
 
-    func getEmptyBaseForEmptyScreen() {
+    func getEmptyTrackerCollection() {
         let request = TrackerCoreData.fetchRequest()
-        let predicate = NSPredicate(format: "%K == %@",
+        let predicate = NSPredicate(format: "%K = %@",
                                     #keyPath(TrackerCoreData.id.uuidString), "impossible trackerId")
         let sort = NSSortDescriptor(key: "category.header", ascending: true)
         request.predicate = predicate
