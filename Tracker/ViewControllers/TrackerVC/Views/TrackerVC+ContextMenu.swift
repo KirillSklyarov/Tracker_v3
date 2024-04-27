@@ -102,7 +102,6 @@ extension TrackerViewController: UIContextMenuInteractionDelegate {
 
             analytics.editButtonTapped()
 
-
         }
         return editAction
     }
