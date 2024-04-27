@@ -8,16 +8,17 @@
 import UIKit
 
 extension TrackerViewController: DataProviderDelegate {
-    
+
     func didUpdate(_ update: TrackersStoreUpdate) {
-        collectionView.reloadData()
+        trackersCollectionView.reloadData()
+        stickyCollectionView.reloadData()
+        setStickyCollectionHeight()
         showOrHidePlaceholder()
     }
 }
 
-
-extension TrackerViewController: CloseScreenDelegate {
-    func closeFewVCAfterCreatingTracker() {
+extension TrackerViewController {
+    @objc func closeFewVCAfterCreatingTracker() {
         viewModel.categories = viewModel.coreDataManager.fetchData()
         self.dismiss(animated: true)
     }

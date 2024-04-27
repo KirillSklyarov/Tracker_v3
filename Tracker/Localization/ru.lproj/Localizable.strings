@@ -1,0 +1,62 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Kirill Sklyarov on 19.04.2024.
+  
+*/
+
+
+"Trackers" = "Трекеры";
+"Tracker" = "Трекер";
+"Search" = "Поиск";
+"Statistics" = "Статистика";
+"Filters" = "Фильтры";
+"Creating a tracker" = "Создание трекера";
+"Tracker" = "Привычка";
+"One-time event" = "Нерегулярные события";
+"There's nothing to analyze yet" = "Анализировать пока нечего";
+"The best period" = "Лучший период";
+"Ideal days" = "Идеальные дни";
+"Completed trackers" = "Трекеров завершено";
+"Trackers per day" = "Среднее значение";
+"New tracker" = "Новая привычка";
+"Enter tracker's name" = "Введите название трекера";
+"Category" = "Категория";
+"Schedule" = "Расписание";
+"Add a category" = "Добавить категорию";
+"Trackers and events can be grouped together in meaning" = "Привычки и события можно объединить по смыслу";
+"Color" = "Цвет";
+"Cancel" = "Отменить";
+"Save" = "Сохранить";
+"Create" = "Создать";
+"Exceed the limit of 38 characters" = "Ограничение 38 символов";
+"New one-time event" = "Новое нерегулярное событие";
+"Edit" = "Редактировать";
+"Delete" = "Удалить";
+"Editing a tracker" = "Редактирование привычки";
+"Editing a category" = "Редактирование категории";
+"Done" = "Готово";
+"Monday" = "Понедельник";
+"Tuesday" = "Вторник";
+"Wednesday" = "Среда";
+"Thursday" = "Четверг";
+"Friday" = "Пятница";
+"Saturday" = "Суббота";
+"Sunday" = "Воскресенье";
+"Everyday" = "Каждый день";
+"All trackers" = "Все трекеры";
+"Today trackers" = "Трекеры на сегодня";
+"Completed" = "Завершенные";
+"Incomplete" = "Незавершенные";
+"Pin" = "Закрепить";
+"Unpin" = "Открепить";
+"What are we going to track?" = "Что будем отслеживать?";
+"Nothing found" = "Ничего не найдено";
+"New category" = "Новая категория";
+"Enter new category name" = "Введите название категории";
+"Are you sure you want to delete the tracker" = "Уверены, что хотите удалить трекер";
+"Pinned" = "Закрепленные";
+"What a great technology!" = "Вот это технологии!";
+"Track only what you want" = "Отслеживайте только то, что хотите";
+"Even if it's not water and yoga" = "Даже если это не литры воды и йога";

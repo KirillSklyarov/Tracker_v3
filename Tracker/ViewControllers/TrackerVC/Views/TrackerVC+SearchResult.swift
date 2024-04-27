@@ -9,17 +9,24 @@ import UIKit
 
 // MARK: - UISearchResultsUpdating
 extension TrackerViewController: UISearchResultsUpdating {
-    
+
     func setupSearchController() {
+
+        // Устанавливаем цвет плейсхолдера серчбара
+        guard let textFieldInsideSearchBar = searchController.searchBar.value(forKey: "searchField") as? UITextField,
+              let color = AppColors.searchTextFieldPlaceholder else { return }
+
+        textFieldInsideSearchBar.attributedPlaceholder = NSAttributedString(
+            string: SGen.search, attributes: [NSAttributedString.Key.foregroundColor: color])
+
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.hidesNavigationBarDuringPresentation = false
-        searchController.searchBar.placeholder = "Поиск"
-        
+
         navigationItem.searchController = searchController
         definesPresentationContext = false
     }
-    
+
     func updateSearchResults(for searchController: UISearchController) {
         if let searchBarText = searchController.searchBar.text?.lowercased(),
            !searchBarText.isEmpty {
@@ -31,7 +38,7 @@ extension TrackerViewController: UISearchResultsUpdating {
         } else {
             viewModel.filteredData = viewModel.categories
         }
-        collectionView.reloadData()
+        trackersCollectionView.reloadData()
         showOrHidePlaceholder()
     }
 }

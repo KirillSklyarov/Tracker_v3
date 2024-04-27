@@ -1,0 +1,60 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Kirill Sklyarov on 19.04.2024.
+  
+*/
+
+"Trackers";
+"Tracker";
+"Search";
+"Statistics";
+"Filters";
+"Creating a tracker";
+"One-time event";
+"There's nothing to analyze yet";
+"The best period";
+"Ideal days";
+"Completed trackers";
+"Trackers per day";
+"New tracker";
+"Enter tracker's name";
+"Category";
+"Add a category";
+"Color";
+"Cancel";
+"Save";
+"Create";
+"Exceed the limit of 38 characters";
+"New one-time event";
+"Edit";
+"Delete";
+"Editing a tracker";
+"Editing a category";
+"Done";
+"Monday";
+"Tuesday";
+"Wednesday";
+"Thursday";
+"Friday";
+"Saturday";
+"Sunday";
+"Everyday";
+"All trackers";
+"Today trackers";
+"Completed";
+"Incomplete";
+"Pin";
+"What are we going to track?";
+"Nothing found";
+"Trackers and events can be grouped together in meaning";
+"New category";
+"Enter new category name";
+"Schedule";
+"Are you sure you want to delete the tracker";
+"Pinned";
+"Unpin";
+"What a great technology!";
+"Track only what you want";
+"Even if it's not water and yoga";

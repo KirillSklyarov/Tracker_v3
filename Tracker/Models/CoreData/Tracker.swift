@@ -13,6 +13,7 @@ struct Tracker {
     let color: String
     let emoji: String
     let schedule: String
+    var isPinned: Bool? = false
 }
 
 extension Tracker {
@@ -22,5 +23,6 @@ extension Tracker {
         self.color = coreDataObject.colorHex ?? "#000000"
         self.emoji = coreDataObject.emoji ?? ""
         self.schedule = coreDataObject.schedule ?? ""
+        self.isPinned = coreDataObject.isPinned
     }
 }

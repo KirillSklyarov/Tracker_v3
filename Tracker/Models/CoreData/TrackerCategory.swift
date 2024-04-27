@@ -15,7 +15,7 @@ struct TrackerCategory {
 extension TrackerCategory {
     init(coreDataObject: TrackerCategoryCoreData) {
         self.header = coreDataObject.header ?? ""
-        
+
         if let trackersSet = coreDataObject.trackers as? Set<TrackerCoreData> {
             self.trackers = trackersSet.map { Tracker(coreDataObject: $0) }
         } else {

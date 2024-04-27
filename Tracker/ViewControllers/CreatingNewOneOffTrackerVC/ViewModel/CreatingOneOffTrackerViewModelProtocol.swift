@@ -8,7 +8,6 @@
 import Foundation
 
 protocol CreatingOneOffTrackerViewModelProtocol {
-    var informAnotherVCofCreatingTracker: ( () -> Void )? { get set }
     var isDoneButtonEnable: ( () -> Void )? { get set }
 
     var tableViewRows: [String] { get set }
@@ -18,8 +17,9 @@ protocol CreatingOneOffTrackerViewModelProtocol {
     var selectedEmoji: String? { get set }
     var selectedColor: String? { get set }
     var trackerName: String? { get set }
-    
+    var selectedSchedule: String? { get set }
+
     func createNewTracker()
     func isAllFieldsFilled() -> Bool
-
+    func getBackToMainScreen()
 }
